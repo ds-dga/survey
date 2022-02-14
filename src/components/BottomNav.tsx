@@ -1,40 +1,46 @@
+import Link from 'next/link';
+
 export default function BottomNav() {
   return (
     <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 inline-flex justify-between bg-blue-600 w-11/12 rounded-3xl z-20 ">
-      <a
-        aria-current="page"
-        className="inline-flex flex-col items-center text-xs font-medium py-3 px-4 text-white flex-grow transition-all hover:bg-blue-200 hover:rounded-3xl hover:text-blue-600"
-        href="#"
-      >
-        <svg
-          className="w-7 h-7"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
+      <Link href={'/'}>
+        <a
+          aria-current="page"
+          className="inline-flex flex-col items-center text-xs font-medium py-3 px-4 text-white flex-grow transition-all hover:bg-blue-200 hover:rounded-3xl hover:text-blue-600"
+          href="#"
         >
-          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
-        </svg>
-        <span className="sr-only">Home</span>
-      </a>
+          <svg
+            className="w-7 h-7"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+          </svg>
+          <span className="sr-only">Home</span>
+        </a>
+      </Link>
 
-      <a
-        className="inline-flex flex-col items-center text-xs font-medium text-blue-400 py-3 px-4 flex-grow transition-all hover:bg-blue-200 hover:rounded-3xl hover:text-blue-600"
-        href="#"
-      >
-        <svg
-          className="w-8 h-8"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
+      <Link href={'/nextjs'}>
+        <a
+          className="inline-flex flex-col items-center text-xs font-medium text-blue-400 py-3 px-4 flex-grow transition-all hover:bg-blue-200 hover:rounded-3xl hover:text-blue-600"
+          href="#"
         >
-          <path
-            fillRule="evenodd"
-            d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
-            clipRule="evenodd"
-          ></path>
-        </svg>
-        <span className="sr-only">Chat</span>
-      </a>
+          <svg
+            className="w-8 h-8"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fillRule="evenodd"
+              d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
+              clipRule="evenodd"
+            ></path>
+          </svg>
+          <span className="sr-only">Chat</span>
+        </a>
+      </Link>
 
       <button className="relative inline-flex flex-col items-center text-xs font-medium text-white py-3 px-6 flex-grow">
         <div className="absolute bottom-4 p-3 rounded-full border-2 border-blue-600 bg-blue-600 hover:border-blue-400 hover:bg-blue-400 hover:bottom-6 transition-all ease-in-out delay-50">

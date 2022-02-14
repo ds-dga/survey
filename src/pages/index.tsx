@@ -1,10 +1,243 @@
-import { useRouter } from 'next/router';
+import { useState } from 'react';
 
+import ArrowDown from '@/icons/ArrowDown';
+import ArrowUp from '@/icons/ArrowUp';
+import Check from '@/icons/Check';
+import Stop from '@/icons/Stop';
 import { Meta } from '@/layout/Meta';
 import { Main } from '@/templates/Main';
 
+function Vote() {
+  let Action = 'up';
+  const Point = 3219;
+  return (
+    <div className="text-2xl flex flex-col items-center">
+      <div
+        className={`${Action === 'up' ? 'up' : ''}`}
+        onClick={() => {
+          // if (noActionAllowed) {
+          //   alert(noActMsg)
+          //   return
+          // }
+          // calcVote(Action === "up" ? "-" : "up")
+        }}
+      >
+        <ArrowUp fill={''} />
+      </div>
+      <div className={`text-center ${Action}`}>{Point}</div>
+      <div
+        className={`arrow ${Action === 'down' ? 'down' : ''}`}
+        onClick={() => {
+          // if (noActionAllowed) {
+          //   alert(noActMsg)
+          //   return
+          // }
+          // calcVote(Action === "down" ? "-" : "down")
+        }}
+      >
+        <ArrowDown fill={''} />
+      </div>
+    </div>
+  );
+}
+
+function CommentForm({ hidden }: any) {
+  return (
+    <form
+      action="#"
+      method="POST"
+      className={`${
+        hidden ? 'hidden' : ''
+      } mt-5 ease-in-out transition duration-150`}
+    >
+      <div>
+        <label
+          htmlFor="about"
+          className="block text-sm font-medium text-gray-700"
+        >
+          ความคิดเห็นของคุณ
+        </label>
+        <div className="mt-1">
+          <textarea
+            id="about"
+            name="about"
+            rows={3}
+            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
+            placeholder="ข้อคิดเห็น/เสนอแนะ"
+            defaultValue={''}
+          />
+        </div>
+        <p className="mt-2 text-sm text-gray-500">
+          อธิบายความเห็นให้ชัดเจน พร้อมทั้งใส่หลักฐานอ้างอิงถ้ามี
+          เพื่อความสะดวกในการติดตาม แก้ไข และพัฒนาต่อ
+        </p>
+      </div>
+      <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
+        <button
+          type="submit"
+          className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          บันทึก
+        </button>
+      </div>
+    </form>
+  );
+}
+
+function CommentItem({ item }: any) {
+  return (
+    <div className="my-2 px-2 py-3 border-l-4 border-slate-400 hover:bg-slate-200">
+      <div className="text-sm text-gray-500">
+        👤 {item.author} ... ⏰ <span className="italic">{item.timestamp}</span>
+      </div>
+      <div className="text-md text-gray-800">{item.comment}</div>
+    </div>
+  );
+}
+
+function CommentList() {
+  const cms = [
+    {
+      author: 'AB CD',
+      timestamp: '3 วันก่อน',
+      comment: 'ข้อมูลดี แต่อยากให้เพิ่ม location',
+    },
+    {
+      author: 'AB FFE',
+      timestamp: '2 วันก่อน',
+      comment: 'ข้อมูลแย่ ไม่ละเอียดเลย location ก็ไม่มี',
+    },
+    { author: 'ZX ZY', timestamp: '1 วันก่อน', comment: 'ขอบคุณครับ' },
+  ];
+  return (
+    <>
+      {cms.map((cm: any, ind: number) => (
+        <CommentItem key={`cm-${ind}`} item={cm} />
+      ))}
+    </>
+  );
+}
+
+function Item({ item }: any) {
+  const [showComment, SetShowComment] = useState(false);
+  return (
+    <div className="group relative rounded-md shadow-md border-2 border-slate-50 bg-slate-50 py-3 px-5">
+      <div className="pt-3 flex gap-3">
+        <Vote />
+        <div>
+          <p className="mt-1 zmax-w-2xl text-sm text-gray-500">
+            {item.category}
+          </p>
+          <h3 className="text-xl leading-6 font-medium text-gray-900">
+            {item.title}
+          </h3>
+        </div>
+      </div>
+      <div className="flex justify-between">
+        <div>
+          {/* <h3 className="text-sm text-gray-700">
+          {item.vote.up} โหวต
+          </h3> */}
+          <div className="text-sm text-gray-500">
+            {item.latestVoted} | {item.vote.up} โหวต{' '}
+            <ArrowUp className="inline" fill={'#10b981'} /> {item.vote.down}{' '}
+            โหวต <ArrowDown className="inline" fill={'#fb7185'} />
+          </div>
+        </div>
+        <button
+          className="text-sm font-medium text-gray-900"
+          onClick={() => {
+            SetShowComment(!showComment);
+          }}
+        >
+          {item.comments.length} ความคิดเห็น
+        </button>
+      </div>
+
+      <CommentForm hidden={!showComment} />
+      {showComment && <CommentList />}
+
+      <div className="mt-5 space-y-10 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-x-8 sm:gap-y-10">
+        <div className="relative border-l-4 border-green-400 pl-2">
+          <div className="text-gray-600 italic">ข้อมูลที่ใกล้เคียง</div>
+          {item.related.map((related: any, ind: number) => (
+            <div className="flex gap-3" key={`${item.id}-related-${ind}`}>
+              <div className="text-2xl min-w-fit">
+                <Check className="inline" fill={'#10b981'} />{' '}
+                <Stop className="inline" fill={'#fb7185'} />
+              </div>
+              <div>
+                <div>{related.title}</div>
+                <div className="text-md text-gray-600">by {related.source}</div>
+                <div className="text-sm text-gray-500">
+                  {related.vote.up - related.vote.down} โหวต{' '}
+                  <Check className="inline" /> {related.comments.length}{' '}
+                  ความคิดเห็น
+                </div>
+
+                <CommentForm hidden={!showComment} />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="relative border-l-4 border-pink-400 pl-2">
+          <div className="text-gray-600 italic">หน่วยงานที่เปิดเผยข้อมูล</div>
+          {item.organizations.map((org: any, ind: number) => (
+            <div className="flex gap-3" key={`${item.id}-org-${ind}`}>
+              <div className="text-2xl min-w-fit">
+                <Check className="inline" fill={'#10b981'} />{' '}
+                <Stop className="inline" fill={'#fb7185'} />
+              </div>
+              <div className="pt-2">{org.title}</div>
+            </div>
+          ))}
+          <button
+            type="button"
+            className="mt-5 px-4 py-1 text-md rounded-full text-white hover:text-white hover:border-transparent focus:outline-none focus:ring-emerald-500 bg-emerald-500 hover:bg-emerald-400 hover:scale-105 ease-in-out duration-300"
+          >
+            เพิ่มหน่วยงานที่อยากให้เปิดข้อมูล
+          </button>
+
+          <CommentForm hidden={!showComment} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const Index = () => {
-  const router = useRouter();
+  const item = {
+    category: 'เศรษฐกิจ การเงินและอุตสาหกรรม',
+    title: 'ข้อมูลค่าจ้างตามมาตรการการใช้แรงงาน',
+    latestVoted: 'โหวตล่าสุด 4 วันก่อน',
+    vote: {
+      up: 104,
+      down: 6,
+    },
+    comments: [],
+    related: [
+      {
+        title: 'ค่าจ้างแรงงานภาคธุรกิจบริการ/ท่องเที่ยว',
+        source: 'กลุ่มสถิติ แรงงาน กองสถิติสังคม',
+        vote: {
+          up: 3,
+          down: 1,
+        },
+        comments: [],
+      },
+    ],
+    organizations: [
+      {
+        title: 'กลุ่มสถิติ แรงงาน กองสถิติสังคม/ท่องเที่ยว',
+        vote: {
+          up: 3,
+          down: 1,
+        },
+        comments: [],
+      },
+    ],
+  };
 
   return (
     <Main
@@ -15,170 +248,10 @@ const Index = () => {
         />
       }
     >
-      <a href="https://github.com/ixartz/Next-js-Boilerplate">
-        <img
-          src={`${router.basePath}/assets/images/nextjs-starter-banner.png`}
-          alt="Nextjs starter banner"
-        />
-      </a>
-      <h1 className="font-bold text-2xl">
-        Boilerplate code for your Nextjs project with Tailwind CSS
-      </h1>
-      <p>
-        <span role="img" aria-label="rocket">
-          🚀
-        </span>{' '}
-        Next.js Boilerplate is a starter code for your Next js project by
-        putting developer experience first .{' '}
-        <span role="img" aria-label="zap">
-          ⚡️
-        </span>{' '}
-        Made with Next.js, TypeScript, ESLint, Prettier, Husky, Lint-Staged,
-        VSCode, Netlify, PostCSS, Tailwind CSS.
-      </p>
-      <h2 className="font-semibold text-lg">Next js Boilerplate Features</h2>
-      <p>Developer experience first:</p>
-      <ul>
-        <li>
-          <span role="img" aria-label="fire">
-            🔥
-          </span>{' '}
-          <a href="https://nextjs.org" rel="nofollow">
-            Next.js
-          </a>{' '}
-          for Static Site Generator
-        </li>
-        <li>
-          <span role="img" aria-label="art">
-            🎨
-          </span>{' '}
-          Integrate with{' '}
-          <a href="https://tailwindcss.com" rel="nofollow">
-            Tailwind CSS
-          </a>
-        </li>
-        <li>
-          <span role="img" aria-label="nail_care">
-            💅
-          </span>{' '}
-          PostCSS for processing Tailwind CSS
-        </li>
-        <li>
-          <span role="img" aria-label="tada">
-            🎉
-          </span>{' '}
-          Type checking Typescript
-        </li>
-        <li>
-          <span role="img" aria-label="pencil2">
-            ✏️
-          </span>{' '}
-          Linter with{' '}
-          <a href="https://eslint.org" rel="nofollow">
-            ESLint
-          </a>
-        </li>
-        <li>
-          <span role="img" aria-label="hammer_and_wrench">
-            🛠
-          </span>{' '}
-          Code Formatter with{' '}
-          <a href="https://prettier.io" rel="nofollow">
-            Prettier
-          </a>
-        </li>
-        <li>
-          <span role="img" aria-label="fox_face">
-            🦊
-          </span>{' '}
-          Husky for Git Hooks
-        </li>
-        <li>
-          <span role="img" aria-label="no_entry_sign">
-            🚫
-          </span>{' '}
-          Lint-staged for running linters on Git staged files
-        </li>
-        <li>
-          <span role="img" aria-label="no_entry_sign">
-            🗂
-          </span>{' '}
-          VSCode configuration: Debug, Settings, Tasks and extension for
-          PostCSS, ESLint, Prettier, TypeScript
-        </li>
-        <li>
-          <span role="img" aria-label="robot">
-            🤖
-          </span>{' '}
-          SEO metadata, JSON-LD and Open Graph tags with Next SEO
-        </li>
-        <li>
-          <span role="img" aria-label="robot">
-            ⚙️
-          </span>{' '}
-          <a
-            href="https://www.npmjs.com/package/@next/bundle-analyzer"
-            rel="nofollow"
-          >
-            Bundler Analyzer
-          </a>
-        </li>
-        <li>
-          <span role="img" aria-label="rainbow">
-            🌈
-          </span>{' '}
-          Include a FREE minimalist theme
-        </li>
-        <li>
-          <span role="img" aria-label="hundred">
-            💯
-          </span>{' '}
-          Maximize lighthouse score
-        </li>
-      </ul>
-      <p>Built-in feature from Next.js:</p>
-      <ul>
-        <li>
-          <span role="img" aria-label="coffee">
-            ☕
-          </span>{' '}
-          Minify HTML &amp; CSS
-        </li>
-        <li>
-          <span role="img" aria-label="dash">
-            💨
-          </span>{' '}
-          Live reload
-        </li>
-        <li>
-          <span role="img" aria-label="white_check_mark">
-            ✅
-          </span>{' '}
-          Cache busting
-        </li>
-      </ul>
-      <h2 className="font-semibold text-lg">Our Stater code Philosophy</h2>
-      <ul>
-        <li>Minimal code</li>
-        <li>SEO-friendly</li>
-        <li>
-          <span role="img" aria-label="rocket">
-            🚀
-          </span>{' '}
-          Production-ready
-        </li>
-      </ul>
-      <p>
-        Check our GitHub project for more information about{' '}
-        <a href="https://github.com/ixartz/Next-js-Boilerplate">
-          Nextjs Boilerplate
-        </a>
-        . You can also browse our{' '}
-        <a href="https://creativedesignsguru.com/category/nextjs/">
-          Premium NextJS Templates
-        </a>{' '}
-        on our website to support this project.
-      </p>
+      {/* <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8"> */}
+      <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6">
+        <Item item={item} />
+      </div>
     </Main>
   );
 };
