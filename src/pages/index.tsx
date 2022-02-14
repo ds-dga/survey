@@ -8,7 +8,7 @@ import { Meta } from '@/layout/Meta';
 import { Main } from '@/templates/Main';
 
 function Vote() {
-  let Action = 'up';
+  const Action = 'up';
   const Point = 3219;
   return (
     <div className="text-2xl flex flex-col items-center">
@@ -26,7 +26,7 @@ function Vote() {
       </div>
       <div className={`text-center ${Action}`}>{Point}</div>
       <div
-        className={`arrow ${Action === 'down' ? 'down' : ''}`}
+        className={`arrow down`}
         onClick={() => {
           // if (noActionAllowed) {
           //   alert(noActMsg)
@@ -62,7 +62,7 @@ function CommentForm({ hidden }: any) {
             id="about"
             name="about"
             rows={3}
-            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
+            className="shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
             placeholder="ข้อคิดเห็น/เสนอแนะ"
             defaultValue={''}
           />
@@ -75,7 +75,7 @@ function CommentForm({ hidden }: any) {
       <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
         <button
           type="submit"
-          className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="inline-flex justify-center py-2 px-4 border border-blue-500 border-b-4 shadow-sm text-sm font-medium text-blue-500 shadow-md hover:text-white hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ease-in-out transition"
         >
           บันทึก
         </button>
@@ -249,7 +249,7 @@ const Index = () => {
       }
     >
       {/* <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8"> */}
-      <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6">
+      <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 mb-20">
         <Item item={item} />
       </div>
     </Main>
