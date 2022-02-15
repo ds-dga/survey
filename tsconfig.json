@@ -10,31 +10,26 @@
     "alwaysStrict": true,
     "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,
-
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "allowUnreachableCode": false,
     "noFallthroughCasesInSwitch": true,
-
     "target": "es5",
     "outDir": "out",
     "declaration": true,
     "sourceMap": true,
-
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "allowJs": false,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-
     "jsx": "preserve",
     "noEmit": true,
     "isolatedModules": true,
     "incremental": true,
-
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
