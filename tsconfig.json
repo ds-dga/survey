@@ -27,7 +27,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "jsx": "preserve",
-    "noEmit": true,
+    // "noEmit": true,
     "isolatedModules": true,
     "incremental": true,
     "baseUrl": ".",

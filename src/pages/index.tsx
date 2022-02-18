@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { useSession } from 'next-auth/react';
+
 import ArrowDown from '@/icons/ArrowDown';
 import ArrowUp from '@/icons/ArrowUp';
 import Check from '@/icons/Check';
@@ -207,6 +209,9 @@ function Item({ item }: any) {
 }
 
 const Index = () => {
+  const { data: session, status } = useSession();
+  const loading = status === 'loading';
+
   const item = {
     category: 'เศรษฐกิจ การเงินและอุตสาหกรรม',
     title: 'ข้อมูลค่าจ้างตามมาตรการการใช้แรงงาน',
@@ -239,6 +244,8 @@ const Index = () => {
     ],
   };
 
+  console.log('Indexpage: session =', loading, session);
+
   return (
     <Main
       meta={
@@ -249,6 +256,13 @@ const Index = () => {
       }
     >
       {/* <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8"> */}
+      {session && (
+        <>
+          <h1>
+            {session.user.name} {session.user.email} {session.user.image}
+          </h1>
+        </>
+      )}
       <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 mb-20">
         <Item item={item} />
         <Item item={item} />

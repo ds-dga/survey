@@ -1,4 +1,5 @@
 import { ApolloProvider } from '@apollo/client';
+import { SessionProvider } from 'next-auth/react';
 import { AppProps } from 'next/app';
 
 import { useApollo } from '../libs/apollo';
@@ -10,7 +11,9 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 
   return (
     <ApolloProvider client={apolloClient}>
-      <Component {...pageProps} />
+      <SessionProvider session={pageProps.session} refetchInterval={5 * 60}>
+        <Component {...pageProps} />
+      </SessionProvider>
     </ApolloProvider>
   );
 };
