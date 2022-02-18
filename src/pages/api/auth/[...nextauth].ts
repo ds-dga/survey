@@ -26,5 +26,11 @@ export default NextAuth({
     session({ session }) {
       return session; // The return type will match the one returned in `useSession()`
     },
+    redirect({ url, baseUrl }) {
+      if (url.startsWith(baseUrl)) return url;
+      // Allows relative callback URLs
+      if (url.startsWith('/')) return new URL(url, baseUrl).toString();
+      return baseUrl;
+    },
   },
 });
