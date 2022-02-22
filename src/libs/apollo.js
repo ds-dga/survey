@@ -17,7 +17,7 @@ import { WebSocketLink } from "@apollo/client/link/ws"
 
 let apolloClient
 const EvHeader = {
-  "x-everyday-app": "satang",
+  "x-everyday-app": "survey",
   "x-everyday-client": "next",
   "x-everyday-social-app": null,
   "x-everyday-uid": null,
@@ -55,8 +55,8 @@ const wsLink = process.browser
           return {
             headers: {
               ...EvHeader,
-              "x-everyday-social-app": session.social.provider || null,
-              "x-everyday-uid": session.social.id || null,
+              // "x-everyday-social-app": session.social.provider || null,
+              // "x-everyday-uid": session.social.id || null,
             },
           }
         },
@@ -72,8 +72,8 @@ const authMiddleware = new ApolloLink(async (operation, forward) => {
   if (session)
     headers = {
       ...EvHeader,
-      "x-everyday-social-app": session.social.provider || null,
-      "x-everyday-uid": session.social.id || null,
+      // "x-everyday-social-app": session.social.provider || null,
+      // "x-everyday-uid": session.social.id || null,
     }
   // add the authorization to the headers
   operation.setContext({

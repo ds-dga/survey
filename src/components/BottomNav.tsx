@@ -25,7 +25,7 @@ export default function BottomNav() {
         </a>
       </Link>
 
-      <Link href={'/nextjs'}>
+      <Link href={'/category'}>
         <a
           className={`inline-flex flex-col items-center text-xs font-medium ${
             route === '/nextjs' ? 'text-white' : 'text-blue-400'
@@ -44,7 +44,7 @@ export default function BottomNav() {
               clipRule="evenodd"
             ></path>
           </svg>
-          <span className="sr-only">Chat</span>
+          <span className="sr-only">Category</span>
         </a>
       </Link>
 
