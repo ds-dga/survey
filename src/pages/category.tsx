@@ -7,7 +7,10 @@ function CategoryItem({ item }: any) {
   return (
     <Link href={`/category/${item.id}`}>
       <div className="group relative rounded-md shadow-md border-2 border-slate-50 bg-slate-50 py-3 px-5 h-25 flex justify-center items-center hover:bg-slate-200 hover:border-slate-200 hover:font-medium transition">
-        <span className="text-center">{item.name}</span>
+        <span className="absolute top-0 right-0 pr-1 text-stone-300 font-semibold text-lg z-0">
+          {item.total.aggregate.count}
+        </span>
+        <span className="text-center z-10">{item.name}</span>
       </div>
     </Link>
   )
@@ -15,9 +18,6 @@ function CategoryItem({ item }: any) {
 
 export default function Category() {
   const { data, loading, error } = useQuery(CATEGORY_QUERY)
-
-  // const router = useRouter();
-  console.log(loading, error, data)
   return (
     <Main
       meta={<Meta title="Dataset: Category" description="Open data category" />}
