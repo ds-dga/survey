@@ -1,16 +1,16 @@
-import { useSession } from "next-auth/react"
-import { Meta } from "@/layout/Meta"
-import { Main } from "@/templates/Main"
-import Item from "@/components/item"
+import { useSession } from 'next-auth/react';
+
+import { Meta } from '@/layout/Meta';
+import { Main } from '@/templates/Main';
 
 const Index = () => {
-  const { data: session, status } = useSession()
-  const loading = status === "loading"
+  const { data: session, status } = useSession();
+  const loading = status === 'loading';
 
-  const item = {
-    category: "เศรษฐกิจ การเงินและอุตสาหกรรม",
-    title: "ข้อมูลค่าจ้างตามมาตรการการใช้แรงงาน",
-    latestVoted: "โหวตล่าสุด 4 วันก่อน",
+  /* const item = {
+    category: 'เศรษฐกิจ การเงินและอุตสาหกรรม',
+    title: 'ข้อมูลค่าจ้างตามมาตรการการใช้แรงงาน',
+    latestVoted: 'โหวตล่าสุด 4 วันก่อน',
     vote: {
       up: 104,
       down: 6,
@@ -18,8 +18,8 @@ const Index = () => {
     comments: [],
     related: [
       {
-        title: "ค่าจ้างแรงงานภาคธุรกิจบริการ/ท่องเที่ยว",
-        source: "กลุ่มสถิติ แรงงาน กองสถิติสังคม",
+        title: 'ค่าจ้างแรงงานภาคธุรกิจบริการ/ท่องเที่ยว',
+        source: 'กลุ่มสถิติ แรงงาน กองสถิติสังคม',
         vote: {
           up: 3,
           down: 1,
@@ -29,7 +29,7 @@ const Index = () => {
     ],
     organizations: [
       {
-        title: "กลุ่มสถิติ แรงงาน กองสถิติสังคม/ท่องเที่ยว",
+        title: 'กลุ่มสถิติ แรงงาน กองสถิติสังคม/ท่องเที่ยว',
         vote: {
           up: 3,
           down: 1,
@@ -37,9 +37,9 @@ const Index = () => {
         comments: [],
       },
     ],
-  }
+  }; */
 
-  console.log("Indexpage: session =", loading, session)
+  console.log('Indexpage: session =', loading, session);
 
   return (
     <Main
@@ -59,12 +59,12 @@ const Index = () => {
         </>
       )}
       <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 mb-20">
+        {/* <Item item={item} />
         <Item item={item} />
-        <Item item={item} />
-        <Item item={item} />
+        <Item item={item} /> */}
       </div>
     </Main>
-  )
-}
+  );
+};
 
-export default Index
+export default Index;

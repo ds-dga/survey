@@ -1,7 +1,11 @@
 import dayjs from "dayjs"
 import calendar from "dayjs/plugin/calendar"
+import buddhistEra from "dayjs/plugin/buddhistEra"
+import th from "dayjs/locale/th"
 
 dayjs.extend(calendar)
+dayjs.extend(buddhistEra)
+dayjs.locale(th)
 
 export const bkkTime = (dayStr) => dayjs(dayStr).calendar()
 export const displayTime = (dayStr) => dayjs(dayStr).format("HH:mm")
@@ -22,8 +26,8 @@ export const relativeTime = (dayStr) => {
   return `${hr.toFixed(0)}:${minText} hr`
 }
 export const displayDatetime = (dayStr) =>
-  dayjs(dayStr).format("MMMM DD, YYYY HH:mm")
-export const displayDate = (dayStr) => dayjs(dayStr).format("MMMM DD, YYYY")
+  dayjs(dayStr).format("D MMM BBBB HH:mm")
+export const displayDate = (dayStr) => dayjs(dayStr).format("D MMM BBBB")
 
 export const minDuration = (d1, d2) => {
   const diff = (dayjs(d2) - dayjs(d1)) / 1000

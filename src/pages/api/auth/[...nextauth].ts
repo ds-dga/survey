@@ -1,20 +1,20 @@
+import { TypeORMLegacyAdapter } from '@next-auth/typeorm-legacy-adapter';
 import NextAuth from 'next-auth';
-import { TypeORMLegacyAdapter } from "@next-auth/typeorm-legacy-adapter"
 import FacebookProvider from 'next-auth/providers/facebook';
 import GoogleProvider from 'next-auth/providers/google';
 import TwitterProvider from 'next-auth/providers/twitter';
 import { ConnectionOptions } from 'typeorm';
 
 const connection: ConnectionOptions = {
-  type: "postgres",
-  host: "dga-vm1",
+  type: 'postgres',
+  host: 'dga-vm1',
   port: 35432,
-  username: "sipp11",
-  password: "banshee10",
-  database: "survey",
+  username: 'sipp11',
+  password: 'banshee10',
+  database: 'survey',
   // namingStrategy: new SnakeNamingStrategy()
   synchronize: true,
-}
+};
 
 export default NextAuth({
   adapter: TypeORMLegacyAdapter(connection),
@@ -39,7 +39,6 @@ export default NextAuth({
   callbacks: {
     // async signIn({ user, account, profile, email, credentials }) {
     //   /* This should handle account creation and verification with the backend system
-        
     //     user: {
     //       id: '11464~~~~~~159',
     //       name: 'Sipp Sippakorn',
@@ -73,12 +72,18 @@ export default NextAuth({
     //       locale: 'en',
     //       iat: 1645687813,
     //       exp: 1645691413
-    //     } 
+    //     }
     //   */
     //   return true
     // },
-    session({ session }) {
-      return session; // The return type will match the one returned in `useSession()`
+    session({ session, user }) {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          uid: user.id,
+        },
+      }; // The return type will match the one returned in `useSession()`
     },
     redirect({ url, baseUrl }) {
       if (url.startsWith(baseUrl)) return url;

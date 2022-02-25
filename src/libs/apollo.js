@@ -25,23 +25,6 @@ const EvHeader = {
 
 const httpLink = new HttpLink({ uri: process.env.NEXT_PUBLIC_GRAPHQL_URI })
 
-// async function getEverydayHook() {
-//   return {}
-//   const session = await getSession()
-//   // console.log("useApollo: ", session)
-//   let headers = {
-//     "x-everyday-app": "satang",
-//     "x-everyday-client": "next",
-//   }
-//   if (session) {
-//     headers = {
-//       ...headers,
-//       "x-everyday-social-app": session.social.provider || null,
-//       "x-everyday-uid": session.social.id || null,
-//     }
-//   }
-//   return headers
-// }
 // Make sure the wsLink is only created on the browser. The server doesn't have a native implemention for websockets
 const wsLink = process.browser
   ? new WebSocketLink({
@@ -72,8 +55,8 @@ const authMiddleware = new ApolloLink(async (operation, forward) => {
   if (session)
     headers = {
       ...EvHeader,
-      // "x-everyday-social-app": session.social.provider || null,
-      // "x-everyday-uid": session.social.id || null,
+      "x-everyday-social-app": "survey",
+      "x-everyday-uid": session.user.uid || null,
     }
   // add the authorization to the headers
   operation.setContext({
