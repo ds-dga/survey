@@ -5,17 +5,14 @@ import { useRouter } from 'next/router';
 import Item from '@/components/item';
 import { Meta } from '@/layout/Meta';
 import { Main } from '@/templates/Main';
-// import Item from "@/components/item"
 
 export default function CategoryOne() {
   const { data: session } = useSession();
   let userWhere = {};
   if (session) {
     userWhere = {
-      user: {
-        email: {
-          _eq: session.user.email,
-        },
+      voted_by: {
+        _eq: session.user.uid,
       },
     };
   }
@@ -30,12 +27,15 @@ export default function CategoryOne() {
         },
       },
     },
-    pollInterval: 6000,
+    pollInterval: 1000 * 7, // 7s
   });
 
+  const title = data ? data.category[0].name : 'Category';
   return (
     <Main
-      meta={<Meta title="Dataset: Category" description="Open data category" />}
+      meta={
+        <Meta title={`Dataset: ${title}`} description="Open data category" />
+      }
     >
       {loading && <p>Loading ... </p>}
       {error && <p>{error.message} ... </p>}

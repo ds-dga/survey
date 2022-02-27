@@ -52,7 +52,7 @@ export default function Item({ item }: any) {
               : ''}
             {moded.vote.up || 0} โหวต{' '}
             <ArrowUp className="inline" fill={'#10b981'} />{' '}
-            {moded.vote.down || 0} โหวต{' '}
+            {Math.abs(moded.vote.down) || 0} โหวต{' '}
             <ArrowDown className="inline" fill={'#fb7185'} />
           </div>
         </div>
