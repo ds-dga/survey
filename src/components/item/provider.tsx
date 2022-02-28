@@ -55,7 +55,7 @@ function ProviderItem({ organization }: ItemProps) {
   const hasVote =
     voteUp.aggregate.sum.point !== null ||
     voteDown.aggregate.sum.point !== null;
-  console.log('hasVote :', hasVote, voteUp, voteDown);
+  // console.log('hasVote :', hasVote, voteUp, voteDown);
 
   const delEnabled = !hasVote && uid === createdBy;
 
@@ -117,7 +117,7 @@ function ProviderItem({ organization }: ItemProps) {
         },
       });
       // console.log(` --> save ${action} by ${IP}`)
-      console.log(' --> mutation result', Point, result);
+      // console.log(' --> mutation result', Point, result);
       // SetAction('-');
       verifyIfrecorded(Point, ownVal, result);
     }, 2000);

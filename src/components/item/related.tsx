@@ -12,6 +12,7 @@ import RelatedForm from './relatedForm';
 type RelatedItemProps = {
   id: Number;
   maintainer: String;
+  url: String;
   title: String;
   points: String[];
   my_vote: any;
@@ -39,6 +40,7 @@ function RelatedItem({ item }: ItemProps) {
     id,
     maintainer,
     title,
+    url,
     created_by: createdBy,
     my_vote: myVote,
     vote_up: voteUp,
@@ -57,7 +59,6 @@ function RelatedItem({ item }: ItemProps) {
   const hasVote =
     voteUp.aggregate.sum.point !== null ||
     voteDown.aggregate.sum.point !== null;
-  console.log('hasVote :', hasVote, voteUp, voteDown);
   const delEnabled = !hasVote && uid === createdBy;
 
   useEffect(() => {
@@ -118,7 +119,7 @@ function RelatedItem({ item }: ItemProps) {
         },
       });
       // console.log(` --> save ${action} by ${IP}`)
-      console.log(' --> mutation result', Point, result);
+      // console.log(' --> mutation result', Point, result);
       // SetAction('-');
       verifyIfrecorded(Point, ownVal, result);
     }, 2000);
@@ -175,8 +176,7 @@ function RelatedItem({ item }: ItemProps) {
           className="px-1 pb-1 hover:bg-slate-200"
           onClick={async () => {
             if (delEnabled) {
-              if (!window.confirm('คุณต้องการจะลบหน่วยงานนี้ ใช่หรือไม่?'))
-                return;
+              if (!window.confirm('คุณต้องการจะข้อมูลนี้ ใช่หรือไม่?')) return;
               const r = await DeleteRelated({
                 variables: {
                   id,
@@ -194,9 +194,10 @@ function RelatedItem({ item }: ItemProps) {
         </span>
       </div>
       <div className="">
-        {title}
-        <br />
-        {maintainer}
+        <a href={`${url}`} target="_blank" rel="noreferrer">
+          {title}
+        </a>
+        <div className={`text-sm text-gray-600`}>โดย {maintainer}</div>
       </div>
     </div>
   );
@@ -245,7 +246,7 @@ export default function Related({ items, datasetID }: RelatedProps) {
 
 const MUTATE_RELATED_DELETION = gql`
   mutation MUTATE_RELATED_DELETION($id: uuid!) {
-    delete_dataset_related_by_pk(id: $id) {
+    delete_dateset_related_by_pk(id: $id) {
       id
     }
   }
