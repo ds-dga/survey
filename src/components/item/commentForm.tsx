@@ -1,12 +1,10 @@
-
-
 export default function CommentForm({ hidden }: any) {
   return (
     <form
       action="#"
       method="POST"
       className={`${
-        hidden ? "hidden" : ""
+        hidden ? 'hidden' : ''
       } mt-5 ease-in-out transition duration-150`}
     >
       <div>
@@ -23,7 +21,7 @@ export default function CommentForm({ hidden }: any) {
             rows={3}
             className="shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
             placeholder="ข้อคิดเห็น/เสนอแนะ"
-            defaultValue={""}
+            defaultValue={''}
           />
         </div>
         <p className="mt-2 text-sm text-gray-500">
@@ -40,5 +38,5 @@ export default function CommentForm({ hidden }: any) {
         </button>
       </div>
     </form>
-  )
+  );
 }
