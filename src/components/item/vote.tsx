@@ -25,11 +25,7 @@ export default function Vote({ initialValue, datasetID }: VoteProps) {
   const [noActionAllowed, SetNoActionAllowed] = useState(true);
   const [noActMsg, SetNoActMessage] = useState('');
   const [Action, SetAction] = useState('-'); // 3 states: up, down, -
-  const [Point, SetPoint] = useState(
-    +initialValue.up
-      ? +initialValue.up - +initialValue.down
-      : +initialValue.down
-  ); // otherwise, down will be 0 - -1 = 1!!
+  const [Point, SetPoint] = useState(+initialValue.up + +initialValue.down);
   const [MyVote, SetMyVote] = useState(initialValue.mine);
 
   useEffect(() => {
@@ -66,18 +62,10 @@ export default function Vote({ initialValue, datasetID }: VoteProps) {
       const confirmObj = returning[0];
       latestPoint = confirmObj.dataset.points_aggregate.aggregate.sum.point;
       const votedPoint = confirmObj.point;
-      // console.log("verify[ok1]: ", confirmObj)
-      // console.log("verify[ok2]: ", votingPoint, votedPoint)
-      // console.log("verify[ok3]: ", latestPoint, currScore + votingPoint)
       if (votedPoint !== votingPoint) {
         alert('Err: your vote does not count');
         // setPoint(confirmObj.point)
       }
-      // FIXME: currScore is good except when double clicking vote --
-      //        it stores the previous one, not "real current" value
-      // if (latestPoint !== currScore + votingPoint) {
-      //   alert("IP ของคุณได้มีการโหวดแล้ววันนี้")
-      // }
     } catch (e) {
       // console.log("verify[err] ", e)
     } finally {

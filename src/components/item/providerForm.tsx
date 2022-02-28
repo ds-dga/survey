@@ -22,7 +22,7 @@ export default function ProviderForm({
     >
       <div>
         <label
-          htmlFor="about"
+          htmlFor="Add new provider"
           className="block text-sm font-medium text-gray-700"
         >
           เพิ่มหน่วยงานที่อยากให้เปิดข้อมูลนี้
