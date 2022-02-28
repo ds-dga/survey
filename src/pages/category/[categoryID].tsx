@@ -96,6 +96,7 @@ const CATEGORY_ITEMS_QUERY = gql`
       providers {
         id
         name
+        created_by
         points(order_by: [{ created_at: desc }], limit: 1) {
           created_at
         }

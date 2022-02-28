@@ -8,6 +8,7 @@ import { displayDatetime } from '@/libs/day';
 
 import CommentList from './comment';
 import CommentForm from './commentForm';
+import Provider from './provider';
 import Vote from './vote';
 
 export default function Item({ item }: any) {
@@ -105,28 +106,7 @@ export default function Item({ item }: any) {
         </div>
 
         <div className="relative border-l-4 border-pink-400 pl-2">
-          <div className="text-gray-600 italic">
-            {moded.providers.length
-              ? 'หน่วยงานที่เปิดเผยข้อมูล'
-              : 'ยังไม่มีข้อมูลหน่วยงานที่เปิดเผยข้อมูล'}
-          </div>
-          {moded.providers.map((org: any, ind: number) => (
-            <div className="flex gap-3" key={`${moded.id}-org-${ind}`}>
-              <div className="text-2xl min-w-fit">
-                <Check className="inline" fill={'#10b981'} />{' '}
-                <Stop className="inline" fill={'#fb7185'} />
-              </div>
-              <div className="pt-2">{org.title}</div>
-            </div>
-          ))}
-          <button
-            type="button"
-            className="mt-5 px-4 py-1 text-sm rounded-full text-white hover:text-white hover:border-transparent focus:outline-none focus:ring-emerald-500 bg-emerald-500 hover:bg-emerald-400 hover:scale-105 ease-in-out duration-300"
-          >
-            เพิ่มหน่วยงานที่อยากให้เปิดข้อมูล
-          </button>
-
-          <CommentForm hidden={!showComment} />
+          <Provider orgs={moded.providers} datasetID={moded.id} />
         </div>
       </div>
     </div>
