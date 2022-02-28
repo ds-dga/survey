@@ -79,6 +79,7 @@ const CATEGORY_ITEMS_QUERY = gql`
         id
         maintainer
         title
+        created_by
         my_vote: points(where: $relatedVotedWhere) {
           point
         }
