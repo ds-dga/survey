@@ -159,15 +159,19 @@ function ProviderItem({ organization }: ItemProps) {
   return (
     <div className="flex gap-2 items-center self-center mt-1">
       <div className="text-l min-w-fit text-gray-500 grid grid-cols-3 gap-1 items-center self-center content-center">
-        <div className={`font-mono text-xs text-right ${noColor}`}>{Point}</div>
+        <div className={`font-mono text-xs text-right ${noColor}`}>
+          {Point !== 0 ? Point : ''}
+        </div>
         <span
+          className="px-1 pb-1 hover:bg-slate-200"
           onClick={() => {
             calcVote(Action === 'up' ? '-' : 'up');
           }}
         >
           <Check className="inline" fill={'#10b981'} />
-        </span>{' '}
+        </span>
         <span
+          className="px-1 pb-1 hover:bg-slate-200"
           onClick={async () => {
             if (delEnabled) {
               if (!window.confirm('คุณต้องการจะลบหน่วยงานนี้ ใช่หรือไม่?'))
@@ -196,6 +200,7 @@ function ProviderItem({ organization }: ItemProps) {
 export default function Provider({ orgs, datasetID }: ProviderProps) {
   const [formVisible, SetFormVisible] = useState(false);
   const { status: sessStatus } = useSession();
+
   return (
     <>
       <div className="text-gray-600 italic">
@@ -208,7 +213,11 @@ export default function Provider({ orgs, datasetID }: ProviderProps) {
       ))}
       <button
         type="button"
-        className="mt-3 px-4 py-1 text-sm rounded-full text-white hover:text-white hover:border-transparent focus:outline-none focus:ring-emerald-500 bg-emerald-500 hover:bg-emerald-400 hover:scale-105 ease-in-out duration-300"
+        className={`mt-3 px-4 py-1 text-sm rounded-full  hover:border-transparent focus:outline-none hover:scale-105 ease-in-out duration-300 ${
+          formVisible
+            ? 'focus:ring-teal-900 bg-fuchsia-700 hover:bg-fuchsia-900 text-white hover:text-white'
+            : 'focus:ring-emerald-500 bg-emerald-500 hover:bg-emerald-400 text-white hover:text-white'
+        }`}
         onClick={() => {
           if (sessStatus === 'authenticated') {
             SetFormVisible(!formVisible);

@@ -56,6 +56,10 @@ export default function ProviderForm({
           }`}
           onClick={async (evt) => {
             evt.preventDefault();
+            if (Text.trim().length === 0) {
+              alert('ยังไม่ได้ใส่ชื่อหน่วยงานที่อยากให้เปิดข้อมูล');
+              return;
+            }
             const result = await addProvider({
               variables: {
                 datasetID,
