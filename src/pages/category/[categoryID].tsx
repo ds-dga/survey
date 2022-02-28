@@ -20,6 +20,8 @@ export default function CategoryOne() {
   const { data, loading, error } = useQuery(CATEGORY_ITEMS_QUERY, {
     variables: {
       votedByWhere: userWhere,
+      relatedVotedWhere: userWhere,
+      providerVotedWhere: userWhere,
       categoryID: router.query.categoryID,
       where: {
         category: {
@@ -55,6 +57,8 @@ const CATEGORY_ITEMS_QUERY = gql`
     $categoryID: Int!
     $where: dataset_bool_exp!
     $votedByWhere: dataset_points_bool_exp!
+    $relatedVotedWhere: related_points_bool_exp!
+    $providerVotedWhere: provider_points_bool_exp!
   ) {
     items: dataset(
       where: $where
@@ -75,6 +79,9 @@ const CATEGORY_ITEMS_QUERY = gql`
         id
         maintainer
         title
+        my_vote: points(where: $relatedVotedWhere) {
+          point
+        }
         points(order_by: [{ created_at: desc }], limit: 1) {
           created_at
         }
@@ -99,6 +106,9 @@ const CATEGORY_ITEMS_QUERY = gql`
         created_by
         points(order_by: [{ created_at: desc }], limit: 1) {
           created_at
+        }
+        my_vote: points(where: $providerVotedWhere) {
+          point
         }
         vote_up: points_aggregate(where: { point: { _gte: 0 } }) {
           aggregate {
