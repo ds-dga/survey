@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import Link from 'next/link';
+
 import ArrowDown from '@/icons/ArrowDown';
 import ArrowUp from '@/icons/ArrowUp';
 import { displayDatetime } from '@/libs/day';
@@ -31,9 +33,11 @@ export default function Item({ item }: any) {
       <div className="pt-3 flex gap-3">
         <Vote datasetID={moded.id} initialValue={moded.vote} />
         <div>
-          <p className="mt-1 zmax-w-2xl text-sm text-gray-500">
-            {moded.category.name}
-          </p>
+          <Link href={`/category/${moded.category.id}`} passHref>
+            <span className="mt-1 zmax-w-2xl text-sm text-gray-500 cursor-pointer">
+              {moded.category.name}
+            </span>
+          </Link>
           <h3 className="text-xl leading-6 font-medium text-gray-900">
             {moded.name}
           </h3>
@@ -51,18 +55,18 @@ export default function Item({ item }: any) {
             <ArrowDown className="inline" fill={'#fb7185'} />
           </div>
         </div>
-        <button
+        {/* <button
           className="text-sm font-medium text-gray-900"
           onClick={() => {
             SetShowComment(!showComment);
           }}
         >
           {moded.comments.length} ความคิดเห็น
-        </button>
+        </button> */}
       </div>
 
       <CommentForm hidden={!showComment} />
-      {showComment && <CommentList />}
+      {showComment && <CommentList toggleVisibility={SetShowComment} />}
 
       <div className="mt-5 space-y-10 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-x-8 sm:gap-y-10">
         <div className="relative border-l-4 border-green-400 pl-2">

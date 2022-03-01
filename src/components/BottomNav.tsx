@@ -2,15 +2,17 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 export default function BottomNav() {
-  const { route } = useRouter();
+  const { basePath, route } = useRouter();
   return (
-    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 inline-flex justify-between bg-blue-600 w-11/12 rounded-3xl z-20 ">
+    <div className="fixed bottom-0 z-20 left-1/2 transform -translate-x-1/2 inline-flex justify-between bg-white w-full md:w-6/12 md:bottom-2 md:rounded-3xl md:border-4 md:border-blue-500">
       <Link href={'/'}>
         <a
           aria-current="page"
           className={`inline-flex flex-col items-center text-xs font-medium py-3 px-4 ${
-            route === '/' ? 'text-white' : 'text-blue-400'
-          } flex-grow transition-all hover:bg-blue-200 hover:rounded-3xl hover:text-blue-600`}
+            route === '/'
+              ? 'text-rose-400 hover:text-rose-600'
+              : 'text-blue-500 hover:text-blue-600 hover:bg-blue-100 hover:rounded-3xl'
+          } flex-grow transition-all `}
           href="#"
         >
           <svg
@@ -28,50 +30,38 @@ export default function BottomNav() {
       <Link href={'/category'}>
         <a
           className={`inline-flex flex-col items-center text-xs font-medium ${
-            route === '/nextjs' ? 'text-white' : 'text-blue-400'
-          } py-3 px-4 flex-grow transition-all hover:bg-blue-200 hover:rounded-3xl hover:text-blue-600`}
+            route === '/category'
+              ? 'text-rose-400 hover:text-rose-600'
+              : 'text-blue-500 hover:text-blue-600 hover:bg-blue-100 hover:rounded-3xl'
+          } py-3 px-4 flex-grow transition-all `}
           href="#"
         >
           <svg
-            className="w-8 h-8"
+            className="w-7 h-7"
             fill="currentColor"
-            viewBox="0 0 20 20"
+            viewBox="0 0 512 512"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path
-              fillRule="evenodd"
-              d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
-              clipRule="evenodd"
-            ></path>
+            <path d="M464 352H320a16 16 0 00-16 16 48 48 0 01-96 0 16 16 0 00-16-16H48a16 16 0 00-16 16v64a64.07 64.07 0 0064 64h320a64.07 64.07 0 0064-64v-64a16 16 0 00-16-16zM479.46 187.88L447.61 68.45C441.27 35.59 417.54 16 384 16H128c-16.8 0-31 4.69-42.1 13.94S67.66 52 64.4 68.4L32.54 187.88A15.9 15.9 0 0032 192v48c0 35.29 28.71 80 64 80h320c35.29 0 64-44.71 64-80v-48a15.9 15.9 0 00-.54-4.12zM440.57 176H320a15.92 15.92 0 00-16 15.82 48 48 0 11-96 0A15.92 15.92 0 00192 176H71.43a2 2 0 01-1.93-2.52L95.71 75c3.55-18.41 13.81-27 32.29-27h256c18.59 0 28.84 8.53 32.25 26.85l26.25 98.63a2 2 0 01-1.93 2.52z" />
           </svg>
           <span className="sr-only">Category</span>
         </a>
       </Link>
 
-      <button className="relative inline-flex flex-col items-center text-xs font-medium text-white py-3 px-6 flex-grow">
-        <div
-          className={`absolute bottom-4 p-3 rounded-full border-2 border-blue-600 bg-blue-600 hover:border-blue-400 hover:bg-blue-400 hover:bottom-6 transition-all ease-in-out delay-50`}
-        >
-          <svg
-            className="w-7 h-7"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
-              clipRule="evenodd"
-            ></path>
-          </svg>
-        </div>
-        <span className="sr-only">Upload</span>
-      </button>
+      <div className={`inline-flex flex-col items-center justify-center`}>
+        <img
+          className={`h-10`}
+          src={`${basePath}/assets/logo/digi.png`}
+          alt="DIGI"
+        />
+      </div>
 
       <a
         className={`inline-flex flex-col items-center text-xs font-medium ${
-          route === '/search' ? 'text-white' : 'text-blue-400'
-        } py-3 px-4 flex-grow transition-all hover:bg-blue-200 hover:rounded-3xl hover:text-blue-600`}
+          route === '/search'
+            ? 'text-rose-400 hover:text-rose-600'
+            : 'text-blue-500 hover:text-blue-600 hover:bg-blue-100 hover:rounded-3xl'
+        } py-3 px-4 flex-grow transition-all `}
         href="#"
       >
         <svg
@@ -92,8 +82,10 @@ export default function BottomNav() {
       <Link href={'/profile'}>
         <a
           className={`inline-flex flex-col items-center text-xs font-medium ${
-            route === '/profile' ? 'text-white' : 'text-blue-400'
-          } py-3 px-4 flex-grow transition-all hover:bg-blue-200 hover:rounded-3xl hover:text-blue-600`}
+            route === '/profile'
+              ? 'text-rose-400 hover:text-rose-600'
+              : 'text-blue-500 hover:text-blue-600 hover:bg-blue-100 hover:rounded-3xl'
+          } py-3 px-4 flex-grow transition-all `}
           href="#"
         >
           <svg
