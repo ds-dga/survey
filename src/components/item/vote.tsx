@@ -138,7 +138,7 @@ export default function Vote({ initialValue, datasetID }: VoteProps) {
   return (
     <div className="text-2xl flex flex-col items-center text-gray-600">
       <div
-        className={`${Action === 'up' ? 'text-green-500' : ''}`}
+        className={`cursor-pointer ${Action === 'up' ? 'text-green-500' : ''}`}
         onClick={() => {
           if (noActionAllowed) {
             alert(noActMsg);
@@ -151,7 +151,7 @@ export default function Vote({ initialValue, datasetID }: VoteProps) {
       </div>
       <div className={`text-center ${noColor}`}>{Point}</div>
       <div
-        className={`${Action === 'down' ? 'text-rose-500' : ''}`}
+        className={`cursor-pointer ${Action === 'down' ? 'text-rose-500' : ''}`}
         onClick={() => {
           if (noActionAllowed) {
             alert(noActMsg);

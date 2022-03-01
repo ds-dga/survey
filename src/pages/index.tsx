@@ -1,12 +1,10 @@
-import { useSession } from 'next-auth/react';
-
+import PopularGroup from '@/components/item/popularGroup';
 import { Meta } from '@/layout/Meta';
 import { Main } from '@/templates/Main';
 
-const Index = () => {
-  const { data: session, status } = useSession();
-  const loading = status === 'loading';
+import { CategoryGroup } from './category';
 
+const Index = () => {
   /* const item = {
     category: 'เศรษฐกิจ การเงินและอุตสาหกรรม',
     title: 'ข้อมูลค่าจ้างตามมาตรการการใช้แรงงาน',
@@ -39,29 +37,39 @@ const Index = () => {
     ],
   }; */
 
-  console.log('Indexpage: session =', loading, session);
+  // console.log('Indexpage: session =', loading, session);
 
   return (
     <Main
       meta={
         <Meta
-          title="Next.js Boilerplate Presentation"
-          description="Next js Boilerplate is the perfect starter code for your project. Build your React application with the Next.js framework."
+          title="Open Data Survey - DGA"
+          description="Open data survey aims to find the most wanted dataset from crowdsourcing, so DGA could laser focus on collaborating with the organization with the particular set of data to open to public."
         />
       }
     >
       {/* <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8"> */}
-      {session && (
+      {/* {session && (
         <>
           <h1>
             {session.user.name} {session.user.email} {session.user.image}
           </h1>
         </>
-      )}
+      )} */}
+
+      <h1 className="font-semibold text-2xl text-gray-700 text-center">
+        ชุดข้อมูลที่ได้รับความสนใจมากที่สุด
+      </h1>
+      <PopularGroup limit={4} />
+
+      <h1 className="font-semibold text-2xl text-gray-700 text-center">
+        กลุ่มชุดข้อมูล
+      </h1>
       <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 mb-20">
         {/* <Item item={item} />
         <Item item={item} />
         <Item item={item} /> */}
+        <CategoryGroup />
       </div>
     </Main>
   );
