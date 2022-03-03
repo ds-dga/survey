@@ -86,10 +86,7 @@ const splitLink = split(
 const cache = new InMemoryCache({
   typePolicies: {
     Query: {
-      fields: {
-        satang_tx: offsetLimitPagination(["txt", "accounts"]),
-        satang_account: offsetLimitPagination(),
-      },
+      fields: {},
     },
   },
 })
@@ -98,7 +95,6 @@ function createApolloClient() {
   return new ApolloClient({
     // ssrMode: typeof window === "undefined", // set to true for SSR
     link: splitLink,
-    // link: new HttpLink({ uri: process.env.GRAPHQL_URI }),
     cache,
   })
 }
