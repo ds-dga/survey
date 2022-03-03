@@ -1,13 +1,11 @@
 import { signOut } from 'next-auth/react';
 
-import ArrowDown from '@/icons/ArrowDown';
-import ArrowUp from '@/icons/ArrowUp';
-import BuildingIcon from '@/icons/Building';
-import FileTextIcon from '@/icons/FileText';
+import MyContribution from './myContribution';
+import MyVote from './myVote';
 
 export default function LoggedProfile({ user }) {
   return (
-    <div className="container mx-auto my-5 p-5">
+    <div className="container mx-auto">
       <div className="md:flex no-wrap md:-mx-2 ">
         <div className="w-full md:w-3/12 md:mx-2">
           <div className="bg-white p-3 border-t-4 border-green-400">
@@ -86,7 +84,7 @@ export default function LoggedProfile({ user }) {
           <div className="my-4"></div>
         </div>
 
-        <div className="w-full md:w-9/12 mx-2 h-64">
+        <div className="min-h-64 h-full w-full md:w-9/12 mx-2">
           {/* <div className="bg-white p-3 shadow-sm rounded-sm">
             <div className="flex gap-1 items-center space-x-2 font-semibold text-gray-900 leading-8">
               <span className="text-green-500">
@@ -193,36 +191,7 @@ export default function LoggedProfile({ user }) {
                   </span>
                   <span className="tracking-wide">รายการที่โหวด</span>
                 </div>
-                <ul className="list-inside space-y-2">
-                  <li>
-                    <div className="text-teal-600 flex gap-1 items-center self-center content-center">
-                      <span className="text-green-500">6</span>
-                      <span className="text-green-500">
-                        <ArrowUp />
-                      </span>
-                      ข้อมูลสถิติภัยคุกคามทางไซเบอร์
-                    </div>
-                    <div className="text-gray-500 text-xs">
-                      วิทยาศาสตร์ เทคโนโลยีดิจิทัล และนวัตกรรม
-                      <br />
-                      เมื่อวันที่ Feb 28, 2022
-                    </div>
-                  </li>
-                  <li>
-                    <div className="text-teal-600 flex gap-1 items-center self-center content-center">
-                      <span className="text-green-500">4</span>
-                      <span className="text-rose-500">
-                        <ArrowDown />
-                      </span>
-                      ข้อมูลค่าจ้างตามมาตรการใช้แรงงาน
-                    </div>
-                    <div className="text-gray-500 text-xs">
-                      เศรษฐกิจ การเงิน และอุตสาหกรรม
-                      <br />
-                      เมื่อวันที่ Feb 25, 2022
-                    </div>
-                  </li>
-                </ul>
+                <MyVote />
               </div>
 
               <div>
@@ -250,50 +219,13 @@ export default function LoggedProfile({ user }) {
                   </span>
                   <span className="tracking-wide">รายการเพิ่ม</span>
                 </div>
-                <ul className="list-inside space-y-2">
-                  <li>
-                    <div className="text-teal-600 flex gap-1 items-center self-center content-center">
-                      <span className="text-rose-500">-1</span>
-                      <BuildingIcon /> กระทรวงพานิชย์
-                    </div>
-                    <div className="text-gray-500 text-sm">
-                      ชุดข้อมูล ข้อมูลสินค้าประเภทงานศิลปหัตถกรรมไทย
-                    </div>
-                    <div className="text-gray-500 text-xs">
-                      เมื่อวันที่ Feb 25, 2022
-                    </div>
-                  </li>
-                  <li>
-                    <div className="text-teal-600 flex gap-1 items-center self-center content-center">
-                      {/* <span className="text-rose-500">-1</span> */}
-                      <BuildingIcon /> กระทรวงวัฒนธรรม
-                    </div>
-                    <div className="text-gray-500 text-sm">
-                      ชุดข้อมูล ข้อมูลหอศิลป์ และแหล่งเรียนรู้ทางวัฒนธรรม
-                    </div>
-                    <div className="text-gray-500 text-xs">
-                      เมื่อวันที่ Feb 22, 2022
-                    </div>
-                  </li>
-                  <li>
-                    <div className="text-teal-600 flex gap-1 items-center self-center content-center">
-                      {/* <span className="text-rose-500 mr-2">-1</span> */}
-                      <FileTextIcon />
-                      รายงานสถานการณ์และคุณภาพอากาศประเทศไทย
-                    </div>
-                    <div className="text-gray-500 text-sm">
-                      ชุดข้อมูล ข้อมูลคุณภาพอากาศ ฝุ่นละออง
-                    </div>
-                    <div className="text-gray-500 text-xs">
-                      เมื่อวันที่ Mar 1, 2022
-                    </div>
-                  </li>
-                </ul>
+                <MyContribution />
               </div>
             </div>
           </div>
         </div>
       </div>
+      <div className="m-20"></div>
     </div>
   );
 }

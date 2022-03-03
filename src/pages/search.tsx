@@ -5,6 +5,7 @@ import { throttle } from 'lodash';
 import { useSession } from 'next-auth/react';
 
 import Item from '@/components/item';
+import Loading from '@/components/loading';
 import { Meta } from '@/layout/Meta';
 import { Main } from '@/templates/Main';
 
@@ -98,11 +99,7 @@ export default function Search() {
         <h1 className="font-semibold text-2xl text-gray-700 text-center mb-5">
           รายการข้อมูลเปิดที่ประชาชนต้องการจากภาครัฐ
         </h1>
-        {loading && (
-          <div className="z-20 absolute top-0 right-0 py-1 px-3 bg-white">
-            Loading...
-          </div>
-        )}
+        <Loading hidden={!loading} />
         {/* {session && <LoggedProfile user={session.user} />}
         {!session && (
           <div>
