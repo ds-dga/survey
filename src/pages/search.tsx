@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { gql, useQuery } from '@apollo/client';
+import { throttle } from 'lodash';
 import { useSession } from 'next-auth/react';
 
 import Item from '@/components/item';
@@ -11,36 +12,49 @@ export default function Search() {
   const [Q, SetQ] = useState('');
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const { data: session } = useSession();
-  let userWhere = {};
-  if (session) {
-    userWhere = {
-      voted_by: {
-        _eq: session.user.uid,
-      },
-    };
-  }
-  let whereArgs = {};
-  if (Q.length > 0) {
-    whereArgs = {
-      name: { _ilike: `%${Q}%` },
-    };
-    // whereArgs = {
-    //   _or: [
-    //     { name: { _ilike: `%${Q}%` } },
-    //     { category: { name: { _ilike: `%${Q}%` } } },
-    //   ],
-    // }
-  }
-  const gqlVars = {
-    votedByWhere: userWhere,
-    relatedVotedWhere: userWhere,
-    providerVotedWhere: userWhere,
-    where: whereArgs,
+  const [GQLVars, SetGQLVars] = useState({
+    votedByWhere: {},
+    relatedVotedWhere: {},
+    providerVotedWhere: {},
+    where: {},
     limit: 10,
     offset: 0,
-  };
+  });
+
+  const throttled = useRef(
+    throttle(
+      (newValue) => {
+        if (newValue.length > 0)
+          SetGQLVars((prev) => ({
+            ...prev,
+            where: {
+              name: { _ilike: `%${newValue}%` },
+            },
+          }));
+      },
+      1000,
+      { trailing: true }
+    )
+  );
+  useEffect(() => throttled.current(Q), [Q]);
+  useEffect(() => {
+    if (session) {
+      const uw = {
+        voted_by: {
+          _eq: session.user.uid,
+        },
+      };
+      SetGQLVars((prev) => ({
+        ...prev,
+        votedByWhere: uw,
+        relatedVotedWhere: uw,
+        providerVotedWhere: uw,
+      }));
+    }
+  }, [session]);
+
   const { data, loading, fetchMore } = useQuery(DATASET_SEARCH_QUERY, {
-    variables: gqlVars,
+    variables: GQLVars,
     pollInterval: 1000 * 7, // 7s
     fetchPolicy: 'network-only',
   });
@@ -73,7 +87,6 @@ export default function Search() {
         };
       },
     });
-    // console.log("oad more res: ", res)
   }
   return (
     <Main
