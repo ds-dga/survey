@@ -6,7 +6,6 @@ import BuildingIcon from '@/icons/Building';
 import FileTextIcon from '@/icons/FileText';
 
 export default function LoggedProfile({ user }) {
-  console.log('logged: ', user);
   return (
     <div className="container mx-auto my-5 p-5">
       <div className="md:flex no-wrap md:-mx-2 ">
@@ -174,7 +173,7 @@ export default function LoggedProfile({ user }) {
 
           <div className="bg-white p-3 shadow-sm rounded-sm">
             <div className="grid grid-cols-1 md:grid-cols-2">
-              <div>
+              <div className="mb-4">
                 <div className="flex items-center space-x-2 font-semibold text-gray-900 leading-8 mb-3">
                   <span className="text-green-500">
                     <svg
