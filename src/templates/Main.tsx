@@ -8,7 +8,7 @@ type IMainProps = {
 };
 
 const Main = (props: IMainProps) => (
-  <div className="flex flex-row min-h-screen text-gray-800 bg-slate-200">
+  <div className="flex flex-row min-h-screen h-full text-gray-800 bg-slate-200">
     {props.meta}
     <BottomNav />
     {/* <SidebarNav /> */}

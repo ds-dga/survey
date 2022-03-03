@@ -1,8 +1,6 @@
 import { TypeORMLegacyAdapter } from '@next-auth/typeorm-legacy-adapter';
 import NextAuth from 'next-auth';
-import FacebookProvider from 'next-auth/providers/facebook';
 import GoogleProvider from 'next-auth/providers/google';
-import TwitterProvider from 'next-auth/providers/twitter';
 import { ConnectionOptions } from 'typeorm';
 
 const connection: ConnectionOptions = {
@@ -18,23 +16,26 @@ const connection: ConnectionOptions = {
 
 export default NextAuth({
   adapter: TypeORMLegacyAdapter(connection),
+  pages: {
+    signIn: '/profile',
+  },
   providers: [
     // OAuth authentication providers...
-    FacebookProvider({
-      clientId: process.env.FACEBOOK_ID!,
-      clientSecret: process.env.FACEBOOK_SECRET!,
-      // @ts-ignore
-    }),
     GoogleProvider({
       clientId: process.env.GOOGLE_ID!,
       clientSecret: process.env.GOOGLE_SECRET!,
       // @ts-ignore
     }),
-    TwitterProvider({
-      clientId: process.env.TWITTER_ID!,
-      clientSecret: process.env.TWITTER_SECRET!,
-      // version: '2.0', // opt-in to Twitter OAuth 2.0
-    }),
+    // FacebookProvider({
+    //   clientId: process.env.FACEBOOK_ID!,
+    //   clientSecret: process.env.FACEBOOK_SECRET!,
+    //   // @ts-ignore
+    // }),
+    // TwitterProvider({
+    //   clientId: process.env.TWITTER_ID!,
+    //   clientSecret: process.env.TWITTER_SECRET!,
+    //   // version: '2.0', // opt-in to Twitter OAuth 2.0
+    // }),
   ],
   callbacks: {
     // async signIn({ user, account, profile, email, credentials }) {
