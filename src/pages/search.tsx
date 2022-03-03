@@ -57,14 +57,13 @@ export default function Search() {
   interface Results {
     items: Item[];
   }
-
   async function loadMore(numTotal) {
     // I really have no idea why we still use 'updateQuery' while I thought it is deprecated..??
     fetchMore({
       variables: {
         offset: numTotal,
       },
-      updateQuery: (previousResult: Results, { fetchMoreResult }) => {
+      updateQuery: (previousResult: Results, { fetchMoreResult }: any) => {
         if (!fetchMoreResult) {
           return previousResult;
         }
@@ -82,53 +81,62 @@ export default function Search() {
         <Meta title="Open data survey" description="Open data survey it is" />
       }
     >
-      <h1 className="font-semibold text-2xl text-gray-700 text-center mb-5">
-        รายการข้อมูลเปิดที่ประชาชนต้องการจากภาครัฐ
-      </h1>
-      {loading && <p>Loading...</p>}
-      {/* {session && <LoggedProfile user={session.user} />}
+      <div className="m-3">
+        <h1 className="font-semibold text-2xl text-gray-700 text-center mb-5">
+          รายการข้อมูลเปิดที่ประชาชนต้องการจากภาครัฐ
+        </h1>
+        {loading && (
+          <div className="z-20 absolute top-0 right-0 py-1 px-3 bg-white">
+            Loading...
+          </div>
+        )}
+        {/* {session && <LoggedProfile user={session.user} />}
         {!session && (
           <div>
             <Link href={`/api/auth/signin`}>Login</Link>
           </div> */}
-      {/* )} */}
-      <div className="">
-        <input
-          className="form-input text-xl px-4 py-3 rounded-md w-full border-0 hover:shadow-md active:border-0"
-          type="text"
-          defaultValue={Q}
-          placeholder="ค้นหา..."
-          onChange={(e) => {
-            const v = e.target.value.trim();
-            SetQ(v);
-          }}
-          autoComplete="off"
-        />
-      </div>
-      <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-6">
-        {data &&
-          data.items.map((item) => <Item key={`s-${item.id}`} item={item} />)}
-      </div>
-
-      {data &&
-        data.items &&
-        hasMore &&
-        (isLoadingMore ? (
-          <p>Loading ....</p>
-        ) : (
-          <button
-            onClick={async () => {
-              console.log('click : ', gqlVars);
-              setIsLoadingMore(true);
-              loadMore(currTotal);
-              setIsLoadingMore(false);
+        {/* )} */}
+        <div className="">
+          <input
+            className="form-input text-xl px-4 py-3 rounded-md w-full border-0 hover:shadow-md active:border-0"
+            type="text"
+            defaultValue={Q}
+            placeholder="ค้นหา..."
+            onChange={(e) => {
+              const v = e.target.value.trim();
+              SetQ(v);
             }}
-          >
-            Load More
-          </button>
-        ))}
+            autoComplete="off"
+          />
+        </div>
+        <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-6">
+          {data &&
+            data.items.map((item) => <Item key={`s-${item.id}`} item={item} />)}
+        </div>
 
-      <div className="mb-20"></div>
+        {data &&
+          data.items &&
+          hasMore &&
+          (isLoadingMore ? (
+            <p>Loading ....</p>
+          ) : (
+            <button
+              className="w-full rounded-md shadow-md bg-slate-50 py-2 my-5 text-center transition-all duration-150 ease-in hover:bg-lime-100"
+              onClick={async () => {
+                setIsLoadingMore(true);
+                loadMore(currTotal);
+                setIsLoadingMore(false);
+              }}
+            >
+              ดูเพิ่มเติม{' '}
+              <span className="text-sm text-gray-600">
+                ({currTotal} จากทั้งหมด {total} รายการ)
+              </span>
+            </button>
+          ))}
+
+        <div className="mb-20"></div>
+      </div>
     </Main>
   );
 }

@@ -38,11 +38,13 @@ export default function Category() {
     <Main
       meta={<Meta title="Dataset: Category" description="Open data category" />}
     >
-      <h1 className="font-semibold text-2xl text-gray-700 text-center mb-5">
-        กลุ่มชุดข้อมูล
-      </h1>
-      <CategoryGroup />
-      <div className="my-6"></div>
+      <div className="m-3">
+        <h1 className="font-semibold text-2xl text-gray-700 text-center mb-5">
+          กลุ่มชุดข้อมูล
+        </h1>
+        <CategoryGroup />
+        <div className="my-6"></div>
+      </div>
     </Main>
   );
 }

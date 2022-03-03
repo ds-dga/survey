@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 export default function BottomNav() {
   const { status } = useSession();
   const { basePath, route } = useRouter();
-  console.log('session: status: ', status);
+
   return (
     <div className="fixed bottom-0 z-20 left-1/2 transform -translate-x-1/2 inline-flex justify-between bg-white w-full md:w-6/12 md:bottom-2 md:rounded-3xl md:border-4 md:border-blue-500">
       <Link href={'/'}>

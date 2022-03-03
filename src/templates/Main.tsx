@@ -12,7 +12,7 @@ const Main = (props: IMainProps) => (
     {props.meta}
     <BottomNav />
     {/* <SidebarNav /> */}
-    <main className="flex flex-col flex-grow transition-all duration-150 ease-in m-5">
+    <main className="flex flex-col flex-grow transition-all duration-150 ease-in">
       {props.children}
     </main>
   </div>
