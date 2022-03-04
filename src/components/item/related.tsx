@@ -167,6 +167,10 @@ function RelatedItem({ item }: ItemProps) {
         <span
           className="px-1 pb-1 hover:bg-slate-200"
           onClick={() => {
+            if (!uid) {
+              alert('โปรดเข้าสู่ระบบก่อน');
+              return;
+            }
             calcVote(Action === 'up' ? '-' : 'up');
           }}
         >
@@ -175,6 +179,10 @@ function RelatedItem({ item }: ItemProps) {
         <span
           className="px-1 pb-1 hover:bg-slate-200"
           onClick={async () => {
+            if (!uid) {
+              alert('โปรดเข้าสู่ระบบก่อน');
+              return;
+            }
             if (delEnabled) {
               if (!window.confirm('คุณต้องการจะข้อมูลนี้ ใช่หรือไม่?')) return;
               const r = await DeleteRelated({
@@ -197,7 +205,9 @@ function RelatedItem({ item }: ItemProps) {
         <a href={`${url}`} target="_blank" rel="noreferrer">
           {title}
         </a>
-        <div className={`text-sm text-gray-600`}>โดย {maintainer}</div>
+        <div className={`text-sm text-gray-600`}>
+          {maintainer ? `โดย ${maintainer}` : ''}
+        </div>
       </div>
     </div>
   );

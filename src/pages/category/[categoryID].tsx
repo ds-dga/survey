@@ -3,6 +3,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
 import Item from '@/components/item';
+import Loading from '@/components/loading';
 import { Meta } from '@/layout/Meta';
 import { Main } from '@/templates/Main';
 
@@ -39,14 +40,18 @@ export default function CategoryOne() {
         <Meta title={`Dataset: ${title}`} description="Open data category" />
       }
     >
-      {loading && <p>Loading ... </p>}
-      {error && <p>{error.message} ... </p>}
-      <div className="text-slate-600 text-2xl font-normal">
-        {data ? data.category[0].name : 'Category'}
-      </div>
-      <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-6 mb-20">
-        {data &&
-          data.items.map((item) => <Item key={`ct-${item.id}`} item={item} />)}
+      <Loading hidden={!loading} />
+      <div className="m-5">
+        {error && <p>{error.message} ... </p>}
+        <div className="text-slate-600 text-2xl font-normal">
+          {data ? data.category[0].name : 'Category'}
+        </div>
+        <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-6 mb-20">
+          {data &&
+            data.items.map((item) => (
+              <Item key={`ct-${item.id}`} item={item} />
+            ))}
+        </div>
       </div>
     </Main>
   );

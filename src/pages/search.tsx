@@ -128,7 +128,7 @@ export default function Search() {
           data.items &&
           hasMore &&
           (isLoadingMore ? (
-            <p>Loading ....</p>
+            <Loading hidden={false} />
           ) : (
             <button
               className="w-full rounded-md shadow-md bg-slate-50 py-2 my-5 text-center transition-all duration-150 ease-in hover:bg-lime-100"
@@ -144,6 +144,13 @@ export default function Search() {
               </span>
             </button>
           ))}
+
+        {data && data.items && data.items.length === 0 && (
+          <div className="text-center text-slate-500">
+            ไม่พบข้อมูลตามคำค้นหา{' '}
+            <span className="italic">&quot;{Q}&quot;</span>
+          </div>
+        )}
 
         <div className="mb-20"></div>
       </div>

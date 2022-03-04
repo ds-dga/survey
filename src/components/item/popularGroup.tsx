@@ -3,6 +3,7 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 
 import Item from '.';
+import Loading from '../loading';
 
 export default function PopularGroup({ limit }: any) {
   const { data: session } = useSession();
@@ -26,7 +27,7 @@ export default function PopularGroup({ limit }: any) {
 
   return (
     <>
-      {loading && <p>Loading ... </p>}
+      <Loading hidden={!loading} />
       <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-6">
         {data &&
           data.items.map((item) => <Item key={`ppi-${item.id}`} item={item} />)}
