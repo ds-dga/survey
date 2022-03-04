@@ -56,7 +56,7 @@ export default function LoggedProfile({ user }) {
               Reprehenderit, eligendi dolorum sequi illum qui unde aspernatur
               non deserunt
             </p> */}
-            <ul className="bg-gray-100 text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
+            {/* <ul className="bg-gray-100 text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
               <li className="flex gap-1 items-center py-3">
                 <span>Status</span>
                 <span className="ml-auto">
@@ -69,7 +69,7 @@ export default function LoggedProfile({ user }) {
                 <span>Member since</span>
                 <span className="ml-auto">Nov 07, 2016</span>
               </li>
-            </ul>
+            </ul> */}
 
             <button
               className="block w-full text-blue-800 text-sm font-semibold rounded-lg hover:bg-gray-100 focus:outline-none focus:shadow-outline focus:bg-gray-100 hover:shadow-xs p-3 my-4"

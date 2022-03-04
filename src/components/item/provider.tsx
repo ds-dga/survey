@@ -165,6 +165,10 @@ function ProviderItem({ organization }: ItemProps) {
         <span
           className="px-1 pb-1 hover:bg-slate-200"
           onClick={() => {
+            if (!uid) {
+              alert('โปรดเข้าสู่ระบบก่อน');
+              return;
+            }
             calcVote(Action === 'up' ? '-' : 'up');
           }}
         >
@@ -173,6 +177,10 @@ function ProviderItem({ organization }: ItemProps) {
         <span
           className="px-1 pb-1 hover:bg-slate-200"
           onClick={async () => {
+            if (!uid) {
+              alert('โปรดเข้าสู่ระบบก่อน');
+              return;
+            }
             if (delEnabled) {
               if (!window.confirm('คุณต้องการจะลบหน่วยงานนี้ ใช่หรือไม่?'))
                 return;

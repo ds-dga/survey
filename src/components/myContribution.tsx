@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { gql, useQuery } from '@apollo/client';
+import dayjs from 'dayjs';
 import { useSession } from 'next-auth/react';
 
 import BuildingIcon from '@/icons/Building';
@@ -40,14 +41,14 @@ export default function MyContribution() {
   useEffect(() => {
     if (!data) return;
     const all: Contribution[] = [...data.provider, ...data.related].sort(
-      (a, b) => a.created_at - b.created_at
+      (a, b) => dayjs(b.created_at).unix() - dayjs(a.created_at).unix()
     );
     if (Total > 0) return;
     SetTotal(
       data.provider_total.aggregate.count + data.related_total.aggregate.count
     );
     SetItems(all);
-  }, [data]);
+  }, [data, Total]);
 
   return (
     <ul className="list-inside space-y-2">

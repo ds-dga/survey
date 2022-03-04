@@ -1,6 +1,7 @@
 import { gql, useQuery } from '@apollo/client';
 import Link from 'next/link';
 
+import Loading from '@/components/loading';
 import { Meta } from '@/layout/Meta';
 import { Main } from '@/templates/Main';
 
@@ -22,7 +23,7 @@ export function CategoryGroup() {
   const items = data ? data.items : [];
   return (
     <>
-      {loading && <p>Loading ... </p>}
+      <Loading hidden={!loading} />
       {error && <p>{error.message} ... </p>}
       <div className="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-4">
         {items.map((item) => (
@@ -38,7 +39,7 @@ export default function Category() {
     <Main
       meta={<Meta title="Dataset: Category" description="Open data category" />}
     >
-      <div className="m-3">
+      <div className="m-3 h-5/6">
         <h1 className="font-semibold text-2xl text-gray-700 text-center mb-5">
           กลุ่มชุดข้อมูล
         </h1>

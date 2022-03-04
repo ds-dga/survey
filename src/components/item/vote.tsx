@@ -40,7 +40,7 @@ export default function Vote({ initialValue, datasetID }: VoteProps) {
 
   useEffect(() => {
     if (status !== 'authenticated') {
-      SetNoActMessage('Please login first');
+      SetNoActMessage('โปรดเข้าสู่ระบบก่อน');
       SetNoActionAllowed(true);
       return;
     }

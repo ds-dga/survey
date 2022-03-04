@@ -5,11 +5,11 @@ import { ConnectionOptions } from 'typeorm';
 
 const connection: ConnectionOptions = {
   type: 'postgres',
-  host: 'dga-vm1',
-  port: 35432,
-  username: 'sipp11',
-  password: 'banshee10',
-  database: 'survey',
+  host: process.env.DB_HOST,
+  port: +`${process.env.DB_PORT}`,
+  database: process.env.DB_NAME,
+  username: process.env.DB_USER,
+  password: process.env.DB_PASSWD,
   // namingStrategy: new SnakeNamingStrategy()
   synchronize: true,
 };
@@ -19,6 +19,7 @@ export default NextAuth({
   pages: {
     signIn: '/profile',
   },
+  secret: process.env.SECRET,
   providers: [
     // OAuth authentication providers...
     GoogleProvider({

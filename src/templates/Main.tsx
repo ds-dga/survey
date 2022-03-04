@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 
 import BottomNav from '@/components/BottomNav';
+import Footer from '@/components/footer';
 
 type IMainProps = {
   meta: ReactNode;
@@ -8,13 +9,14 @@ type IMainProps = {
 };
 
 const Main = (props: IMainProps) => (
-  <div className="flex flex-row min-h-screen h-full text-gray-800 bg-slate-200">
+  <div className="min-h-screen h-full text-gray-800 bg-slate-200">
     {props.meta}
     <BottomNav />
     {/* <SidebarNav /> */}
-    <main className="flex flex-col flex-grow transition-all duration-150 ease-in">
+    <main className="min-h-screen flex flex-col flex-grow transition-all duration-150 ease-in">
       {props.children}
     </main>
+    <Footer />
   </div>
 );
 
