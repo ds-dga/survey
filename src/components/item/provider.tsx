@@ -7,6 +7,7 @@ import { useSession } from 'next-auth/react';
 import Check from '@/icons/Check';
 import Stop from '@/icons/Stop';
 
+import Modal from '../modal';
 import ProviderForm from './providerForm';
 
 type OrgProps = {
@@ -20,6 +21,7 @@ type OrgProps = {
 };
 type ItemProps = {
   organization: OrgProps;
+  SetHidden: Function;
 };
 
 type ProviderProps = {
@@ -27,7 +29,7 @@ type ProviderProps = {
   datasetID: string;
 };
 
-function ProviderItem({ organization }: ItemProps) {
+function ProviderItem({ organization, SetHidden }: ItemProps) {
   /*
     Check - is like upvote
     Stop - is like downvote, but if it's creator, then it's deletion,
@@ -166,7 +168,7 @@ function ProviderItem({ organization }: ItemProps) {
           className="px-1 pb-1 hover:bg-slate-200"
           onClick={() => {
             if (!uid) {
-              alert('โปรดเข้าสู่ระบบก่อน');
+              SetHidden(false);
               return;
             }
             calcVote(Action === 'up' ? '-' : 'up');
@@ -178,7 +180,7 @@ function ProviderItem({ organization }: ItemProps) {
           className="px-1 pb-1 hover:bg-slate-200"
           onClick={async () => {
             if (!uid) {
-              alert('โปรดเข้าสู่ระบบก่อน');
+              SetHidden(false);
               return;
             }
             if (delEnabled) {
@@ -207,17 +209,23 @@ function ProviderItem({ organization }: ItemProps) {
 
 export default function Provider({ orgs, datasetID }: ProviderProps) {
   const [formVisible, SetFormVisible] = useState(false);
+  const [Hidden, SetHidden] = useState(true);
   const { status: sessStatus } = useSession();
 
   return (
     <>
+      {!Hidden && <Modal hidden={false} handleHidden={SetHidden} />}
       <div className="text-gray-600 italic">
         {orgs.length
           ? 'หน่วยงานที่เปิดเผยข้อมูล'
           : 'ยังไม่มีข้อมูลหน่วยงานที่เปิดเผยข้อมูล'}
       </div>
       {orgs.map((org: any, ind: number) => (
-        <ProviderItem key={`${datasetID}-org-${ind}`} organization={org} />
+        <ProviderItem
+          key={`${datasetID}-org-${ind}`}
+          organization={org}
+          SetHidden={SetHidden}
+        />
       ))}
       <button
         type="button"
@@ -230,7 +238,7 @@ export default function Provider({ orgs, datasetID }: ProviderProps) {
           if (sessStatus === 'authenticated') {
             SetFormVisible(!formVisible);
           } else {
-            alert('โปรดเข้าสู่ระบบก่อน');
+            SetHidden(false);
           }
         }}
       >

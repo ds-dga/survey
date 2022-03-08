@@ -7,6 +7,7 @@ import { useSession } from 'next-auth/react';
 import Check from '@/icons/Check';
 import Stop from '@/icons/Stop';
 
+import Modal from '../modal';
 import RelatedForm from './relatedForm';
 
 type RelatedItemProps = {
@@ -22,6 +23,7 @@ type RelatedItemProps = {
 };
 type ItemProps = {
   item: RelatedItemProps;
+  SetHidden: Function;
 };
 
 type RelatedProps = {
@@ -29,7 +31,7 @@ type RelatedProps = {
   datasetID: string;
 };
 
-function RelatedItem({ item }: ItemProps) {
+function RelatedItem({ item, SetHidden }: ItemProps) {
   /*
     Check - is like upvote
     Stop - is like downvote, but if it's creator, then it's deletion,
@@ -168,7 +170,7 @@ function RelatedItem({ item }: ItemProps) {
           className="px-1 pb-1 hover:bg-slate-200"
           onClick={() => {
             if (!uid) {
-              alert('โปรดเข้าสู่ระบบก่อน');
+              SetHidden(false);
               return;
             }
             calcVote(Action === 'up' ? '-' : 'up');
@@ -180,7 +182,7 @@ function RelatedItem({ item }: ItemProps) {
           className="px-1 pb-1 hover:bg-slate-200"
           onClick={async () => {
             if (!uid) {
-              alert('โปรดเข้าสู่ระบบก่อน');
+              SetHidden(false);
               return;
             }
             if (delEnabled) {
@@ -215,15 +217,21 @@ function RelatedItem({ item }: ItemProps) {
 
 export default function Related({ items, datasetID }: RelatedProps) {
   const [formVisible, SetFormVisible] = useState(false);
+  const [Hidden, SetHidden] = useState(true);
   const { status: sessStatus } = useSession();
 
   return (
     <>
+      {!Hidden && <Modal hidden={false} handleHidden={SetHidden} />}
       <div className="text-gray-600 italic">
         {items.length ? 'ข้อมูลที่ใกล้เคียง' : 'ยังไม่มีข้อมูลที่ใกล้เคียง'}
       </div>
       {items.map((item: any, ind: number) => (
-        <RelatedItem key={`${datasetID}-org-${ind}`} item={item} />
+        <RelatedItem
+          key={`${datasetID}-org-${ind}`}
+          item={item}
+          SetHidden={SetHidden}
+        />
       ))}
       <button
         type="button"
@@ -236,7 +244,7 @@ export default function Related({ items, datasetID }: RelatedProps) {
           if (sessStatus === 'authenticated') {
             SetFormVisible(!formVisible);
           } else {
-            alert('โปรดเข้าสู่ระบบก่อน');
+            SetHidden(false);
           }
         }}
       >
