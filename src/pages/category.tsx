@@ -8,7 +8,7 @@ import { Main } from '@/templates/Main';
 function CategoryItem({ item }: any) {
   return (
     <Link href={`/category/${item.id}`} passHref>
-      <div className="group relative rounded-md shadow-md border-2 border-slate-50 bg-slate-50 py-5 px-5 flex justify-center items-center hover:bg-slate-200 hover:border-slate-200 hover:font-medium transition">
+      <div className="group relative rounded-md shadow-md border-2 border-slate-50 bg-slate-50 py-5 px-5 flex justify-center items-center hover:bg-emerald-100 hover:border-emerald-100 hover:font-medium transition cursor-pointer">
         <span className="absolute top-0 right-0 pr-1 text-stone-300 font-semibold text-lg z-0">
           {item.total.aggregate.count}
         </span>
