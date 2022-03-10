@@ -215,11 +215,30 @@ export default function Provider({ orgs, datasetID }: ProviderProps) {
   return (
     <>
       {!Hidden && <Modal hidden={false} handleHidden={SetHidden} />}
-      <div className="text-gray-600 italic">
-        {orgs.length
-          ? 'หน่วยงานที่เปิดเผยข้อมูล'
-          : 'ยังไม่มีข้อมูลหน่วยงานที่เปิดเผยข้อมูล'}
+      <div
+        className="text-gray-600 italic hover:bg-green-200 cursor-pointer"
+        onClick={() => {
+          if (sessStatus === 'authenticated') {
+            SetFormVisible(!formVisible);
+          } else {
+            SetHidden(false);
+          }
+        }}
+      >
+        อยากได้ข้อมูลจากหน่วยงาน...
+        <svg
+          viewBox="0 0 32 32"
+          className="inline mx-1 h-4 w-4 fill-slate-600 hover:fill-emerald-600"
+        >
+          <g data-name="plus android app aplication phone">
+            <path d="M16 31a15 15 0 1 1 15-15 15 15 0 0 1-15 15zm0-28a13 13 0 1 0 13 13A13 13 0 0 0 16 3z" />
+            <path d="M17 24h-2a2 2 0 0 1-2-2v-3h-3a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h3v-3a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v3h3a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-3v3a2 2 0 0 1-2 2zm-7-9v2h4a1 1 0 0 1 1 1v4h2v-4a1 1 0 0 1 1-1h4v-2h-4a1 1 0 0 1-1-1v-4h-2v4a1 1 0 0 1-1 1z" />
+          </g>
+        </svg>
       </div>
+      {orgs.length === 0 && (
+        <p className="text-sm text-gray-500 italic">ยังไม่มีข้อมูล</p>
+      )}
       {orgs.map((org: any, ind: number) => (
         <ProviderItem
           key={`${datasetID}-org-${ind}`}
@@ -227,7 +246,7 @@ export default function Provider({ orgs, datasetID }: ProviderProps) {
           SetHidden={SetHidden}
         />
       ))}
-      <button
+      {/* <button
         type="button"
         className={`mt-3 px-4 py-1 text-sm rounded-full  hover:border-transparent focus:outline-none hover:scale-105 ease-in-out duration-300 ${
           formVisible
@@ -242,10 +261,8 @@ export default function Provider({ orgs, datasetID }: ProviderProps) {
           }
         }}
       >
-        {formVisible
-          ? 'ยกเลิกการเพิ่มหน่วยงาน'
-          : 'เพิ่มหน่วยงานที่อยากให้เปิดข้อมูล'}
-      </button>
+        อยากได้ข้อมูลจากหน่วยงาน...
+      </button> */}
 
       <ProviderForm
         datasetID={datasetID}
