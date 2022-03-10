@@ -47,9 +47,18 @@ export default function ProviderForm({
       </div>
       <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
         <button
+          className="inline-flex justify-center py-2 px-4 mx-2 border border-b-4 text-sm font-medium shadow-md  focus:outline-none focus:ring-2 focus:ring-offset-2 ease-in-out transition text-gray-500 border-gray-500 hover:border-emerald-300 hover:text-emerald-400"
+          onClick={(evt) => {
+            evt.preventDefault();
+            handleFormVisible(false);
+          }}
+        >
+          ยกเลิก
+        </button>
+        <button
           type="submit"
           disabled={disabled}
-          className={`inline-flex justify-center py-2 px-4 border  border-b-4 text-sm font-medium shadow-md  focus:outline-none focus:ring-2 focus:ring-offset-2  ease-in-out transition ${
+          className={`inline-flex justify-center py-2 px-4 border  border-b-4 text-sm font-medium shadow-md  focus:outline-none focus:ring-2 focus:ring-offset-2 ease-in-out transition ${
             disabled
               ? 'cursor-not-allowed border-gray-500 text-gray-500  focus:ring-gray-500 hover:white hover:text-gray'
               : 'border-blue-500 text-blue-500 hover:bg-blue-500 focus:ring-blue-500 hover:text-white '

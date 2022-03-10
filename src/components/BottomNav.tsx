@@ -5,13 +5,14 @@ import { useRouter } from 'next/router';
 export default function BottomNav() {
   const { status } = useSession();
   const { basePath, route } = useRouter();
+  const signedIn = status === 'authenticated';
 
   return (
     <div className="fixed bottom-0 z-20 left-1/2 transform -translate-x-1/2 inline-flex justify-between bg-white w-full md:w-6/12 md:bottom-2 md:rounded-3xl md:border-4 md:border-blue-500">
       <Link href={'/'}>
         <a
           aria-current="page"
-          className={`inline-flex flex-col items-center text-xs font-medium py-3 px-4 ${
+          className={`inline-flex flex-col items-center text-xs font-medium pt-2 pb-1 px-4 ${
             route === '/'
               ? 'text-rose-400 hover:text-rose-600'
               : 'text-blue-500 hover:text-blue-600 hover:bg-blue-100 hover:rounded-3xl'
@@ -26,7 +27,7 @@ export default function BottomNav() {
           >
             <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
           </svg>
-          <span className="sr-only">Home</span>
+          <span className="">หน้าแรก</span>
         </a>
       </Link>
 
@@ -36,7 +37,7 @@ export default function BottomNav() {
             route === '/category'
               ? 'text-rose-400 hover:text-rose-600'
               : 'text-blue-500 hover:text-blue-600 hover:bg-blue-100 hover:rounded-3xl'
-          } py-3 px-4 flex-grow transition-all `}
+          } pt-2 pb-1 px-4 flex-grow transition-all `}
           href="#"
         >
           <svg
@@ -47,7 +48,7 @@ export default function BottomNav() {
           >
             <path d="M464 352H320a16 16 0 00-16 16 48 48 0 01-96 0 16 16 0 00-16-16H48a16 16 0 00-16 16v64a64.07 64.07 0 0064 64h320a64.07 64.07 0 0064-64v-64a16 16 0 00-16-16zM479.46 187.88L447.61 68.45C441.27 35.59 417.54 16 384 16H128c-16.8 0-31 4.69-42.1 13.94S67.66 52 64.4 68.4L32.54 187.88A15.9 15.9 0 0032 192v48c0 35.29 28.71 80 64 80h320c35.29 0 64-44.71 64-80v-48a15.9 15.9 0 00-.54-4.12zM440.57 176H320a15.92 15.92 0 00-16 15.82 48 48 0 11-96 0A15.92 15.92 0 00192 176H71.43a2 2 0 01-1.93-2.52L95.71 75c3.55-18.41 13.81-27 32.29-27h256c18.59 0 28.84 8.53 32.25 26.85l26.25 98.63a2 2 0 01-1.93 2.52z" />
           </svg>
-          <span className="sr-only">Category</span>
+          <span className="">ดูกลุ่ม</span>
         </a>
       </Link>
 
@@ -65,7 +66,7 @@ export default function BottomNav() {
             route === '/search'
               ? 'text-rose-400 hover:text-rose-600'
               : 'text-blue-500 hover:text-blue-600 hover:bg-blue-100 hover:rounded-3xl'
-          } py-3 px-4 flex-grow transition-all `}
+          } pt-2 pb-1 px-4 flex-grow transition-all `}
           href="#"
         >
           <svg
@@ -80,7 +81,7 @@ export default function BottomNav() {
               clipRule="evenodd"
             ></path>
           </svg>
-          <span className="sr-only">Search</span>
+          <span className="">ค้นหา</span>
         </a>
       </Link>
 
@@ -90,10 +91,10 @@ export default function BottomNav() {
             route === '/profile'
               ? 'text-rose-400 hover:text-rose-600'
               : 'text-blue-500 hover:text-blue-600 hover:bg-blue-100 hover:rounded-3xl'
-          } py-3 px-4 flex-grow transition-all `}
+          } pt-2 pb-1 px-4 flex-grow transition-all `}
           href="#"
         >
-          {status === 'authenticated' ? (
+          {signedIn ? (
             <svg
               className="w-7 h-7"
               fill="currentColor"
@@ -118,7 +119,9 @@ export default function BottomNav() {
               <path d="M10 11V8l5 4-5 4v-3H1v-2h9zm-7.542 4h2.124A8.003 8.003 0 0020 12 8 8 0 004.582 9H2.458C3.732 4.943 7.522 2 12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10c-4.478 0-8.268-2.943-9.542-7z" />
             </svg>
           )}
-          <span className="sr-only">Profile</span>
+          <span className="">
+            {signedIn ? 'สิ่งที่ฉันโหวต' : 'เข้าสู่ระบบ'}
+          </span>
         </a>
       </Link>
     </div>
