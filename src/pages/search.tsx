@@ -95,7 +95,7 @@ export default function Search() {
         <Meta title="Open data survey" description="Open data survey it is" />
       }
     >
-      <div className="m-3">
+      <div className="container mx-auto">
         <h1 className="font-semibold text-2xl text-gray-700 text-center mb-5">
           รายการข้อมูลเปิดที่ประชาชนต้องการจากภาครัฐ
         </h1>
