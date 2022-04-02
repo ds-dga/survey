@@ -14,7 +14,7 @@ export default function Profile({ providers }) {
 
   return (
     <Main meta={<Meta title="Profile" description="Open data survey it is" />}>
-      <div className="m-5 h-screen">
+      <div className="m-5 min-h-screen">
         <Loading hidden={!loading} />
         {session && <LoggedProfile user={session.user} />}
         {!session && <Login providers={providers} />}

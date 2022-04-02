@@ -72,6 +72,15 @@ export default function LoggedProfile({ user }) {
             </ul> */}
 
             <button
+              className="block w-full text-purple-500 bg-purple-50 text-sm rounded-lg hover:bg-purple-100 focus:outline-none focus:shadow-outline focus:bg-purple-200 hover:shadow-xs p-3 my-4"
+              onClick={() => {
+                alert('aaa');
+              }}
+            >
+              ผู้ใช้ของภาครัฐ?
+            </button>
+
+            <button
               className="block w-full text-blue-800 text-sm font-semibold rounded-lg hover:bg-gray-100 focus:outline-none focus:shadow-outline focus:bg-gray-100 hover:shadow-xs p-3 my-4"
               onClick={() => {
                 signOut();
