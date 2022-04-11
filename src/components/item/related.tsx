@@ -7,6 +7,7 @@ import { useSession } from 'next-auth/react';
 import Check from '@/icons/Check';
 import Stop from '@/icons/Stop';
 
+import { isGovOfficer } from '../../libs/govAccount';
 import Modal from '../modal';
 import RelatedForm from './relatedForm';
 
@@ -48,7 +49,7 @@ function RelatedItem({ item, SetHidden }: ItemProps) {
     vote_up: voteUp,
     vote_down: voteDown,
   } = item;
-  const { data: session } = useSession();
+  const { data: session, status: sessStatus } = useSession();
   const [UpsertVote] = useMutation(MUTATE_RELATED_POINTS);
   const [DeleteRelated] = useMutation(MUTATE_RELATED_DELETION);
   const vUp = +voteUp.aggregate.sum.point || 0;
@@ -57,7 +58,8 @@ function RelatedItem({ item, SetHidden }: ItemProps) {
   const [MyVote, SetMyVote] = useState(myVote.length > 0 ? myVote[0].point : 0);
   const [Action, SetAction] = useState('-'); // 3 states: up, down, -
   const [PendingDeletion, SetPendingDeletion] = useState(false);
-  const uid = session && session.user ? session.user.uid : null;
+  const user = (session && session.user) || null;
+  const uid = user ? user.uid : null;
   const hasVote =
     voteUp.aggregate.sum.point !== null ||
     voteDown.aggregate.sum.point !== null;
@@ -162,46 +164,57 @@ function RelatedItem({ item, SetHidden }: ItemProps) {
   }
   return (
     <div className="flex gap-2 items-center self-center mt-1">
-      <div className="text-l min-w-fit text-gray-500 grid grid-cols-3 gap-1 items-center self-center content-center">
-        <div className={`font-mono text-xs text-right ${noColor}`}>
-          {Point !== 0 ? Point : ''}
-        </div>
-        <span
-          className="px-1 pb-1 hover:bg-slate-200"
-          onClick={() => {
-            if (!uid) {
-              SetHidden(false);
-              return;
-            }
-            calcVote(Action === 'up' ? '-' : 'up');
-          }}
-        >
-          <Check className="inline" fill={'#10b981'} />
-        </span>
-        <span
-          className="px-1 pb-1 hover:bg-slate-200"
-          onClick={async () => {
-            if (!uid) {
-              SetHidden(false);
-              return;
-            }
-            if (delEnabled) {
-              if (!window.confirm('คุณต้องการจะข้อมูลนี้ ใช่หรือไม่?')) return;
-              const r = await DeleteRelated({
-                variables: {
-                  id,
-                },
-              });
-              if (r.data && r.data.delete_dataset_related_by_pk) {
-                SetPendingDeletion(true);
-              }
-            } else {
-              calcVote(Action === 'down' ? '-' : 'down');
-            }
-          }}
-        >
-          <Stop className="inline" fill={'#fb7185'} />
-        </span>
+      <div
+        className={`text-l min-w-fit text-gray-500  ${
+          isGovOfficer(user)
+            ? 'grid grid-cols-3 gap-1 items-center self-center content-center'
+            : ''
+        }`}
+      >
+        <div className={`font-mono text-xs text-right ${noColor}`}>{Point}</div>
+        {/* Related vote only applied to govOfficer #### >>> */}
+        {sessStatus !== 'loading' && isGovOfficer(user) && (
+          <>
+            <span
+              className="px-1 pb-1 hover:bg-slate-200"
+              onClick={() => {
+                if (!uid) {
+                  SetHidden(false);
+                  return;
+                }
+                calcVote(Action === 'up' ? '-' : 'up');
+              }}
+            >
+              <Check className="inline" fill={'#10b981'} />
+            </span>
+            <span
+              className="px-1 pb-1 hover:bg-slate-200"
+              onClick={async () => {
+                if (!uid) {
+                  SetHidden(false);
+                  return;
+                }
+                if (delEnabled) {
+                  if (!window.confirm('คุณต้องการจะข้อมูลนี้ ใช่หรือไม่?'))
+                    return;
+                  const r = await DeleteRelated({
+                    variables: {
+                      id,
+                    },
+                  });
+                  if (r.data && r.data.delete_dataset_related_by_pk) {
+                    SetPendingDeletion(true);
+                  }
+                } else {
+                  calcVote(Action === 'down' ? '-' : 'down');
+                }
+              }}
+            >
+              <Stop className="inline" fill={'#fb7185'} />
+            </span>
+          </>
+        )}
+        {/* << #### END of Related vote only applied to govOfficer */}
       </div>
       <div className="">
         <a href={`${url}`} target="_blank" rel="noreferrer">
