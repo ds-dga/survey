@@ -47,8 +47,8 @@ export default NextAuth({
     // }),
   ],
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
-      /* This should handle account creation and verification with the backend system
+    // async signIn({ user, account, profile, email, credentials }) {
+    /* This should handle account creation and verification with the backend system
         user: {
           id: '11464~~~~~~159',
           name: 'Sipp Sippakorn',
@@ -84,14 +84,14 @@ export default NextAuth({
           exp: 1645691413
         }
       */
-      console.log('-----------------------------------');
-      console.log('user =====', user);
-      console.log('account ==> ', account);
-      console.log('profile ==> ', profile);
-      console.log('email ==> ', email);
-      console.log('credentials ==> ', credentials);
-      return true;
-    },
+    //   console.log('-----------------------------------');
+    //   console.log('user =====', user);
+    //   console.log('account ==> ', account);
+    //   console.log('profile ==> ', profile);
+    //   console.log('email ==> ', email);
+    //   console.log('credentials ==> ', credentials);
+    //   return true;
+    // },
     session({ session, user }) {
       return {
         ...session,

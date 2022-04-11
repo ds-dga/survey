@@ -1,5 +1,6 @@
 import { signOut } from 'next-auth/react';
 
+import { isGovOfficer } from '../libs/govAccount';
 import MyContribution from './myContribution';
 import MyVote from './myVote';
 
@@ -51,12 +52,29 @@ export default function LoggedProfile({ user }) {
             <h3 className="text-gray-600 font-lg text-semibold leading-6">
               {user.email}
             </h3>
+            <ul className="bg-gray-100 text-gray-600 px-3 mt-3 divide-y rounded shadow-sm">
+              {isGovOfficer(user) ? (
+                <li className="flex gap-1 items-center py-3">
+                  <span>ผู้ใช้</span>
+                  <span className="ml-auto">เจ้าหน้าที่รัฐ</span>
+                </li>
+              ) : (
+                <button
+                  className="block w-full text-purple-500 bg-purple-50 text-sm rounded-lg hover:bg-purple-100 focus:outline-none focus:shadow-outline focus:bg-purple-200 hover:shadow-xs p-3 my-4"
+                  onClick={() => {
+                    alert('aaa');
+                  }}
+                >
+                  ผู้ใช้ของภาครัฐ?
+                </button>
+              )}
+            </ul>
             {/* <p className="text-sm text-gray-500 hover:text-gray-600 leading-6">
               Lorem ipsum dolor sit amet consectetur adipisicing elit.
               Reprehenderit, eligendi dolorum sequi illum qui unde aspernatur
               non deserunt
             </p> */}
-            {/* <ul className="bg-gray-100 text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
+            {/*
               <li className="flex gap-1 items-center py-3">
                 <span>Status</span>
                 <span className="ml-auto">
@@ -70,15 +88,6 @@ export default function LoggedProfile({ user }) {
                 <span className="ml-auto">Nov 07, 2016</span>
               </li>
             </ul> */}
-
-            <button
-              className="block w-full text-purple-500 bg-purple-50 text-sm rounded-lg hover:bg-purple-100 focus:outline-none focus:shadow-outline focus:bg-purple-200 hover:shadow-xs p-3 my-4"
-              onClick={() => {
-                alert('aaa');
-              }}
-            >
-              ผู้ใช้ของภาครัฐ?
-            </button>
 
             <button
               className="block w-full text-blue-800 text-sm font-semibold rounded-lg hover:bg-gray-100 focus:outline-none focus:shadow-outline focus:bg-gray-100 hover:shadow-xs p-3 my-4"
