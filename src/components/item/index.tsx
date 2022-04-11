@@ -1,9 +1,11 @@
 import { useState } from 'react';
 
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 import ArrowDown from '@/icons/ArrowDown';
 import ArrowUp from '@/icons/ArrowUp';
+import LinkIcon from '@/icons/LinkIcon';
 import { displayDatetime } from '@/libs/day';
 
 import CommentList from './comment';
@@ -13,6 +15,7 @@ import Related from './related';
 import Vote from './vote';
 
 export default function Item({ item }: any) {
+  const router = useRouter();
   const [showComment, SetShowComment] = useState(false);
   const moded = {
     ...item,
@@ -27,9 +30,20 @@ export default function Item({ item }: any) {
   if (item.my_vote.length > 0) {
     moded.vote.mine = item.my_vote[0].point;
   }
+  const detailView = router.pathname === '/n/[ID]';
 
   return (
     <div className="group relative rounded-md shadow-md border-2 border-slate-50 bg-slate-50 pb-3 px-5">
+      {!detailView && (
+        <span className="float-right">
+          <Link passHref href={`/n/${moded.id}`}>
+            <div className="text text-gray-500 mt-1 zmax-w-2xl text-sm cursor-pointer">
+              <LinkIcon className="inline" fill={'#10b981'} />
+              #[permanent link]
+            </div>
+          </Link>
+        </span>
+      )}
       <div className="pt-3 flex gap-3">
         <Vote datasetID={moded.id} initialValue={moded.vote} />
         <div>
