@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { useQuery, gql } from '@apollo/client';
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 
 import ArrowDown from '@/icons/ArrowDown';
 import ArrowUp from '@/icons/ArrowUp';
@@ -58,17 +59,21 @@ export default function MyVote() {
         {data &&
           data.items.map((item) => (
             <li key={`ifv-${item.id}`}>
-              <div className="text-teal-600 flex gap-1 items-center self-center content-center">
-                <span className={`${getColor(item.point)}`}>
-                  {item.dataset.score.aggregate.sum.point || 0}
-                </span>
-                <span className={`${getColor(item.point)}`}>
-                  {getArrow(item.point)}
-                </span>
-                {item.dataset.name}
-              </div>
+              <Link href={`/n/${item.dataset.id}`} passHref>
+                <div className="text-teal-600 flex gap-1 items-center self-center content-center cursor-pointer">
+                  <span className={`${getColor(item.point)}`}>
+                    {item.dataset.score.aggregate.sum.point || 0}
+                  </span>
+                  <span className={`${getColor(item.point)}`}>
+                    {getArrow(item.point)}
+                  </span>
+                  {item.dataset.name}
+                </div>
+              </Link>
               <div className="text-gray-500 text-xs pl-8">
-                {item.dataset.category.name}
+                <Link href={`/category/${item.dataset.category.id}`} passHref>
+                  {item.dataset.category.name}
+                </Link>
                 <br />
                 เมื่อวันที่ {displayDatetime(item.created_at)}
               </div>

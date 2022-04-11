@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import dayjs from 'dayjs';
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 
 import BuildingIcon from '@/icons/Building';
 import Check from '@/icons/Check';
@@ -72,9 +73,11 @@ export default function MyContribution() {
                 </>
               )}
             </div>
-            <div className="text-gray-500 text-sm pl-8">
-              {item.dataset.name}
-            </div>
+            <Link href={`/n/${item.dataset.id}`} passHref>
+              <div className="text-gray-500 text-sm pl-8 cursor-pointer">
+                {item.dataset.name}
+              </div>
+            </Link>
             <div className="text-gray-500 text-xs pl-8">
               เมื่อวันที่ {displayDatetime(item.created_at)}
             </div>
