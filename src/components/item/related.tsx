@@ -4,8 +4,8 @@ import { gql, useMutation } from '@apollo/client';
 import dayjs from 'dayjs';
 import { useSession } from 'next-auth/react';
 
-import Check from '@/icons/Check';
-import Stop from '@/icons/Stop';
+import ThumbDown from '@/icons/ThumbDown';
+import ThumbUp from '@/icons/ThumbUp';
 
 import { isGovOfficer } from '../../libs/govAccount';
 import Modal from '../modal';
@@ -164,17 +164,24 @@ function RelatedItem({ item, SetHidden }: ItemProps) {
   }
   return (
     <div className="flex gap-2 items-center self-center mt-1">
-      <div
+      {/* <div
         className={`text-l min-w-fit text-gray-500  ${
           isGovOfficer(user)
             ? 'grid grid-cols-3 gap-1 items-center self-center content-center'
             : ''
         }`}
-      >
-        <div className={`font-mono text-xs text-right ${noColor}`}>{Point}</div>
+      ></div> */}
+      <div className="">
+        <a href={`${url}`} target="_blank" rel="noreferrer">
+          ‣ {title}
+        </a>
+        <div className={`text-xs text-gray-600 ml-3`}>
+          {maintainer ? `โดย ${maintainer}` : ''}
+        </div>
         {/* Related vote only applied to govOfficer #### >>> */}
         {sessStatus !== 'loading' && isGovOfficer(user) && (
-          <>
+          <div className={`text-md text-gray-600 ml-3 flex items-center`}>
+            <span className={`font-mono text-xs ${noColor} pr-1`}>{Point}</span>
             <span
               className="px-1 pb-1 hover:bg-slate-200"
               onClick={() => {
@@ -185,7 +192,7 @@ function RelatedItem({ item, SetHidden }: ItemProps) {
                 calcVote(Action === 'up' ? '-' : 'up');
               }}
             >
-              <Check className="inline" fill={'#10b981'} />
+              <ThumbUp className="inline" fill={'#10b981'} />
             </span>
             <span
               className="px-1 pb-1 hover:bg-slate-200"
@@ -210,19 +217,11 @@ function RelatedItem({ item, SetHidden }: ItemProps) {
                 }
               }}
             >
-              <Stop className="inline" fill={'#fb7185'} />
+              <ThumbDown className="inline" fill={'#fb7185'} />
             </span>
-          </>
+          </div>
         )}
         {/* << #### END of Related vote only applied to govOfficer */}
-      </div>
-      <div className="">
-        <a href={`${url}`} target="_blank" rel="noreferrer">
-          {title}
-        </a>
-        <div className={`text-sm text-gray-600`}>
-          {maintainer ? `โดย ${maintainer}` : ''}
-        </div>
       </div>
     </div>
   );

@@ -4,8 +4,8 @@ import { gql, useMutation } from '@apollo/client';
 import dayjs from 'dayjs';
 import { useSession } from 'next-auth/react';
 
-import Check from '@/icons/Check';
-import Stop from '@/icons/Stop';
+import ThumbDown from '@/icons/ThumbDown';
+import ThumbUp from '@/icons/ThumbUp';
 
 import { isGovOfficer } from '../../libs/govAccount';
 import Modal from '../modal';
@@ -162,17 +162,12 @@ function ProviderItem({ organization, SetHidden }: ItemProps) {
   }
   return (
     <div className="flex gap-2 items-center self-center mt-1">
-      <div
-        className={`text-l min-w-fit text-gray-500  ${
-          isGovOfficer(user)
-            ? 'grid grid-cols-3 gap-1 items-center self-center content-center'
-            : ''
-        }`}
-      >
-        <div className={`font-mono text-xs text-right ${noColor}`}>{Point}</div>
-        {/* Related vote only applied to govOfficer #### >>> */}
+      <div className="">
+        ‣ {name}
+        {/* Provider vote only applied to govOfficer #### >>> */}
         {sessStatus !== 'loading' && isGovOfficer(user) && (
-          <>
+          <div className={`text-md text-gray-600 ml-3 flex items-center`}>
+            <span className={`font-mono text-xs ${noColor} pr-1`}>{Point}</span>
             <span
               className="px-1 pb-1 hover:bg-slate-200"
               onClick={() => {
@@ -183,7 +178,7 @@ function ProviderItem({ organization, SetHidden }: ItemProps) {
                 calcVote(Action === 'up' ? '-' : 'up');
               }}
             >
-              <Check className="inline" fill={'#10b981'} />
+              <ThumbUp className="inline" fill={'#10b981'} />
             </span>
             <span
               className="px-1 pb-1 hover:bg-slate-200"
@@ -193,14 +188,14 @@ function ProviderItem({ organization, SetHidden }: ItemProps) {
                   return;
                 }
                 if (delEnabled) {
-                  if (!window.confirm('คุณต้องการจะลบหน่วยงานนี้ ใช่หรือไม่?'))
+                  if (!window.confirm('คุณต้องการจะข้อมูลนี้ ใช่หรือไม่?'))
                     return;
                   const r = await DeleteProvider({
                     variables: {
                       id,
                     },
                   });
-                  if (r.data && r.data.delete_dataset_provider_by_pk) {
+                  if (r.data && r.data.delete_dataset_related_by_pk) {
                     SetPendingDeletion(true);
                   }
                 } else {
@@ -208,13 +203,12 @@ function ProviderItem({ organization, SetHidden }: ItemProps) {
                 }
               }}
             >
-              <Stop className="inline" fill={'#fb7185'} />
+              <ThumbDown className="inline" fill={'#fb7185'} />
             </span>
-          </>
+          </div>
         )}
-        {/* << #### END of Related vote only applied to govOfficer */}
+        {/* << #### END of Provider vote only applied to govOfficer */}
       </div>
-      <div className="">{name}</div>
     </div>
   );
 }
