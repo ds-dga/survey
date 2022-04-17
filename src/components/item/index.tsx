@@ -1,37 +1,35 @@
-import { useState } from 'react';
+import { useState } from "react"
 
-import Link from 'next/link';
-import { useRouter } from 'next/router';
+import Link from "next/link"
+import { useRouter } from "next/router"
 
-import ArrowDown from '@/icons/ArrowDown';
-import ArrowUp from '@/icons/ArrowUp';
-import ChatBubble from '@/icons/ChatBubble';
-import LinkIcon from '@/icons/LinkIcon';
-import { displayDatetime } from '@/libs/day';
+import ChatBubble from "@/icons/ChatBubble"
+import LinkIcon from "@/icons/LinkIcon"
+import { displayDatetime } from "@/libs/day"
 
-import CommentList from './comment';
-import CommentForm from './commentForm';
-import Provider from './provider';
-import Related from './related';
-import Vote from './vote';
+import CommentList from "./comment"
+import CommentForm from "./commentForm"
+import Provider from "./provider"
+import Related from "./related"
+import VoteInline from "./vote-inline"
 
 export default function Item({ item, commentTotal }: any) {
-  const router = useRouter();
-  const [showComment, SetShowComment] = useState(false);
+  const router = useRouter()
+  const [showComment, SetShowComment] = useState(false)
   const moded = {
     ...item,
     vote: { up: 0, down: 0, latest: null, mine: 0 },
     comments: [],
-  };
+  }
   if (item.points.length > 0) {
-    moded.vote.up = item.vote_up.aggregate.sum.point;
-    moded.vote.down = item.vote_down.aggregate.sum.point;
-    moded.vote.latest = item.points[0].created_at;
+    moded.vote.up = item.vote_up.aggregate.sum.point
+    moded.vote.down = item.vote_down.aggregate.sum.point
+    moded.vote.latest = item.points[0].created_at
   }
   if (item.my_vote.length > 0) {
-    moded.vote.mine = item.my_vote[0].point;
+    moded.vote.mine = item.my_vote[0].point
   }
-  const detailView = router.pathname === '/n/[ID]';
+  const detailView = router.pathname === "/n/[ID]"
 
   return (
     <div className="group relative rounded-md shadow-md border-2 border-slate-50 bg-slate-50 pb-3 px-5">
@@ -39,14 +37,14 @@ export default function Item({ item, commentTotal }: any) {
         <span className="float-right">
           <Link passHref href={`/n/${moded.id}`}>
             <div className="text text-gray-500 mt-1 zmax-w-2xl text-sm cursor-pointer">
-              <LinkIcon className="inline" fill={'#10b981'} />
+              <LinkIcon className="inline" fill={"#10b981"} />
               #[permanent link]
             </div>
           </Link>
         </span>
       )}
       <div className="pt-3 flex gap-3">
-        <Vote datasetID={moded.id} initialValue={moded.vote} />
+        {/* <Vote datasetID={moded.id} initialValue={moded.vote} /> */}
         <div>
           <Link href={`/category/${moded.category.id}`} passHref>
             <span className="mt-1 zmax-w-2xl text-sm text-gray-500 cursor-pointer">
@@ -58,30 +56,30 @@ export default function Item({ item, commentTotal }: any) {
           </h3>
         </div>
       </div>
-      <div className="flex justify-between">
-        <div>
-          <div className="text-sm text-gray-500">
-            {moded.vote.latest
-              ? `${displayDatetime(moded.vote.latest)} | `
-              : ''}
-            {moded.vote.up || 0} โหวต{' '}
-            <ArrowUp className="inline" fill={'#10b981'} />{' '}
-            {Math.abs(moded.vote.down) || 0} โหวต{' '}
-            <ArrowDown className="inline" fill={'#fb7185'} />{' '}
-            {commentTotal && (
-              <button
-                className="text-sm font-medium text-sky-500"
-                onClick={() => {
-                  SetShowComment(!showComment);
-                }}
-              >
-                {commentTotal.aggregate.count} ความเห็น{' '}
-                <ChatBubble className="inline text-xl" />
-              </button>
-            )}
-          </div>
-        </div>
+      {/* <div className="flex justify-between"> */}
+      <div className="text-sm text-gray-500 flex">
+        <VoteInline datasetID={moded.id} initialValue={moded.vote} />
+        &nbsp;|&nbsp;
+        <span className="px-1">
+        {moded.vote.latest ? `${displayDatetime(moded.vote.latest)} | ` : ""}
+        </span>
+        {/* {moded.vote.up || 0} โหวต{" "}
+        <ArrowUp className="inline" fill={"#10b981"} />{" "}
+        {Math.abs(moded.vote.down) || 0} โหวต{" "}
+        <ArrowDown className="inline" fill={"#fb7185"} />{" "} */}
+        {commentTotal && (
+          <button
+            className="text-sm font-medium text-sky-500"
+            onClick={() => {
+              SetShowComment(!showComment)
+            }}
+          >
+            {commentTotal.aggregate.count} ความเห็น{" "}
+            <ChatBubble className="inline text-xl" />
+          </button>
+        )}
       </div>
+      {/* </div> */}
 
       <CommentForm hidden={!showComment} />
       {showComment && <CommentList toggleVisibility={SetShowComment} />}
@@ -96,5 +94,5 @@ export default function Item({ item, commentTotal }: any) {
         </div>
       </div>
     </div>
-  );
+  )
 }
