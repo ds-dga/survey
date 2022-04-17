@@ -29,7 +29,7 @@ export default function DatasetOne() {
   });
 
   const title = data ? data.item.name : 'ชุดข้อมูล';
-  console.log('data item = ', data);
+  // console.log('data item = ', data, loading, error);
   return (
     <Main
       meta={
@@ -42,7 +42,13 @@ export default function DatasetOne() {
           {error && <p>{error.message} ... </p>}
           <div className="text-slate-600 text-2xl font-normal">ชุดข้อมูล</div>
           <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-6 mb-20">
-            {data && <Item key={`ct-${data.item.id}`} item={data.item} />}
+            {data && (
+              <Item
+                key={`ct-${data.item.id}`}
+                item={data.item}
+                commentTotal={data.dataset_comments_total}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -135,6 +141,13 @@ const DATASET_ONE_QUERY = gql`
             point
           }
         }
+      }
+    }
+    dataset_comments_total: comments_aggregate(
+      where: { parent_id: { _eq: $ID }, parent_type: { _eq: dataset } }
+    ) {
+      aggregate {
+        count
       }
     }
   }

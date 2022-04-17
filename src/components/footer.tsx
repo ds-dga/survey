@@ -23,8 +23,12 @@ export default function Footer() {
         <div className="text-center text-slate-500 hidden md:block">
           <p>สำนักงานพัฒนารัฐบาลดิจิทัล (องค์การมหาชน) (สพร.)</p>
           <p>
-            Digital Government Development Agency (Public Organization) (DGA)
+            Digital Government Development Agency
+            <br />
+            (Public Organization) (DGA)
           </p>
+          <p className="text-xs">Contact Center (+66) 0 2612 6060</p>
+          <p className="text-xs">อีเมล contact@dga.or.th</p>
         </div>
         <div className="text-sm text-slate-500 text-right">
           <h3 className="font-bold">Open data survey</h3>

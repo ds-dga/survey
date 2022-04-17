@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 
 import ArrowDown from '@/icons/ArrowDown';
 import ArrowUp from '@/icons/ArrowUp';
+import ChatBubble from '@/icons/ChatBubble';
 import LinkIcon from '@/icons/LinkIcon';
 import { displayDatetime } from '@/libs/day';
 
@@ -14,7 +15,7 @@ import Provider from './provider';
 import Related from './related';
 import Vote from './vote';
 
-export default function Item({ item }: any) {
+export default function Item({ item, commentTotal }: any) {
   const router = useRouter();
   const [showComment, SetShowComment] = useState(false);
   const moded = {
@@ -66,17 +67,20 @@ export default function Item({ item }: any) {
             {moded.vote.up || 0} โหวต{' '}
             <ArrowUp className="inline" fill={'#10b981'} />{' '}
             {Math.abs(moded.vote.down) || 0} โหวต{' '}
-            <ArrowDown className="inline" fill={'#fb7185'} />
+            <ArrowDown className="inline" fill={'#fb7185'} />{' '}
+            {commentTotal && (
+              <button
+                className="text-sm font-medium text-sky-500"
+                onClick={() => {
+                  SetShowComment(!showComment);
+                }}
+              >
+                {commentTotal.aggregate.count} ความเห็น{' '}
+                <ChatBubble className="inline text-xl" />
+              </button>
+            )}
           </div>
         </div>
-        {/* <button
-          className="text-sm font-medium text-gray-900"
-          onClick={() => {
-            SetShowComment(!showComment);
-          }}
-        >
-          {moded.comments.length} ความคิดเห็น
-        </button> */}
       </div>
 
       <CommentForm hidden={!showComment} />
