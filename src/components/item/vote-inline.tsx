@@ -5,10 +5,11 @@ import dayjs from 'dayjs';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 
-import ArrowDown from '@/icons/ArrowDown';
-import ArrowUp from '@/icons/ArrowUp';
+import ThumbDown from '@/icons/ThumbDown';
+import ThumbUp from '@/icons/ThumbUp';
 
 import Modal from '../modal';
+import { wording } from './wording';
 
 type InitProps = {
   up: Number;
@@ -21,11 +22,9 @@ type VoteProps = {
   datasetID: string;
 };
 
-// TODO: deprecated due to ./vote-inline.tsx
-
-export default function Vote({ initialValue, datasetID }: VoteProps) {
+export default function VoteInline({ initialValue, datasetID }: VoteProps) {
   const timer = useRef(0);
-  const { status } = useSession();
+  const { status: sessStatus } = useSession();
   const [upsertVote, { loading }] = useMutation(MUTATE_DATASET_POINTS);
   const [noActionAllowed, SetNoActionAllowed] = useState(true);
   const [noActMsg, SetNoActMessage] = useState('');
@@ -45,7 +44,7 @@ export default function Vote({ initialValue, datasetID }: VoteProps) {
   }, [initialValue]);
 
   useEffect(() => {
-    if (status !== 'authenticated') {
+    if (sessStatus !== 'authenticated') {
       SetNoActMessage('โปรดเข้าสู่ระบบก่อน');
       SetNoActionAllowed(true);
       return;
@@ -57,7 +56,7 @@ export default function Vote({ initialValue, datasetID }: VoteProps) {
     }
     SetNoActionAllowed(false);
     SetNoActMessage('');
-  }, [loading, status]);
+  }, [loading, sessStatus]);
 
   function verifyIfrecorded(currScore, votingPoint, mutationResult) {
     let latestPoint = currScore;
@@ -105,9 +104,6 @@ export default function Vote({ initialValue, datasetID }: VoteProps) {
           datasetID,
         },
       });
-      // console.log(` --> save ${action} by ${IP}`)
-      // console.log(" --> mutation result", Point, result)
-      // SetAction('-');
       verifyIfrecorded(Point, ownVal, result);
     }, 2000);
   }
@@ -141,8 +137,9 @@ export default function Vote({ initialValue, datasetID }: VoteProps) {
   } else if (Action === 'down') {
     noColor = 'text-rose-500';
   }
+  /* Provider vote only applied to govOfficer #### >>> */
   return (
-    <div className="text-2xl flex flex-col items-center text-gray-600">
+    <span className="inline">
       {!Hidden && (
         <Modal
           hidden={false}
@@ -201,33 +198,43 @@ export default function Vote({ initialValue, datasetID }: VoteProps) {
           }
         />
       )}
-      <div
-        className={`cursor-pointer ${Action === 'up' ? 'text-green-500' : ''}`}
-        onClick={() => {
-          if (noActionAllowed) {
-            SetHidden(false);
-            // alert(noActMsg);
-            return;
-          }
-          calcVote(Action === 'up' ? '-' : 'up');
-        }}
-      >
-        <ArrowUp fill={''} />
+      <div className={`text-md text-gray-600 flex items-center`}>
+        <span className={`font-mono text-xs ${noColor} pr-1`}>{Point}</span>
+        <span
+          className="px-1 pb-1 hover:bg-slate-200"
+          title={wording.like}
+          onClick={() => {
+            if (noActionAllowed) {
+              SetHidden(false);
+              // alert(noActMsg);
+              return;
+            }
+            calcVote(Action === 'up' ? '-' : 'up');
+          }}
+        >
+          <ThumbUp
+            className="inline"
+            fill={MyVote > 0 ? `#10b981` : '#9CA3AF'}
+          />
+        </span>
+        <span
+          className="px-1 pb-1 hover:bg-slate-200"
+          title={wording.unlike}
+          onClick={async () => {
+            if (noActionAllowed) {
+              SetHidden(false);
+              return;
+            }
+            calcVote(Action === 'down' ? '-' : 'down');
+          }}
+        >
+          <ThumbDown
+            className="inline"
+            fill={MyVote < 0 ? `#fb7185` : '#9CA3AF'}
+          />
+        </span>
       </div>
-      <div className={`text-center ${noColor}`}>{Point}</div>
-      <div
-        className={`cursor-pointer ${Action === 'down' ? 'text-rose-500' : ''}`}
-        onClick={() => {
-          if (noActionAllowed) {
-            SetHidden(false);
-            return;
-          }
-          calcVote(Action === 'down' ? '-' : 'down');
-        }}
-      >
-        <ArrowDown fill={''} />
-      </div>
-    </div>
+    </span>
   );
 }
 

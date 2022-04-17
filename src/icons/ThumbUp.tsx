@@ -6,7 +6,7 @@ function ThumbUp(props: any) {
   return (
     <svg
       fill={`${fill || 'currentColor'}`}
-      viewBox="0 0 24 24"
+      viewBox="0 0 22 22"
       height="1em"
       width="1em"
       {...extraProps}

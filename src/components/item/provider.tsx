@@ -4,21 +4,20 @@ import { gql, useMutation } from '@apollo/client';
 import dayjs from 'dayjs';
 import { useSession } from 'next-auth/react';
 
-import ThumbDown from '@/icons/ThumbDown';
-import ThumbUp from '@/icons/ThumbUp';
-
-import { isGovOfficer } from '../../libs/govAccount';
 import Modal from '../modal';
+import ChildrenVoteInline from './children-vote-inline';
+import CommentList from './comment';
+import CommentForm from './commentForm';
 import ProviderForm from './providerForm';
 
 type OrgProps = {
-  id: Number;
-  name: String;
-  points: String[];
+  id: string;
+  name: string;
+  points: string[];
   my_vote: any;
   vote_up: any;
   vote_down: any;
-  created_by: String;
+  created_by: string;
 };
 type ItemProps = {
   organization: OrgProps;
@@ -37,6 +36,7 @@ function ProviderItem({ organization, SetHidden }: ItemProps) {
             but that only allowed when there is no vote at all
   */
   const timer = useRef(0);
+  const [showComment, SetShowComment] = useState(false);
   const {
     id,
     name,
@@ -45,7 +45,7 @@ function ProviderItem({ organization, SetHidden }: ItemProps) {
     vote_up: voteUp,
     vote_down: voteDown,
   } = organization;
-  const { data: session, status: sessStatus } = useSession();
+  const { data: session } = useSession();
   const [UpsertVote] = useMutation(MUTATE_PROVIDER_POINTS);
   const [DeleteProvider] = useMutation(MUTATE_PROVIDER_DELETION);
   const vUp = +voteUp.aggregate.sum.point || 0;
@@ -59,7 +59,6 @@ function ProviderItem({ organization, SetHidden }: ItemProps) {
   const hasVote =
     voteUp.aggregate.sum.point !== null ||
     voteDown.aggregate.sum.point !== null;
-  // console.log('hasVote :', hasVote, voteUp, voteDown);
 
   const delEnabled = !hasVote && uid === createdBy;
 
@@ -119,6 +118,9 @@ function ProviderItem({ organization, SetHidden }: ItemProps) {
           day: today,
           providerID: id,
         },
+        // refetchQueries:[
+        //   {query:}
+        // ]
       });
       // console.log(` --> save ${action} by ${IP}`)
       // console.log(' --> mutation result', Point, result);
@@ -154,60 +156,32 @@ function ProviderItem({ organization, SetHidden }: ItemProps) {
   if (PendingDeletion) {
     return <></>;
   }
-  let noColor = '';
-  if (Action === 'up') {
-    noColor = 'text-green-500';
-  } else if (Action === 'down') {
-    noColor = 'text-rose-500';
-  }
+
   return (
     <div className="flex gap-2 items-center self-center mt-1">
       <div className="">
         ‣ {name}
-        {/* Provider vote only applied to govOfficer #### >>> */}
-        {sessStatus !== 'loading' && isGovOfficer(user) && (
-          <div className={`text-md text-gray-600 ml-3 flex items-center`}>
-            <span className={`font-mono text-xs ${noColor} pr-1`}>{Point}</span>
-            <span
-              className="px-1 pb-1 hover:bg-slate-200"
-              onClick={() => {
-                if (!uid) {
-                  SetHidden(false);
-                  return;
-                }
-                calcVote(Action === 'up' ? '-' : 'up');
-              }}
-            >
-              <ThumbUp className="inline" fill={'#10b981'} />
-            </span>
-            <span
-              className="px-1 pb-1 hover:bg-slate-200"
-              onClick={async () => {
-                if (!uid) {
-                  SetHidden(false);
-                  return;
-                }
-                if (delEnabled) {
-                  if (!window.confirm('คุณต้องการจะข้อมูลนี้ ใช่หรือไม่?'))
-                    return;
-                  const r = await DeleteProvider({
-                    variables: {
-                      id,
-                    },
-                  });
-                  if (r.data && r.data.delete_dataset_related_by_pk) {
-                    SetPendingDeletion(true);
-                  }
-                } else {
-                  calcVote(Action === 'down' ? '-' : 'down');
-                }
-              }}
-            >
-              <ThumbDown className="inline" fill={'#fb7185'} />
-            </span>
-          </div>
-        )}
-        {/* << #### END of Provider vote only applied to govOfficer */}
+        <ChildrenVoteInline
+          Point={Point}
+          id={id}
+          calcVote={calcVote}
+          Action={Action}
+          SetHidden={SetHidden}
+          DeleteItem={DeleteProvider}
+          delEnabled={delEnabled}
+          SetPendingDeletion={SetPendingDeletion}
+        />
+        <CommentForm
+          parentType={'provider'}
+          parentID={id}
+          hidden={!showComment}
+        />
+        <CommentList
+          parentType={'provider'}
+          parentID={id}
+          hidden={!showComment}
+          toggleVisibility={SetShowComment}
+        />
       </div>
     </div>
   );
@@ -217,7 +191,7 @@ export default function Provider({ orgs, datasetID }: ProviderProps) {
   const [formVisible, SetFormVisible] = useState(false);
   const [Hidden, SetHidden] = useState(true);
   const { status: sessStatus } = useSession();
-
+  console.log('[provider] ', orgs);
   return (
     <>
       {!Hidden && <Modal hidden={false} handleHidden={SetHidden} />}
@@ -252,23 +226,6 @@ export default function Provider({ orgs, datasetID }: ProviderProps) {
           SetHidden={SetHidden}
         />
       ))}
-      {/* <button
-        type="button"
-        className={`mt-3 px-4 py-1 text-sm rounded-full  hover:border-transparent focus:outline-none hover:scale-105 ease-in-out duration-300 ${
-          formVisible
-            ? 'focus:ring-teal-900 bg-fuchsia-700 hover:bg-fuchsia-900 text-white hover:text-white'
-            : 'focus:ring-emerald-500 bg-emerald-500 hover:bg-emerald-400 text-white hover:text-white'
-        }`}
-        onClick={() => {
-          if (sessStatus === 'authenticated') {
-            SetFormVisible(!formVisible);
-          } else {
-            SetHidden(false);
-          }
-        }}
-      >
-        อยากได้ข้อมูลจากหน่วยงาน...
-      </button> */}
 
       <ProviderForm
         datasetID={datasetID}

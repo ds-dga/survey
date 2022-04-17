@@ -125,8 +125,8 @@ const DATASET_ONE_QUERY = gql`
           }
         }
       }
-      points(order_by: [{ created_at: desc }], limit: 1) {
-        created_at
+      points(order_by: [{ updated_at: desc }], limit: 1) {
+        updated_at
       }
       vote_up: points_aggregate(where: { point: { _gte: 0 } }) {
         aggregate {

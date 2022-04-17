@@ -40,17 +40,19 @@ export default function CategoryOne() {
         <Meta title={`Dataset: ${title}`} description="Open data category" />
       }
     >
-      <Loading hidden={!loading} />
-      <div className="m-5">
-        {error && <p>{error.message} ... </p>}
-        <div className="text-slate-600 text-2xl font-normal">
-          {data ? data.category[0].name : 'Category'}
-        </div>
-        <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-6 mb-20">
-          {data &&
-            data.items.map((item) => (
-              <Item key={`ct-${item.id}`} item={item} />
-            ))}
+      <div className="container mx-auto">
+        <Loading hidden={!loading} />
+        <div className="m-5">
+          {error && <p>{error.message} ... </p>}
+          <div className="text-slate-600 text-2xl font-normal">
+            {data ? data.category[0].name : 'Category'}
+          </div>
+          <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-6 mb-20">
+            {data &&
+              data.items.map((item) => (
+                <Item key={`ct-${item.id}`} item={item} />
+              ))}
+          </div>
         </div>
       </div>
     </Main>
@@ -133,8 +135,8 @@ const CATEGORY_ITEMS_QUERY = gql`
           }
         }
       }
-      points(order_by: [{ created_at: desc }], limit: 1) {
-        created_at
+      points(order_by: [{ updated_at: desc }], limit: 1) {
+        updated_at
       }
       vote_up: points_aggregate(where: { point: { _gte: 0 } }) {
         aggregate {

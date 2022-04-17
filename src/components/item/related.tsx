@@ -4,23 +4,24 @@ import { gql, useMutation } from '@apollo/client';
 import dayjs from 'dayjs';
 import { useSession } from 'next-auth/react';
 
-import ThumbDown from '@/icons/ThumbDown';
-import ThumbUp from '@/icons/ThumbUp';
+import ChatBubble from '@/icons/ChatBubble';
 
-import { isGovOfficer } from '../../libs/govAccount';
 import Modal from '../modal';
+import ChildrenVoteInline from './children-vote-inline';
+import CommentList from './comment';
+import CommentForm from './commentForm';
 import RelatedForm from './relatedForm';
 
 type RelatedItemProps = {
-  id: Number;
-  maintainer: String;
-  url: String;
-  title: String;
-  points: String[];
+  id: string;
+  maintainer: string;
+  url: string;
+  title: string;
+  points: string[];
   my_vote: any;
   vote_up: any;
   vote_down: any;
-  created_by: String;
+  created_by: string;
 };
 type ItemProps = {
   item: RelatedItemProps;
@@ -39,6 +40,7 @@ function RelatedItem({ item, SetHidden }: ItemProps) {
             but that only allowed when there is no vote at all
   */
   const timer = useRef(0);
+  const [showComment, SetShowComment] = useState(false);
   const {
     id,
     maintainer,
@@ -49,7 +51,7 @@ function RelatedItem({ item, SetHidden }: ItemProps) {
     vote_up: voteUp,
     vote_down: voteDown,
   } = item;
-  const { data: session, status: sessStatus } = useSession();
+  const { data: session } = useSession();
   const [UpsertVote] = useMutation(MUTATE_RELATED_POINTS);
   const [DeleteRelated] = useMutation(MUTATE_RELATED_DELETION);
   const vUp = +voteUp.aggregate.sum.point || 0;
@@ -156,12 +158,7 @@ function RelatedItem({ item, SetHidden }: ItemProps) {
   if (PendingDeletion) {
     return <></>;
   }
-  let noColor = '';
-  if (Action === 'up') {
-    noColor = 'text-green-500';
-  } else if (Action === 'down') {
-    noColor = 'text-rose-500';
-  }
+
   return (
     <div className="flex gap-2 items-center self-center mt-1">
       {/* <div
@@ -178,50 +175,36 @@ function RelatedItem({ item, SetHidden }: ItemProps) {
         <div className={`text-xs text-gray-600 ml-3`}>
           {maintainer ? `โดย ${maintainer}` : ''}
         </div>
-        {/* Related vote only applied to govOfficer #### >>> */}
-        {sessStatus !== 'loading' && isGovOfficer(user) && (
-          <div className={`text-md text-gray-600 ml-3 flex items-center`}>
-            <span className={`font-mono text-xs ${noColor} pr-1`}>{Point}</span>
-            <span
-              className="px-1 pb-1 hover:bg-slate-200"
-              onClick={() => {
-                if (!uid) {
-                  SetHidden(false);
-                  return;
-                }
-                calcVote(Action === 'up' ? '-' : 'up');
-              }}
-            >
-              <ThumbUp className="inline" fill={'#10b981'} />
-            </span>
-            <span
-              className="px-1 pb-1 hover:bg-slate-200"
-              onClick={async () => {
-                if (!uid) {
-                  SetHidden(false);
-                  return;
-                }
-                if (delEnabled) {
-                  if (!window.confirm('คุณต้องการจะข้อมูลนี้ ใช่หรือไม่?'))
-                    return;
-                  const r = await DeleteRelated({
-                    variables: {
-                      id,
-                    },
-                  });
-                  if (r.data && r.data.delete_dataset_related_by_pk) {
-                    SetPendingDeletion(true);
-                  }
-                } else {
-                  calcVote(Action === 'down' ? '-' : 'down');
-                }
-              }}
-            >
-              <ThumbDown className="inline" fill={'#fb7185'} />
-            </span>
-          </div>
-        )}
-        {/* << #### END of Related vote only applied to govOfficer */}
+        <ChildrenVoteInline
+          Point={Point}
+          id={id}
+          calcVote={calcVote}
+          Action={Action}
+          SetHidden={SetHidden}
+          DeleteItem={DeleteRelated}
+          delEnabled={delEnabled}
+          SetPendingDeletion={SetPendingDeletion}
+        />
+
+        <button
+          className="text-sm font-medium text-sky-500"
+          onClick={() => {
+            SetShowComment(!showComment);
+          }}
+        >
+          99 ความเห็น <ChatBubble className="inline text-xl" />
+        </button>
+        <CommentForm
+          parentType={'provider'}
+          parentID={id}
+          hidden={!showComment}
+        />
+        <CommentList
+          parentType={'provider'}
+          parentID={id}
+          hidden={!showComment}
+          toggleVisibility={SetShowComment}
+        />
       </div>
     </div>
   );
@@ -232,6 +215,7 @@ export default function Related({ items, datasetID }: RelatedProps) {
   const [Hidden, SetHidden] = useState(true);
   const { status: sessStatus } = useSession();
 
+  console.log('[related] items: ', items);
   return (
     <>
       {!Hidden && <Modal hidden={false} handleHidden={SetHidden} />}
