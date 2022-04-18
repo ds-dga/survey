@@ -1,14 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 
-import { gql, useMutation } from '@apollo/client';
-import dayjs from 'dayjs';
+import { gql } from '@apollo/client';
 import { useSession } from 'next-auth/react';
 
 import Modal from '../modal';
 import ChildrenVoteInline from './children-vote-inline';
-import CommentList from './comment';
-import CommentForm from './commentForm';
 import ProviderForm from './providerForm';
+import InteractiveStatusBar from './statusbar';
 
 type OrgProps = {
   id: string;
@@ -29,130 +27,16 @@ type ProviderProps = {
   datasetID: string;
 };
 
-function ProviderItem({ organization, SetHidden }: ItemProps) {
+function ProviderItem({ organization }: ItemProps) {
   /*
     Check - is like upvote
     Stop - is like downvote, but if it's creator, then it's deletion,
             but that only allowed when there is no vote at all
   */
-  const timer = useRef(0);
-  const [showComment, SetShowComment] = useState(false);
-  const {
-    id,
-    name,
-    my_vote: myVote,
-    created_by: createdBy,
-    vote_up: voteUp,
-    vote_down: voteDown,
-  } = organization;
-  const { data: session } = useSession();
-  const [UpsertVote] = useMutation(MUTATE_PROVIDER_POINTS);
-  const [DeleteProvider] = useMutation(MUTATE_PROVIDER_DELETION);
+  const { id, name, vote_up: voteUp, vote_down: voteDown } = organization;
   const vUp = +voteUp.aggregate.sum.point || 0;
   const vDown = +voteDown.aggregate.sum.point || 0;
-  const [Point, SetPoint] = useState(vUp + vDown);
-  const [MyVote, SetMyVote] = useState(myVote.length > 0 ? myVote[0].point : 0);
-  const [Action, SetAction] = useState('-'); // 3 states: up, down, -
   const [PendingDeletion, SetPendingDeletion] = useState(false);
-  const user = (session && session.user) || null;
-  const uid = user ? user.uid : null;
-  const hasVote =
-    voteUp.aggregate.sum.point !== null ||
-    voteDown.aggregate.sum.point !== null;
-
-  const delEnabled = !hasVote && uid === createdBy;
-
-  useEffect(() => {
-    if (myVote.length > 0) {
-      const pnt = myVote[0].point;
-      let act = '-';
-      if (pnt > 0) {
-        act = 'up';
-      } else if (pnt < 0) {
-        act = 'down';
-      }
-      SetAction(act);
-    }
-  }, [myVote]);
-
-  function verifyIfrecorded(currScore, votingPoint, mutationResult) {
-    let latestPoint = currScore;
-    try {
-      const {
-        insert_provider_points: { returning },
-      } = mutationResult.data;
-      const confirmObj = returning[0];
-      latestPoint = confirmObj.provider.points_aggregate.aggregate.sum.point;
-      const votedPoint = confirmObj.point;
-      if (votedPoint !== votingPoint) {
-        alert('Err: your vote does not count');
-        // setPoint(confirmObj.point)
-      }
-    } catch (e) {
-      // console.log("verify[err] ", e)
-    } finally {
-      SetPoint(latestPoint);
-      // console.log("verify[finally] ")
-    }
-  }
-
-  function saveVote(action: string) {
-    clearTimeout(timer.current);
-    timer.current = window.setTimeout(async () => {
-      // update vote to timer
-      const today = dayjs().format('YYYY-MM-DD');
-      let ownVal = 0;
-      switch (action) {
-        case 'up':
-          ownVal = 1;
-          break;
-        case 'down':
-          ownVal = -1;
-          break;
-        default:
-          break;
-      }
-      const result = await UpsertVote({
-        variables: {
-          point: ownVal,
-          day: today,
-          providerID: id,
-        },
-        // refetchQueries:[
-        //   {query:}
-        // ]
-      });
-      // console.log(` --> save ${action} by ${IP}`)
-      // console.log(' --> mutation result', Point, result);
-      // SetAction('-');
-      verifyIfrecorded(Point, ownVal, result);
-    }, 2000);
-  }
-
-  function calcVote(action) {
-    let currValue = Point;
-    switch (action) {
-      case 'up':
-        currValue = currValue + 1 + (MyVote === -1 ? 1 : 0);
-        SetMyVote(1);
-        break;
-      case 'down':
-        currValue = currValue - 1 - (MyVote === 1 ? 1 : 0);
-        SetMyVote(-1);
-        break;
-      default:
-        if (MyVote > 0) {
-          currValue -= 1;
-        } else if (MyVote < 0) {
-          currValue += 1;
-        }
-        SetMyVote(0);
-    }
-    SetPoint(currValue);
-    SetAction(action);
-    saveVote(action);
-  }
-
   if (PendingDeletion) {
     return <></>;
   }
@@ -162,26 +46,14 @@ function ProviderItem({ organization, SetHidden }: ItemProps) {
       <div className="">
         ‣ {name}
         <ChildrenVoteInline
-          Point={Point}
+          initialPoints={vUp + vDown}
           id={id}
-          calcVote={calcVote}
-          Action={Action}
-          SetHidden={SetHidden}
-          DeleteItem={DeleteProvider}
-          delEnabled={delEnabled}
+          parentType="provider"
           SetPendingDeletion={SetPendingDeletion}
+          updateMutationQ={MUTATE_PROVIDER_POINTS}
+          deleteMutationQ={MUTATE_PROVIDER_DELETION}
         />
-        <CommentForm
-          parentType={'provider'}
-          parentID={id}
-          hidden={!showComment}
-        />
-        <CommentList
-          parentType={'provider'}
-          parentID={id}
-          hidden={!showComment}
-          toggleVisibility={SetShowComment}
-        />
+        <InteractiveStatusBar parentID={id} parentType={'provider'} />
       </div>
     </div>
   );
@@ -248,9 +120,9 @@ const MUTATE_PROVIDER_POINTS = gql`
   mutation MUTATE_PROVIDER_POINTS(
     $point: Int!
     $day: date!
-    $providerID: Int!
+    $providerID: uuid!
   ) {
-    insert_provider_points(
+    upsert_points: insert_provider_points(
       objects: { point: $point, day: $day, provider_id: $providerID }
       on_conflict: {
         constraint: provider_points_provider_id_voted_by_key

@@ -23,7 +23,7 @@ export default function CommentForm({
   } = useForm({ defaultValues: { note: '' } });
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log('[commentForm] submit', data);
+    // console.log('[commentForm] submit', data);
     const result = await createComment({
       variables: {
         note: data.note.trim(),
@@ -43,10 +43,10 @@ export default function CommentForm({
     if (result.data) {
       reset();
     }
-    console.log('mutate createComment: ', result);
+    // console.log('mutate createComment: ', result);
   });
 
-  console.log('[commentForm] err:', errors);
+  // console.log('[commentForm] err:', errors);
 
   return (
     <form
