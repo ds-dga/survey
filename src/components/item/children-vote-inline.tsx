@@ -8,9 +8,9 @@ import { wording } from './wording';
 
 type VoteProps = {
   Point: Number;
-  id: Number;
+  id: string;
   calcVote: Function;
-  Action: String;
+  Action: string;
   SetHidden: Function;
   DeleteItem: Function;
   delEnabled: boolean;

@@ -1,23 +1,23 @@
-import { gql, useQuery } from "@apollo/client"
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/router"
+import { gql, useQuery } from '@apollo/client';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
-import Item from "@/components/item"
-import Loading from "@/components/loading"
-import { Meta } from "@/layout/Meta"
-import { Main } from "@/templates/Main"
+import Item from '@/components/item';
+import Loading from '@/components/loading';
+import { Meta } from '@/layout/Meta';
+import { Main } from '@/templates/Main';
 
 export default function CategoryOne() {
-  const { data: session } = useSession()
-  let userWhere = {}
+  const { data: session } = useSession();
+  let userWhere = {};
   if (session) {
     userWhere = {
       voted_by: {
         _eq: session.user.uid,
       },
-    }
+    };
   }
-  const router = useRouter()
+  const router = useRouter();
   const { data, loading, error } = useQuery(CATEGORY_ITEMS_QUERY, {
     variables: {
       votedByWhere: userWhere,
@@ -31,9 +31,9 @@ export default function CategoryOne() {
       },
     },
     pollInterval: 1000 * 7, // 7s
-  })
+  });
 
-  const title = data ? data.category[0].name : "Category"
+  const title = data ? data.category[0].name : 'Category';
   return (
     <Main
       meta={
@@ -45,7 +45,7 @@ export default function CategoryOne() {
         <div className="m-5">
           {error && <p>{error.message} ... </p>}
           <div className="text-slate-600 text-2xl font-normal">
-            {data ? data.category[0].name : "Category"}
+            {data ? data.category[0].name : 'Category'}
           </div>
           <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-6 mb-20">
             {data &&
@@ -56,7 +56,7 @@ export default function CategoryOne() {
         </div>
       </div>
     </Main>
-  )
+  );
 }
 
 const CATEGORY_ITEMS_QUERY = gql`
@@ -135,8 +135,8 @@ const CATEGORY_ITEMS_QUERY = gql`
           }
         }
       }
-      points(order_by: [{ created_at: desc }], limit: 1) {
-        created_at
+      points(order_by: [{ updated_at: desc }], limit: 1) {
+        updated_at
       }
       vote_up: points_aggregate(where: { point: { _gte: 0 } }) {
         aggregate {
@@ -157,4 +157,4 @@ const CATEGORY_ITEMS_QUERY = gql`
       name
     }
   }
-`
+`;

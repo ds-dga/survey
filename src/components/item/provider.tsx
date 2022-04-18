@@ -6,16 +6,18 @@ import { useSession } from 'next-auth/react';
 
 import Modal from '../modal';
 import ChildrenVoteInline from './children-vote-inline';
+import CommentList from './comment';
+import CommentForm from './commentForm';
 import ProviderForm from './providerForm';
 
 type OrgProps = {
-  id: Number;
-  name: String;
-  points: String[];
+  id: string;
+  name: string;
+  points: string[];
   my_vote: any;
   vote_up: any;
   vote_down: any;
-  created_by: String;
+  created_by: string;
 };
 type ItemProps = {
   organization: OrgProps;
@@ -34,6 +36,7 @@ function ProviderItem({ organization, SetHidden }: ItemProps) {
             but that only allowed when there is no vote at all
   */
   const timer = useRef(0);
+  const [showComment, SetShowComment] = useState(false);
   const {
     id,
     name,
@@ -115,6 +118,9 @@ function ProviderItem({ organization, SetHidden }: ItemProps) {
           day: today,
           providerID: id,
         },
+        // refetchQueries:[
+        //   {query:}
+        // ]
       });
       // console.log(` --> save ${action} by ${IP}`)
       // console.log(' --> mutation result', Point, result);
@@ -165,6 +171,17 @@ function ProviderItem({ organization, SetHidden }: ItemProps) {
           delEnabled={delEnabled}
           SetPendingDeletion={SetPendingDeletion}
         />
+        <CommentForm
+          parentType={'provider'}
+          parentID={id}
+          hidden={!showComment}
+        />
+        <CommentList
+          parentType={'provider'}
+          parentID={id}
+          hidden={!showComment}
+          toggleVisibility={SetShowComment}
+        />
       </div>
     </div>
   );
@@ -174,7 +191,7 @@ export default function Provider({ orgs, datasetID }: ProviderProps) {
   const [formVisible, SetFormVisible] = useState(false);
   const [Hidden, SetHidden] = useState(true);
   const { status: sessStatus } = useSession();
-
+  console.log('[provider] ', orgs);
   return (
     <>
       {!Hidden && <Modal hidden={false} handleHidden={SetHidden} />}

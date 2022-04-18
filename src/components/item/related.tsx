@@ -4,20 +4,24 @@ import { gql, useMutation } from '@apollo/client';
 import dayjs from 'dayjs';
 import { useSession } from 'next-auth/react';
 
+import ChatBubble from '@/icons/ChatBubble';
+
 import Modal from '../modal';
 import ChildrenVoteInline from './children-vote-inline';
+import CommentList from './comment';
+import CommentForm from './commentForm';
 import RelatedForm from './relatedForm';
 
 type RelatedItemProps = {
-  id: Number;
-  maintainer: String;
-  url: String;
-  title: String;
-  points: String[];
+  id: string;
+  maintainer: string;
+  url: string;
+  title: string;
+  points: string[];
   my_vote: any;
   vote_up: any;
   vote_down: any;
-  created_by: String;
+  created_by: string;
 };
 type ItemProps = {
   item: RelatedItemProps;
@@ -36,6 +40,7 @@ function RelatedItem({ item, SetHidden }: ItemProps) {
             but that only allowed when there is no vote at all
   */
   const timer = useRef(0);
+  const [showComment, SetShowComment] = useState(false);
   const {
     id,
     maintainer,
@@ -180,6 +185,26 @@ function RelatedItem({ item, SetHidden }: ItemProps) {
           delEnabled={delEnabled}
           SetPendingDeletion={SetPendingDeletion}
         />
+
+        <button
+          className="text-sm font-medium text-sky-500"
+          onClick={() => {
+            SetShowComment(!showComment);
+          }}
+        >
+          99 ความเห็น <ChatBubble className="inline text-xl" />
+        </button>
+        <CommentForm
+          parentType={'provider'}
+          parentID={id}
+          hidden={!showComment}
+        />
+        <CommentList
+          parentType={'provider'}
+          parentID={id}
+          hidden={!showComment}
+          toggleVisibility={SetShowComment}
+        />
       </div>
     </div>
   );
@@ -190,6 +215,7 @@ export default function Related({ items, datasetID }: RelatedProps) {
   const [Hidden, SetHidden] = useState(true);
   const { status: sessStatus } = useSession();
 
+  console.log('[related] items: ', items);
   return (
     <>
       {!Hidden && <Modal hidden={false} handleHidden={SetHidden} />}
