@@ -1,3 +1,7 @@
+import { useRef, useState } from 'react';
+
+import { DocumentNode, useMutation } from '@apollo/client';
+import dayjs from 'dayjs';
 import { useSession } from 'next-auth/react';
 
 import ThumbDown from '@/icons/ThumbDown';
@@ -7,30 +11,72 @@ import { isGovOfficer } from '../../libs/govAccount';
 import { wording } from './wording';
 
 type VoteProps = {
-  Point: Number;
+  initialPoints: number;
   id: string;
-  calcVote: Function;
-  Action: string;
-  SetHidden: Function;
-  DeleteItem: Function;
-  delEnabled: boolean;
+  parentType: string;
+  // calcVote: Function;
+  // Action: string;
+  // SetHidden: Function;
+  // DeleteItem: Function;
+  // delEnabled: boolean;
   SetPendingDeletion: Function;
+  updateMutationQ: DocumentNode;
+  deleteMutationQ: DocumentNode;
 };
 
 export default function ChildrenVoteInline({
-  Point,
   id,
-  Action,
-  calcVote,
-  SetHidden,
-  DeleteItem,
-  delEnabled,
+  parentType,
+  initialPoints,
   SetPendingDeletion,
+  updateMutationQ,
+  deleteMutationQ,
 }: VoteProps) {
-  // const [Action, SetAction] = useState('-'); // 3 states: up, down, -
+  const timer = useRef(0);
+  const [Action, SetAction] = useState('-'); // 3 states: up, down, -
+  const [Point, SetPoint] = useState(initialPoints);
+  const [MyVote, SetMyVote] = useState(0);
+  const [UpsertItem] = useMutation(updateMutationQ);
+  const [DeleteItem] = useMutation(deleteMutationQ);
   const { data: session, status: sessStatus } = useSession();
   const user = (session && session.user) || null;
   const uid = user ? user.uid : null;
+
+  function saveVote(point: number) {
+    clearTimeout(timer.current);
+    timer.current = window.setTimeout(async () => {
+      // update vote to timer
+      const today = dayjs().format('YYYY-MM-DD');
+      let variables;
+      if (parentType === 'provider') {
+        variables = {
+          point,
+          day: today,
+          providerID: id,
+        };
+      } else if (parentType === 'related') {
+        variables = {
+          point,
+          day: today,
+          relatedID: id,
+        };
+      }
+      if (!variables.day) return;
+
+      const result = await UpsertItem({
+        variables,
+      });
+      // console.log(` --> save ${action} by ${IP}`)
+      console.log(' --> mutation result', Point, result);
+      const { success, message } = verifyIfrecorded(Point, point, result);
+      console.log('[vote-inline]', success, message);
+      if (success) {
+        SetPoint(+(message as string));
+      } else {
+        alert(message);
+      }
+    }, 2000);
+  }
 
   let noColor = '';
   if (Action === 'up') {
@@ -38,6 +84,8 @@ export default function ChildrenVoteInline({
   } else if (Action === 'down') {
     noColor = 'text-rose-500';
   }
+
+  const delEnabled = !uid;
 
   return (
     <>
@@ -50,10 +98,18 @@ export default function ChildrenVoteInline({
             title={wording.like}
             onClick={() => {
               if (!uid) {
-                SetHidden(false);
+                // SetHidden(false);
+                alert('login first!');
                 return;
               }
-              calcVote(Action === 'up' ? '-' : 'up');
+              const action = Action === 'up' ? '-' : 'up';
+              const currPnt = calcVote(Point, MyVote, action);
+
+              SetPoint(currPnt);
+              SetAction(action);
+              const myV = action === 'up' ? 1 : 0;
+              saveVote(myV);
+              SetMyVote(myV);
             }}
           >
             <ThumbUp
@@ -66,7 +122,8 @@ export default function ChildrenVoteInline({
             title={wording.unlike}
             onClick={async () => {
               if (!uid) {
-                SetHidden(false);
+                // SetHidden(false);
+                alert('login first!');
                 return;
               }
               if (delEnabled) {
@@ -81,7 +138,14 @@ export default function ChildrenVoteInline({
                   SetPendingDeletion(true);
                 }
               } else {
-                calcVote(Action === 'down' ? '-' : 'down');
+                const action = Action === 'down' ? '-' : 'down';
+                const currPnt = calcVote(Point, MyVote, action);
+
+                SetPoint(currPnt);
+                SetAction(action);
+                const myV = action === 'down' ? -1 : 0;
+                saveVote(myV);
+                SetMyVote(myV);
               }
             }}
           >
@@ -95,4 +159,45 @@ export default function ChildrenVoteInline({
       {/* << #### END of Related vote only applied to govOfficer */}
     </>
   );
+}
+
+function verifyIfrecorded(currScore, votingPoint, mutationResult) {
+  let latestPoint = currScore;
+  try {
+    const {
+      upsert_points: { returning },
+    } = mutationResult.data;
+    const confirmObj = returning[0];
+    const xx = confirmObj.related ? confirmObj.related : confirmObj.provider;
+    latestPoint = xx.points_aggregate.aggregate.sum.point;
+    const votedPoint = confirmObj.point;
+    if (votedPoint !== votingPoint) {
+      return { success: false, message: 'Err: your vote does not count' };
+      // alert('Err: your vote does not count');
+      // setPoint(confirmObj.point)
+    }
+    return { success: true, message: `${latestPoint}` };
+  } catch (e) {
+    // console.log("verify[err] ", e)
+    return { success: false, message: e };
+  }
+}
+
+function calcVote(initPoint, initVote, action) {
+  let currValue = initPoint;
+  switch (action) {
+    case 'up':
+      currValue = currValue + 1 + (initVote === -1 ? 1 : 0);
+      break;
+    case 'down':
+      currValue = currValue - 1 - (initVote === 1 ? 1 : 0);
+      break;
+    default:
+      if (initVote > 0) {
+        currValue -= 1;
+      } else if (initVote < 0) {
+        currValue += 1;
+      }
+  }
+  return currValue;
 }

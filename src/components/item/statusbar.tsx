@@ -60,12 +60,12 @@ export default function InteractiveStatusBar({
       </button>
 
       <CommentForm
-        parentType={'related'}
+        parentType={parentType}
         parentID={parentID}
         hidden={!showComment}
       />
       <CommentList
-        parentType={'related'}
+        parentType={parentType}
         parentID={parentID}
         hidden={!showComment}
         toggleVisibility={SetShowComment}
