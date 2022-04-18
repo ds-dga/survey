@@ -28,7 +28,7 @@ export default function PopularGroup({ limit }: any) {
   return (
     <>
       <Loading hidden={!loading} />
-      <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-6">
+      <div className="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-y-6 gap-x-6">
         {data &&
           data.items.map((item) => <Item key={`ppi-${item.id}`} item={item} />)}
       </div>

@@ -4,13 +4,10 @@ import { gql, useMutation } from '@apollo/client';
 import dayjs from 'dayjs';
 import { useSession } from 'next-auth/react';
 
-import ChatBubble from '@/icons/ChatBubble';
-
 import Modal from '../modal';
 import ChildrenVoteInline from './children-vote-inline';
-import CommentList from './comment';
-import CommentForm from './commentForm';
 import RelatedForm from './relatedForm';
+import InteractiveStatusBar from './statusbar';
 
 type RelatedItemProps = {
   id: string;
@@ -40,7 +37,6 @@ function RelatedItem({ item, SetHidden }: ItemProps) {
             but that only allowed when there is no vote at all
   */
   const timer = useRef(0);
-  const [showComment, SetShowComment] = useState(false);
   const {
     id,
     maintainer,
@@ -185,26 +181,7 @@ function RelatedItem({ item, SetHidden }: ItemProps) {
           delEnabled={delEnabled}
           SetPendingDeletion={SetPendingDeletion}
         />
-
-        <button
-          className="text-sm font-medium text-sky-500"
-          onClick={() => {
-            SetShowComment(!showComment);
-          }}
-        >
-          99 ความเห็น <ChatBubble className="inline text-xl" />
-        </button>
-        <CommentForm
-          parentType={'provider'}
-          parentID={id}
-          hidden={!showComment}
-        />
-        <CommentList
-          parentType={'provider'}
-          parentID={id}
-          hidden={!showComment}
-          toggleVisibility={SetShowComment}
-        />
+        <InteractiveStatusBar parentID={id} parentType={'related'} />
       </div>
     </div>
   );
