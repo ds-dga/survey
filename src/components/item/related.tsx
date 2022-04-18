@@ -1,33 +1,33 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from 'react';
 
-import { gql, useMutation } from "@apollo/client"
-import dayjs from "dayjs"
-import { useSession } from "next-auth/react"
+import { gql, useMutation } from '@apollo/client';
+import dayjs from 'dayjs';
+import { useSession } from 'next-auth/react';
 
-import Modal from "../modal"
-import RelatedForm from "./relatedForm"
-import ChildrenVoteInline from "./children-vote-inline"
+import Modal from '../modal';
+import ChildrenVoteInline from './children-vote-inline';
+import RelatedForm from './relatedForm';
 
 type RelatedItemProps = {
-  id: Number
-  maintainer: String
-  url: String
-  title: String
-  points: String[]
-  my_vote: any
-  vote_up: any
-  vote_down: any
-  created_by: String
-}
+  id: Number;
+  maintainer: String;
+  url: String;
+  title: String;
+  points: String[];
+  my_vote: any;
+  vote_up: any;
+  vote_down: any;
+  created_by: String;
+};
 type ItemProps = {
-  item: RelatedItemProps
-  SetHidden: Function
-}
+  item: RelatedItemProps;
+  SetHidden: Function;
+};
 
 type RelatedProps = {
-  items: RelatedItemProps[]
-  datasetID: string
-}
+  items: RelatedItemProps[];
+  datasetID: string;
+};
 
 function RelatedItem({ item, SetHidden }: ItemProps) {
   /*
@@ -35,7 +35,7 @@ function RelatedItem({ item, SetHidden }: ItemProps) {
     Stop - is like downvote, but if it's creator, then it's deletion,
             but that only allowed when there is no vote at all
   */
-  const timer = useRef(0)
+  const timer = useRef(0);
   const {
     id,
     maintainer,
@@ -45,71 +45,72 @@ function RelatedItem({ item, SetHidden }: ItemProps) {
     my_vote: myVote,
     vote_up: voteUp,
     vote_down: voteDown,
-  } = item
-  const { data: session } = useSession()
-  const [UpsertVote] = useMutation(MUTATE_RELATED_POINTS)
-  const [DeleteRelated] = useMutation(MUTATE_RELATED_DELETION)
-  const vUp = +voteUp.aggregate.sum.point || 0
-  const vDown = +voteDown.aggregate.sum.point || 0
-  const [Point, SetPoint] = useState(vUp + vDown)
-  const [MyVote, SetMyVote] = useState(myVote.length > 0 ? myVote[0].point : 0)
-  const [Action, SetAction] = useState("-") // 3 states: up, down, -
-  const [PendingDeletion, SetPendingDeletion] = useState(false)
-  const user = (session && session.user) || null
-  const uid = user ? user.uid : null
+  } = item;
+  const { data: session } = useSession();
+  const [UpsertVote] = useMutation(MUTATE_RELATED_POINTS);
+  const [DeleteRelated] = useMutation(MUTATE_RELATED_DELETION);
+  const vUp = +voteUp.aggregate.sum.point || 0;
+  const vDown = +voteDown.aggregate.sum.point || 0;
+  const [Point, SetPoint] = useState(vUp + vDown);
+  const [MyVote, SetMyVote] = useState(myVote.length > 0 ? myVote[0].point : 0);
+  const [Action, SetAction] = useState('-'); // 3 states: up, down, -
+  const [PendingDeletion, SetPendingDeletion] = useState(false);
+  const user = (session && session.user) || null;
+  const uid = user ? user.uid : null;
   const hasVote =
-    voteUp.aggregate.sum.point !== null || voteDown.aggregate.sum.point !== null
-  const delEnabled = !hasVote && uid === createdBy
+    voteUp.aggregate.sum.point !== null ||
+    voteDown.aggregate.sum.point !== null;
+  const delEnabled = !hasVote && uid === createdBy;
 
   useEffect(() => {
     if (myVote.length > 0) {
-      const pnt = myVote[0].point
-      let act = "-"
+      const pnt = myVote[0].point;
+      let act = '-';
       if (pnt > 0) {
-        act = "up"
+        act = 'up';
       } else if (pnt < 0) {
-        act = "down"
+        act = 'down';
       }
-      SetAction(act)
+      SetAction(act);
     }
-  }, [myVote])
+  }, [myVote]);
 
   function verifyIfrecorded(currScore, votingPoint, mutationResult) {
-    let latestPoint = currScore
+    let latestPoint = currScore;
     try {
       const {
         insert_related_points: { returning },
-      } = mutationResult.data
-      const confirmObj = returning[0]
-      latestPoint = confirmObj.related.points_aggregate.aggregate.sum.point
-      const votedPoint = confirmObj.point
+      } = mutationResult.data;
+      const confirmObj = returning[0];
+      latestPoint = confirmObj.related.points_aggregate.aggregate.sum.point;
+      const votedPoint = confirmObj.point;
       if (votedPoint !== votingPoint) {
-        alert("Err: your vote does not count")
+        alert('Err: your vote does not count');
         // setPoint(confirmObj.point)
       }
     } catch (e) {
       // console.log("verify[err] ", e)
     } finally {
-      SetPoint(latestPoint)
+      SetPoint(latestPoint);
       // console.log("verify[finally] ")
     }
   }
 
   function saveVote(action: string) {
-    clearTimeout(timer.current)
+    clearTimeout(timer.current);
     timer.current = window.setTimeout(async () => {
       // update vote to timer
-      const today = dayjs().format("YYYY-MM-DD")
-      let ownVal = 0
+      const today = dayjs().format('YYYY-MM-DD');
+      let ownVal = 0;
       switch (action) {
-        case "up":
-          ownVal = 1
-          break
-        case "down":
-          ownVal = -1
-          break
+        case 'up':
+          ownVal = 1;
+          break;
+        case 'down':
+          ownVal = -1;
+          break;
         default:
-          break
+          break;
       }
       const result = await UpsertVote({
         variables: {
@@ -117,40 +118,40 @@ function RelatedItem({ item, SetHidden }: ItemProps) {
           day: today,
           relatedID: id,
         },
-      })
+      });
       // console.log(` --> save ${action} by ${IP}`)
       // console.log(' --> mutation result', Point, result);
       // SetAction('-');
-      verifyIfrecorded(Point, ownVal, result)
-    }, 2000)
+      verifyIfrecorded(Point, ownVal, result);
+    }, 2000);
   }
 
   function calcVote(action) {
-    let currValue = Point
+    let currValue = Point;
     switch (action) {
-      case "up":
-        currValue = currValue + 1 + (MyVote === -1 ? 1 : 0)
-        SetMyVote(1)
-        break
-      case "down":
-        currValue = currValue - 1 - (MyVote === 1 ? 1 : 0)
-        SetMyVote(-1)
-        break
+      case 'up':
+        currValue = currValue + 1 + (MyVote === -1 ? 1 : 0);
+        SetMyVote(1);
+        break;
+      case 'down':
+        currValue = currValue - 1 - (MyVote === 1 ? 1 : 0);
+        SetMyVote(-1);
+        break;
       default:
         if (MyVote > 0) {
-          currValue -= 1
+          currValue -= 1;
         } else if (MyVote < 0) {
-          currValue += 1
+          currValue += 1;
         }
-        SetMyVote(0)
+        SetMyVote(0);
     }
-    SetPoint(currValue)
-    SetAction(action)
-    saveVote(action)
+    SetPoint(currValue);
+    SetAction(action);
+    saveVote(action);
   }
 
   if (PendingDeletion) {
-    return <></>
+    return <></>;
   }
 
   return (
@@ -167,7 +168,7 @@ function RelatedItem({ item, SetHidden }: ItemProps) {
           ‣ {title}
         </a>
         <div className={`text-xs text-gray-600 ml-3`}>
-          {maintainer ? `โดย ${maintainer}` : ""}
+          {maintainer ? `โดย ${maintainer}` : ''}
         </div>
         <ChildrenVoteInline
           Point={Point}
@@ -181,13 +182,13 @@ function RelatedItem({ item, SetHidden }: ItemProps) {
         />
       </div>
     </div>
-  )
+  );
 }
 
 export default function Related({ items, datasetID }: RelatedProps) {
-  const [formVisible, SetFormVisible] = useState(false)
-  const [Hidden, SetHidden] = useState(true)
-  const { status: sessStatus } = useSession()
+  const [formVisible, SetFormVisible] = useState(false);
+  const [Hidden, SetHidden] = useState(true);
+  const { status: sessStatus } = useSession();
 
   return (
     <>
@@ -195,10 +196,10 @@ export default function Related({ items, datasetID }: RelatedProps) {
       <div
         className="text-gray-600 italic hover:bg-green-200 cursor-pointer"
         onClick={() => {
-          if (sessStatus === "authenticated") {
-            SetFormVisible(!formVisible)
+          if (sessStatus === 'authenticated') {
+            SetFormVisible(!formVisible);
           } else {
-            SetHidden(false)
+            SetHidden(false);
           }
         }}
       >
@@ -250,7 +251,7 @@ export default function Related({ items, datasetID }: RelatedProps) {
         handleFormVisible={SetFormVisible}
       />
     </>
-  )
+  );
 }
 
 const MUTATE_RELATED_DELETION = gql`
@@ -259,7 +260,7 @@ const MUTATE_RELATED_DELETION = gql`
       id
     }
   }
-`
+`;
 
 const MUTATE_RELATED_POINTS = gql`
   mutation MUTATE_RELATED_POINTS($point: Int!, $day: date!, $relatedID: uuid!) {
@@ -285,4 +286,4 @@ const MUTATE_RELATED_POINTS = gql`
       }
     }
   }
-`
+`;

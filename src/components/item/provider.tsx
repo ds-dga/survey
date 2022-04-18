@@ -5,8 +5,8 @@ import dayjs from 'dayjs';
 import { useSession } from 'next-auth/react';
 
 import Modal from '../modal';
-import ProviderForm from './providerForm';
 import ChildrenVoteInline from './children-vote-inline';
+import ProviderForm from './providerForm';
 
 type OrgProps = {
   id: Number;
@@ -155,7 +155,6 @@ function ProviderItem({ organization, SetHidden }: ItemProps) {
     <div className="flex gap-2 items-center self-center mt-1">
       <div className="">
         ‣ {name}
-
         <ChildrenVoteInline
           Point={Point}
           id={id}

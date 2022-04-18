@@ -1,98 +1,101 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from 'react';
 
-import { gql, useMutation } from "@apollo/client"
-import dayjs from "dayjs"
-import { useSession } from "next-auth/react"
-import Modal from "../modal"
-import ThumbDown from "@/icons/ThumbDown"
-import ThumbUp from "@/icons/ThumbUp"
-import Link from "next/link"
+import { gql, useMutation } from '@apollo/client';
+import dayjs from 'dayjs';
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
+
+import ThumbDown from '@/icons/ThumbDown';
+import ThumbUp from '@/icons/ThumbUp';
+
+import Modal from '../modal';
+import { wording } from './wording';
 
 type InitProps = {
-  up: Number
-  mine: Number
-  down: Number
-  latest: string
-}
+  up: Number;
+  mine: Number;
+  down: Number;
+  latest: string;
+};
 type VoteProps = {
-  initialValue: InitProps
-  datasetID: string
-}
+  initialValue: InitProps;
+  datasetID: string;
+};
 
 export default function VoteInline({ initialValue, datasetID }: VoteProps) {
-  const timer = useRef(0)
-  const { status: sessStatus } = useSession()
-  const [upsertVote, { loading }] = useMutation(MUTATE_DATASET_POINTS)
-  const [noActionAllowed, SetNoActionAllowed] = useState(true)
-  const [noActMsg, SetNoActMessage] = useState("")
-  const [Action, SetAction] = useState("-") // 3 states: up, down, -
-  const [Point, SetPoint] = useState(+initialValue.up + +initialValue.down)
-  const [MyVote, SetMyVote] = useState(initialValue.mine)
-  const [Hidden, SetHidden] = useState(true)
+  const timer = useRef(0);
+  const { status: sessStatus } = useSession();
+  const [upsertVote, { loading }] = useMutation(MUTATE_DATASET_POINTS);
+  const [noActionAllowed, SetNoActionAllowed] = useState(true);
+  const [noActMsg, SetNoActMessage] = useState('');
+  const [Action, SetAction] = useState('-'); // 3 states: up, down, -
+  const [Point, SetPoint] = useState(+initialValue.up + +initialValue.down);
+  const [MyVote, SetMyVote] = useState(initialValue.mine);
+  const [Hidden, SetHidden] = useState(true);
 
   useEffect(() => {
     if (initialValue.mine < 0) {
-      SetAction("down")
+      SetAction('down');
     } else if (initialValue.mine === 0) {
-      SetAction("-")
+      SetAction('-');
     } else {
-      SetAction("up")
+      SetAction('up');
     }
-  }, [initialValue])
+  }, [initialValue]);
 
   useEffect(() => {
-    if (sessStatus !== "authenticated") {
-      SetNoActMessage("โปรดเข้าสู่ระบบก่อน")
-      SetNoActionAllowed(true)
-      return
+    if (sessStatus !== 'authenticated') {
+      SetNoActMessage('โปรดเข้าสู่ระบบก่อน');
+      SetNoActionAllowed(true);
+      return;
     }
     if (loading) {
-      SetNoActMessage("Processing")
-      SetNoActionAllowed(true)
-      return
+      SetNoActMessage('Processing');
+      SetNoActionAllowed(true);
+      return;
     }
-    SetNoActionAllowed(false)
-    SetNoActMessage("")
-  }, [loading, sessStatus])
+    SetNoActionAllowed(false);
+    SetNoActMessage('');
+  }, [loading, sessStatus]);
 
   function verifyIfrecorded(currScore, votingPoint, mutationResult) {
-    let latestPoint = currScore
+    let latestPoint = currScore;
     try {
       const {
         insert_dataset_points: { returning },
-      } = mutationResult.data
-      const confirmObj = returning[0]
-      latestPoint = confirmObj.dataset.points_aggregate.aggregate.sum.point
-      const votedPoint = confirmObj.point
+      } = mutationResult.data;
+      const confirmObj = returning[0];
+      latestPoint = confirmObj.dataset.points_aggregate.aggregate.sum.point;
+      const votedPoint = confirmObj.point;
       if (votedPoint !== votingPoint) {
-        alert("Err: your vote does not count")
+        alert('Err: your vote does not count');
         // setPoint(confirmObj.point)
       }
     } catch (e) {
       // console.log("verify[err] ", e)
     } finally {
-      SetPoint(latestPoint)
+      SetPoint(latestPoint);
       // console.log("verify[finally] ")
-      SetNoActionAllowed(false)
-      SetNoActMessage("")
+      SetNoActionAllowed(false);
+      SetNoActMessage('');
     }
   }
 
   function saveVote(action: string) {
-    clearTimeout(timer.current)
+    clearTimeout(timer.current);
     timer.current = window.setTimeout(async () => {
       // update vote to timer
-      const today = dayjs().format("YYYY-MM-DD")
-      let ownVal = 0
+      const today = dayjs().format('YYYY-MM-DD');
+      let ownVal = 0;
       switch (action) {
-        case "up":
-          ownVal = 1
-          break
-        case "down":
-          ownVal = -1
-          break
+        case 'up':
+          ownVal = 1;
+          break;
+        case 'down':
+          ownVal = -1;
+          break;
         default:
-          break
+          break;
       }
       const result = await upsertVote({
         variables: {
@@ -100,39 +103,39 @@ export default function VoteInline({ initialValue, datasetID }: VoteProps) {
           day: today,
           datasetID,
         },
-      })
-      verifyIfrecorded(Point, ownVal, result)
-    }, 2000)
+      });
+      verifyIfrecorded(Point, ownVal, result);
+    }, 2000);
   }
 
   function calcVote(action) {
-    let currValue = Point
+    let currValue = Point;
     switch (action) {
-      case "up":
-        currValue = currValue + 1 + (MyVote === -1 ? 1 : 0)
-        SetMyVote(1)
-        break
-      case "down":
-        currValue = currValue - 1 - (MyVote === 1 ? 1 : 0)
-        SetMyVote(-1)
-        break
+      case 'up':
+        currValue = currValue + 1 + (MyVote === -1 ? 1 : 0);
+        SetMyVote(1);
+        break;
+      case 'down':
+        currValue = currValue - 1 - (MyVote === 1 ? 1 : 0);
+        SetMyVote(-1);
+        break;
       default:
         if (MyVote > 0) {
-          currValue -= 1
+          currValue -= 1;
         } else if (MyVote < 0) {
-          currValue += 1
+          currValue += 1;
         }
-        SetMyVote(0)
+        SetMyVote(0);
     }
-    SetPoint(currValue)
-    SetAction(action)
-    saveVote(action)
+    SetPoint(currValue);
+    SetAction(action);
+    saveVote(action);
   }
-  let noColor = ""
-  if (Action === "up") {
-    noColor = "text-green-500"
-  } else if (Action === "down") {
-    noColor = "text-rose-500"
+  let noColor = '';
+  if (Action === 'up') {
+    noColor = 'text-green-500';
+  } else if (Action === 'down') {
+    noColor = 'text-rose-500';
   }
   /* Provider vote only applied to govOfficer #### >>> */
   return (
@@ -146,7 +149,7 @@ export default function VoteInline({ initialValue, datasetID }: VoteProps) {
               type="button"
               className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
               onClick={() => {
-                SetHidden(true)
+                SetHidden(true);
               }}
             >
               Close
@@ -199,38 +202,40 @@ export default function VoteInline({ initialValue, datasetID }: VoteProps) {
         <span className={`font-mono text-xs ${noColor} pr-1`}>{Point}</span>
         <span
           className="px-1 pb-1 hover:bg-slate-200"
+          title={wording.like}
           onClick={() => {
             if (noActionAllowed) {
-              SetHidden(false)
+              SetHidden(false);
               // alert(noActMsg);
-              return
+              return;
             }
-            calcVote(Action === "up" ? "-" : "up")
+            calcVote(Action === 'up' ? '-' : 'up');
           }}
         >
           <ThumbUp
             className="inline"
-            fill={MyVote > 0 ? `#10b981` : "#9CA3AF"}
+            fill={MyVote > 0 ? `#10b981` : '#9CA3AF'}
           />
         </span>
         <span
           className="px-1 pb-1 hover:bg-slate-200"
+          title={wording.unlike}
           onClick={async () => {
             if (noActionAllowed) {
-              SetHidden(false)
-              return
+              SetHidden(false);
+              return;
             }
-            calcVote(Action === "down" ? "-" : "down")
+            calcVote(Action === 'down' ? '-' : 'down');
           }}
         >
           <ThumbDown
             className="inline"
-            fill={MyVote < 0 ? `#fb7185` : "#9CA3AF"}
+            fill={MyVote < 0 ? `#fb7185` : '#9CA3AF'}
           />
         </span>
       </div>
     </span>
-  )
+  );
 }
 
 const MUTATE_DATASET_POINTS = gql`
@@ -257,4 +262,4 @@ const MUTATE_DATASET_POINTS = gql`
       }
     }
   }
-`
+`;
