@@ -2,7 +2,7 @@ import { signOut } from 'next-auth/react';
 
 import { isGovOfficer } from '../libs/govAccount';
 import MyContribution from './myContribution';
-import MyVote from './myVote';
+import MyVoteHistory from './myVoteHistory';
 
 export default function LoggedProfile({ user }) {
   return (
@@ -209,7 +209,7 @@ export default function LoggedProfile({ user }) {
                   </span>
                   <span className="tracking-wide">รายการที่โหวด</span>
                 </div>
-                <MyVote />
+                <MyVoteHistory />
               </div>
 
               <div>

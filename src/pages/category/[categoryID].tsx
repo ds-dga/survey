@@ -30,7 +30,7 @@ export default function CategoryOne() {
         },
       },
     },
-    pollInterval: 1000 * 7, // 7s
+    pollInterval: 1000 * 20, // 7s
   });
 
   const title = data ? data.category[0].name : 'Category';

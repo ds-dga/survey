@@ -4,7 +4,6 @@ import { gql } from '@apollo/client';
 import { useSession } from 'next-auth/react';
 
 import Modal from '../modal';
-import ChildrenVoteInline from './children-vote-inline';
 import ProviderForm from './providerForm';
 import InteractiveStatusBar from './statusbar';
 
@@ -33,7 +32,13 @@ function ProviderItem({ organization }: ItemProps) {
     Stop - is like downvote, but if it's creator, then it's deletion,
             but that only allowed when there is no vote at all
   */
-  const { id, name, vote_up: voteUp, vote_down: voteDown } = organization;
+  const {
+    id,
+    name,
+    vote_up: voteUp,
+    vote_down: voteDown,
+    my_vote: myVote,
+  } = organization;
   const vUp = +voteUp.aggregate.sum.point || 0;
   const vDown = +voteDown.aggregate.sum.point || 0;
   const [PendingDeletion, SetPendingDeletion] = useState(false);
@@ -45,15 +50,15 @@ function ProviderItem({ organization }: ItemProps) {
     <div className="flex gap-2 items-center self-center mt-1">
       <div className="">
         ‣ {name}
-        <ChildrenVoteInline
+        <InteractiveStatusBar
+          parentID={id}
+          parentType={'provider'}
+          myInitialPoint={myVote.length > 0 ? myVote[0].point : 0}
           initialPoints={vUp + vDown}
-          id={id}
-          parentType="provider"
           SetPendingDeletion={SetPendingDeletion}
           updateMutationQ={MUTATE_PROVIDER_POINTS}
           deleteMutationQ={MUTATE_PROVIDER_DELETION}
         />
-        <InteractiveStatusBar parentID={id} parentType={'provider'} />
       </div>
     </div>
   );
@@ -63,7 +68,6 @@ export default function Provider({ orgs, datasetID }: ProviderProps) {
   const [formVisible, SetFormVisible] = useState(false);
   const [Hidden, SetHidden] = useState(true);
   const { status: sessStatus } = useSession();
-  console.log('[provider] ', orgs);
   return (
     <>
       {!Hidden && <Modal hidden={false} handleHidden={SetHidden} />}

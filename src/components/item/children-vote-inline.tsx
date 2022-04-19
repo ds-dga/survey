@@ -11,6 +11,7 @@ import { isGovOfficer } from '../../libs/govAccount';
 import { wording } from './wording';
 
 type VoteProps = {
+  myInitialPoint?: number;
   initialPoints: number;
   id: string;
   parentType: string;
@@ -28,14 +29,15 @@ export default function ChildrenVoteInline({
   id,
   parentType,
   initialPoints,
+  myInitialPoint,
   SetPendingDeletion,
   updateMutationQ,
   deleteMutationQ,
 }: VoteProps) {
   const timer = useRef(0);
-  const [Action, SetAction] = useState('-'); // 3 states: up, down, -
   const [Point, SetPoint] = useState(initialPoints);
-  const [MyVote, SetMyVote] = useState(0);
+  const [Action, SetAction] = useState(Vote2Action(myInitialPoint)); // 3 states: up, down, -
+  const [MyVote, SetMyVote] = useState(myInitialPoint || 0);
   const [UpsertItem] = useMutation(updateMutationQ);
   const [DeleteItem] = useMutation(deleteMutationQ);
   const { data: session, status: sessStatus } = useSession();
@@ -67,9 +69,9 @@ export default function ChildrenVoteInline({
         variables,
       });
       // console.log(` --> save ${action} by ${IP}`)
-      console.log(' --> mutation result', Point, result);
+      // console.log(' --> mutation result', Point, result);
       const { success, message } = verifyIfrecorded(Point, point, result);
-      console.log('[vote-inline]', success, message);
+      // console.log('[vote-inline]', success, message);
       if (success) {
         SetPoint(+(message as string));
       } else {
@@ -91,7 +93,7 @@ export default function ChildrenVoteInline({
     <>
       {/* Related vote only applied to govOfficer #### >>> */}
       {sessStatus !== 'loading' && isGovOfficer(user) && (
-        <div className={`text-md text-gray-600 ml-3 flex items-center`}>
+        <div className={`text-md text-gray-600 flex items-center`}>
           <span className={`font-mono text-xs ${noColor} pr-1`}>{Point}</span>
           <span
             className="px-1 pb-1 hover:bg-slate-200"
@@ -200,4 +202,10 @@ function calcVote(initPoint, initVote, action) {
       }
   }
   return currValue;
+}
+
+function Vote2Action(v) {
+  if (v === 1) return 'up';
+  if (v === -1) return 'down';
+  return '-';
 }
