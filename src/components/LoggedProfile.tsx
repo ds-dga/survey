@@ -10,7 +10,7 @@ export default function LoggedProfile({ user }) {
       <div className="md:flex no-wrap md:-mx-2 ">
         <div className="w-full md:w-3/12 md:mx-2">
           <div className="bg-white p-3 border-t-4 border-green-400">
-            <div className="image overflow-hidden">
+            <div className="hidden md:block image overflow-hidden">
               {user.image ? (
                 <img
                   className="h-auto w-full mx-auto"
@@ -47,9 +47,9 @@ export default function LoggedProfile({ user }) {
               )}
             </div>
             <h1 className="text-gray-900 font-bold text-xl leading-8 my-1">
-              {user.name}
+              {user.username || user.name}
             </h1>
-            <h3 className="text-gray-600 font-lg text-semibold leading-6">
+            <h3 className="text-gray-600 font-sm leading-6 overflow-auto">
               {user.email}
             </h3>
             <ul className="bg-gray-100 text-gray-600 px-3 mt-3 divide-y rounded shadow-sm">
@@ -69,25 +69,6 @@ export default function LoggedProfile({ user }) {
                 </button>
               )}
             </ul>
-            {/* <p className="text-sm text-gray-500 hover:text-gray-600 leading-6">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Reprehenderit, eligendi dolorum sequi illum qui unde aspernatur
-              non deserunt
-            </p> */}
-            {/*
-              <li className="flex gap-1 items-center py-3">
-                <span>Status</span>
-                <span className="ml-auto">
-                  <span className="bg-green-500 py-1 px-2 rounded text-white text-sm">
-                    Active
-                  </span>
-                </span>
-              </li>
-              <li className="flex gap-1 items-center py-3">
-                <span>Member since</span>
-                <span className="ml-auto">Nov 07, 2016</span>
-              </li>
-            </ul> */}
 
             <button
               className="block w-full text-blue-800 text-sm font-semibold rounded-lg hover:bg-gray-100 focus:outline-none focus:shadow-outline focus:bg-gray-100 hover:shadow-xs p-3 my-4"
@@ -102,7 +83,7 @@ export default function LoggedProfile({ user }) {
           <div className="my-4"></div>
         </div>
 
-        <div className="min-h-64 h-full w-full md:w-9/12 mx-2">
+        <div className="min-h-64 h-full w-full mx-0 md:w-9/12 md:mx-2">
           {/* <div className="bg-white p-3 shadow-sm rounded-sm">
             <div className="flex gap-1 items-center space-x-2 font-semibold text-gray-900 leading-8">
               <span className="text-green-500">
