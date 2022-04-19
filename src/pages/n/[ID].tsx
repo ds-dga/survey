@@ -29,7 +29,6 @@ export default function DatasetOne() {
   });
 
   const title = data ? data.item.name : 'ชุดข้อมูล';
-  // console.log('data item = ', data, loading, error);
   return (
     <Main
       meta={
