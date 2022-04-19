@@ -30,9 +30,8 @@ export default function Item({ item, commentTotal }: any) {
       {!detailView && (
         <span className="float-right">
           <Link passHref href={`/n/${moded.id}`}>
-            <div className="text text-gray-500 mt-1 zmax-w-2xl text-sm cursor-pointer">
+            <div className="text text-gray-500 mt-1 zmax-w-2xl text-xl cursor-pointer">
               <LinkIcon className="inline" fill={'#10b981'} />
-              #[permanent link]
             </div>
           </Link>
         </span>
