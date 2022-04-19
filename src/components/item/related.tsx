@@ -4,7 +4,6 @@ import { gql } from '@apollo/client';
 import { useSession } from 'next-auth/react';
 
 import Modal from '../modal';
-import ChildrenVoteInline from './children-vote-inline';
 import RelatedForm from './relatedForm';
 import InteractiveStatusBar from './statusbar';
 
@@ -41,7 +40,7 @@ function RelatedItem({ item }: ItemProps) {
     title,
     url,
     // created_by: createdBy,
-    // my_vote: myVote,
+    my_vote: myVote,
     vote_up: voteUp,
     vote_down: voteDown,
   } = item;
@@ -55,13 +54,6 @@ function RelatedItem({ item }: ItemProps) {
 
   return (
     <div className="flex gap-2 items-center self-center mt-1">
-      {/* <div
-        className={`text-l min-w-fit text-gray-500  ${
-          isGovOfficer(user)
-            ? 'grid grid-cols-3 gap-1 items-center self-center content-center'
-            : ''
-        }`}
-      ></div> */}
       <div className="">
         <a href={`${url}`} target="_blank" rel="noreferrer">
           ‣ {title}
@@ -69,15 +61,15 @@ function RelatedItem({ item }: ItemProps) {
         <div className={`text-xs text-gray-600 ml-3`}>
           {maintainer ? `โดย ${maintainer}` : ''}
         </div>
-        <ChildrenVoteInline
+        <InteractiveStatusBar
+          parentID={id}
+          parentType={'related'}
+          myInitialPoint={myVote.length > 0 ? myVote[0].point : 0}
           initialPoints={vUp + vDown}
-          id={id}
-          parentType="related"
           SetPendingDeletion={SetPendingDeletion}
           updateMutationQ={MUTATE_RELATED_POINTS}
           deleteMutationQ={MUTATE_RELATED_DELETION}
         />
-        <InteractiveStatusBar parentID={id} parentType={'related'} />
       </div>
     </div>
   );
@@ -88,7 +80,7 @@ export default function Related({ items, datasetID }: RelatedProps) {
   const [Hidden, SetHidden] = useState(true);
   const { status: sessStatus } = useSession();
 
-  console.log('[related] items: ', items);
+  // console.log('[related] items: ', items);
   return (
     <>
       {!Hidden && <Modal hidden={false} handleHidden={SetHidden} />}

@@ -56,7 +56,7 @@ export default function Search() {
 
   const { data, loading, fetchMore } = useQuery(DATASET_SEARCH_QUERY, {
     variables: GQLVars,
-    pollInterval: 1000 * 7, // 7s
+    pollInterval: 1000 * 10, // 7s
     fetchPolicy: 'network-only',
   });
 
@@ -200,7 +200,7 @@ const DATASET_SEARCH_QUERY = gql`
           point
         }
         points(order_by: [{ created_at: desc }], limit: 1) {
-          updated_at
+          created_at
         }
         vote_up: points_aggregate(where: { point: { _gte: 0 } }) {
           aggregate {

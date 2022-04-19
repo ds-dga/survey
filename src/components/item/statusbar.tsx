@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { gql, useLazyQuery } from '@apollo/client';
+import { DocumentNode, gql, useLazyQuery } from '@apollo/client';
 import { useSession } from 'next-auth/react';
 
 import ChatBubble from '@/icons/ChatBubble';
 
+import { isGovOfficer } from '../../libs/govAccount';
+import ChildrenVoteInline from './children-vote-inline';
 import CommentList from './comment';
 import CommentForm from './commentForm';
 
@@ -13,15 +15,26 @@ type StatusBarProps = {
   parentID: string;
   // toggleVisibility: Function;
   // hidden: boolean;
+
+  initialPoints?: number;
+  myInitialPoint?: number;
+  SetPendingDeletion?: Function;
+  updateMutationQ?: DocumentNode;
+  deleteMutationQ?: DocumentNode;
 };
 
 export default function InteractiveStatusBar({
   parentType,
   parentID,
+  initialPoints,
+  myInitialPoint,
+  SetPendingDeletion,
+  updateMutationQ,
+  deleteMutationQ,
 }: StatusBarProps) {
   const timer = useRef(0);
   const [showComment, SetShowComment] = useState(false);
-  const { status: sessStatus } = useSession();
+  const { data: session, status: sessStatus } = useSession();
   const [execQuery, { data }] = useLazyQuery(STATUS_COMPONENT_QUERY);
 
   useEffect(() => {
@@ -47,30 +60,52 @@ export default function InteractiveStatusBar({
   }, [sessStatus, execQuery, parentID, parentType]);
 
   const talkTotal = data ? data.commentTotal.aggregate.count : 0;
+  const hasInlineVote =
+    isGovOfficer(session?.user) &&
+    initialPoints !== undefined &&
+    SetPendingDeletion !== undefined &&
+    updateMutationQ !== undefined &&
+    deleteMutationQ !== undefined;
 
   return (
-    <div className="px-3">
-      <button
-        className="text-sm font-medium text-sky-500"
-        onClick={() => {
-          SetShowComment(!showComment);
-        }}
-      >
-        {talkTotal} ความเห็น <ChatBubble className="inline text-xl" />
-      </button>
-
-      <CommentForm
-        parentType={parentType}
-        parentID={parentID}
-        hidden={!showComment}
-      />
-      <CommentList
-        parentType={parentType}
-        parentID={parentID}
-        hidden={!showComment}
-        toggleVisibility={SetShowComment}
-      />
-    </div>
+    <>
+      <div className="px-3 flex ">
+        {hasInlineVote && (
+          <ChildrenVoteInline
+            id={parentID}
+            parentType={parentType}
+            initialPoints={initialPoints}
+            myInitialPoint={myInitialPoint || 0} // optional
+            SetPendingDeletion={SetPendingDeletion}
+            updateMutationQ={updateMutationQ}
+            deleteMutationQ={deleteMutationQ}
+          />
+        )}
+        <button
+          className={`text-sm font-medium text-sky-500 ${
+            hasInlineVote && 'ml-1'
+          }`}
+          onClick={() => {
+            SetShowComment(!showComment);
+          }}
+        >
+          {talkTotal} ความเห็น <ChatBubble className="inline text-xl" />
+        </button>
+      </div>
+      <div>
+        <CommentForm
+          parentType={parentType}
+          parentID={parentID}
+          hidden={!showComment}
+        />
+        <CommentList
+          parentType={parentType}
+          parentID={parentID}
+          hidden={!showComment}
+          toggleVisibility={SetShowComment}
+        />
+      </div>
+    </>
   );
 }
 

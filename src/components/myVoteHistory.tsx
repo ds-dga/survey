@@ -4,13 +4,13 @@ import { useQuery, gql } from '@apollo/client';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 
-import ArrowDown from '@/icons/ArrowDown';
-import ArrowUp from '@/icons/ArrowUp';
+import ThumbDown from '@/icons/ThumbDown';
+import ThumbUp from '@/icons/ThumbUp';
 import { displayDatetime } from '@/libs/day';
 
 import Loading from './loading';
 
-export default function MyVote() {
+export default function myVoteHistory() {
   const { data: session } = useSession();
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const { data, loading, fetchMore } = useQuery(MY_VOTE_QUERY, {
@@ -22,8 +22,8 @@ export default function MyVote() {
     skip: !session,
   });
 
-  const currTotal = (data && data.items.length) || 0;
-  const total = (data && data.total.aggregate.count) || 0;
+  const currTotal = data?.items.length || 0;
+  const total = data?.total.aggregate.count || 0;
   const hasMore = total > currTotal;
 
   interface Item {
@@ -79,10 +79,9 @@ export default function MyVote() {
               </div>
             </li>
           ))}
-        {data && data.items.length === 0 && <li>ยังไม่เคยโหวต</li>}
+        {data?.items.length === 0 && <li>ยังไม่เคยโหวต</li>}
       </ul>
-      {data &&
-        data.items &&
+      {data?.items &&
         hasMore &&
         data.items.length < total &&
         (isLoadingMore ? (
@@ -153,10 +152,12 @@ function getColor(point: Number): string {
 
 function getArrow(point: Number) {
   if (point > 0) {
-    return <ArrowUp />;
+    return <ThumbUp />;
+    // return <ArrowUp />;
   }
   if (point < 0) {
-    return <ArrowDown />;
+    return <ThumbDown />;
+    // return <ArrowDown />;
   }
   return <p>-</p>;
 }
