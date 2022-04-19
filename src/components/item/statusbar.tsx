@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 
 import { DocumentNode, gql, useLazyQuery } from '@apollo/client';
 import { useSession } from 'next-auth/react';
+import { NextRouter, useRouter } from 'next/router';
 
 import ChatBubble from '@/icons/ChatBubble';
+import { extractHashRoute } from '@/libs/route';
 
 import { isGovOfficer } from '../../libs/govAccount';
 import ChildrenVoteInline from './children-vote-inline';
@@ -11,11 +13,9 @@ import CommentList from './comment';
 import CommentForm from './commentForm';
 
 type StatusBarProps = {
+  datasetID: string;
   parentType: string;
   parentID: string;
-  // toggleVisibility: Function;
-  // hidden: boolean;
-
   initialPoints?: number;
   myInitialPoint?: number;
   SetPendingDeletion?: Function;
@@ -24,6 +24,7 @@ type StatusBarProps = {
 };
 
 export default function InteractiveStatusBar({
+  datasetID,
   parentType,
   parentID,
   initialPoints,
@@ -33,9 +34,27 @@ export default function InteractiveStatusBar({
   deleteMutationQ,
 }: StatusBarProps) {
   const timer = useRef(0);
-  const [showComment, SetShowComment] = useState(false);
+  const commentRef = useRef(null);
+  const router = useRouter();
+  const isDetailPage = router.route === '/n/[ID]';
+  const [showComment, SetShowComment] = useState(
+    shouldShowCommment(parentType, parentID, router)
+  );
   const { data: session, status: sessStatus } = useSession();
   const [execQuery, { data }] = useLazyQuery(STATUS_COMPONENT_QUERY);
+
+  useEffect(() => {
+    if (shouldShowCommment(parentType, parentID, router)) {
+      setTimeout(() => {
+        window.scrollTo({
+          behavior: commentRef?.current ? 'smooth' : 'auto',
+          top: commentRef?.current
+            ? (commentRef?.current as HTMLElement).offsetTop
+            : 0,
+        });
+      }, 500);
+    }
+  }, []);
 
   useEffect(() => {
     if (sessStatus !== 'loading' && parentType && parentID) {
@@ -86,13 +105,17 @@ export default function InteractiveStatusBar({
             hasInlineVote && 'ml-1'
           }`}
           onClick={() => {
-            SetShowComment(!showComment);
+            if (isDetailPage) {
+              SetShowComment(!showComment);
+            } else {
+              router.push(`/n/${datasetID}/#${parentType}-comment/${parentID}`);
+            }
           }}
         >
           {talkTotal} ความเห็น <ChatBubble className="inline text-xl" />
         </button>
       </div>
-      <div>
+      <div ref={commentRef}>
         <CommentForm
           parentType={parentType}
           parentID={parentID}
@@ -107,6 +130,30 @@ export default function InteractiveStatusBar({
       </div>
     </>
   );
+}
+
+function shouldShowCommment(
+  parentType: string,
+  parentID: string,
+  router: NextRouter
+) {
+  const { route, asPath } = router;
+  if (route !== '/n/[ID]') return false;
+  const hashOpt = extractHashRoute(asPath);
+  if (hashOpt.length !== 2) return false;
+  if (
+    parentType === 'related' &&
+    hashOpt[0] === 'related-comment' &&
+    parentID === hashOpt[1]
+  )
+    return true;
+  if (
+    parentType === 'provider' &&
+    hashOpt[0] === 'provider-comment' &&
+    parentID === hashOpt[1]
+  )
+    return true;
+  return false;
 }
 
 export const STATUS_COMPONENT_QUERY = gql`

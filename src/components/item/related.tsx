@@ -21,6 +21,7 @@ type RelatedItemProps = {
 type ItemProps = {
   item: RelatedItemProps;
   SetHidden: Function;
+  datasetID: string;
 };
 
 type RelatedProps = {
@@ -28,7 +29,7 @@ type RelatedProps = {
   datasetID: string;
 };
 
-function RelatedItem({ item }: ItemProps) {
+function RelatedItem({ item, datasetID }: ItemProps) {
   /*
     Check - is like upvote
     Stop - is like downvote, but if it's creator, then it's deletion,
@@ -62,6 +63,7 @@ function RelatedItem({ item }: ItemProps) {
           {maintainer ? `โดย ${maintainer}` : ''}
         </div>
         <InteractiveStatusBar
+          datasetID={datasetID}
           parentID={id}
           parentType={'related'}
           myInitialPoint={myVote.length > 0 ? myVote[0].point : 0}
@@ -112,30 +114,11 @@ export default function Related({ items, datasetID }: RelatedProps) {
       {items.map((item: any, ind: number) => (
         <RelatedItem
           key={`${datasetID}-org-${ind}`}
+          datasetID={datasetID}
           item={item}
           SetHidden={SetHidden}
         />
       ))}
-      {/* <button
-        type="button"
-        className={`mt-3 px-4 py-1 text-sm rounded-full  hover:border-transparent focus:outline-none hover:scale-105 ease-in-out duration-300 ${
-          formVisible
-            ? 'focus:ring-teal-900 bg-fuchsia-700 hover:bg-fuchsia-900 text-white hover:text-white'
-            : 'focus:ring-emerald-500 bg-emerald-500 hover:bg-emerald-400 text-white hover:text-white'
-        }`}
-        onClick={() => {
-          if (sessStatus === 'authenticated') {
-            SetFormVisible(!formVisible);
-          } else {
-            SetHidden(false);
-          }
-        }}
-      >
-        {formVisible
-          ? 'ยกเลิกการเพิ่มชุดข้อมูลเปิด'
-          : 'เพิ่มข้อมูลเปิดที่ใกล้เคียง'}
-      </button> */}
-
       <RelatedForm
         datasetID={datasetID}
         hidden={!formVisible}

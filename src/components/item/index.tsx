@@ -1,11 +1,12 @@
 import { useState } from 'react';
 
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { NextRouter, useRouter } from 'next/router';
 
 import ChatBubble from '@/icons/ChatBubble';
 import LinkIcon from '@/icons/LinkIcon';
 import { displayDatetime } from '@/libs/day';
+import { extractHashRoute } from '@/libs/route';
 
 import CommentList from './comment';
 import CommentForm from './commentForm';
@@ -13,22 +14,15 @@ import Provider from './provider';
 import Related from './related';
 import VoteInline from './vote-inline';
 
+/*  Item only handles the rendering part and won't deal with fetching
+any extra data related. That's why something like # of comments will be
+missing due to the limitation of query and how we store comments.
+*/
 export default function Item({ item, commentTotal }: any) {
   const router = useRouter();
-  const [showComment, SetShowComment] = useState(false);
-  const moded = {
-    ...item,
-    vote: { up: 0, down: 0, latest: null, mine: 0 },
-    comments: [],
-  };
-  if (item.points.length > 0) {
-    moded.vote.up = item.vote_up.aggregate.sum.point;
-    moded.vote.down = item.vote_down.aggregate.sum.point;
-    moded.vote.latest = item.points[0].updated_at;
-  }
-  if (item.my_vote.length > 0) {
-    moded.vote.mine = item.my_vote[0].point;
-  }
+  const isDetailPage = router.route === '/n/[ID]';
+  const [showComment, SetShowComment] = useState(shouldShowCommment(router));
+  const moded = itemProcessor(item);
   const detailView = router.pathname === '/n/[ID]';
 
   return (
@@ -62,21 +56,19 @@ export default function Item({ item, commentTotal }: any) {
         <span className="px-1">
           {moded.vote.latest ? `${displayDatetime(moded.vote.latest)} | ` : ''}
         </span>
-        {/* {moded.vote.up || 0} โหวต{" "}
-        <ArrowUp className="inline" fill={"#10b981"} />{" "}
-        {Math.abs(moded.vote.down) || 0} โหวต{" "}
-        <ArrowDown className="inline" fill={"#fb7185"} />{" "} */}
-        {commentTotal && (
-          <button
-            className="text-sm font-medium text-sky-500"
-            onClick={() => {
+        <button
+          className="text-sm font-medium text-sky-500"
+          onClick={() => {
+            if (isDetailPage) {
               SetShowComment(!showComment);
-            }}
-          >
-            {commentTotal.aggregate.count} ความเห็น{' '}
-            <ChatBubble className="inline text-xl" />
-          </button>
-        )}
+            } else {
+              router.push(`/n/${moded.id}/#comment`);
+            }
+          }}
+        >
+          {commentTotal && `${commentTotal.aggregate.count} `}
+          ความเห็น <ChatBubble className="inline text-xl" />
+        </button>
       </div>
 
       <CommentForm
@@ -102,4 +94,30 @@ export default function Item({ item, commentTotal }: any) {
       </div>
     </div>
   );
+}
+
+function itemProcessor(item) {
+  const moded = {
+    ...item,
+    vote: { up: 0, down: 0, latest: null, mine: 0 },
+    comments: [],
+  };
+  if (item.points.length > 0) {
+    moded.vote.up = item.vote_up.aggregate.sum.point;
+    moded.vote.down = item.vote_down.aggregate.sum.point;
+    moded.vote.latest = item.points[0].updated_at;
+  }
+  if (item.my_vote.length > 0) {
+    moded.vote.mine = item.my_vote[0].point;
+  }
+  return moded;
+}
+
+function shouldShowCommment(router: NextRouter) {
+  const { route, asPath } = router;
+  if (route !== '/n/[ID]') return false;
+  const hashOpt = extractHashRoute(asPath);
+  if (hashOpt.length !== 1) return false;
+  if (hashOpt[0] === 'comment') return true;
+  return false;
 }

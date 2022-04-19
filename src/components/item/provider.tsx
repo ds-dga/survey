@@ -19,6 +19,7 @@ type OrgProps = {
 type ItemProps = {
   organization: OrgProps;
   SetHidden: Function;
+  datasetID: string;
 };
 
 type ProviderProps = {
@@ -26,7 +27,7 @@ type ProviderProps = {
   datasetID: string;
 };
 
-function ProviderItem({ organization }: ItemProps) {
+function ProviderItem({ organization, datasetID }: ItemProps) {
   /*
     Check - is like upvote
     Stop - is like downvote, but if it's creator, then it's deletion,
@@ -51,6 +52,7 @@ function ProviderItem({ organization }: ItemProps) {
       <div className="">
         ‣ {name}
         <InteractiveStatusBar
+          datasetID={datasetID}
           parentID={id}
           parentType={'provider'}
           myInitialPoint={myVote.length > 0 ? myVote[0].point : 0}
@@ -98,6 +100,7 @@ export default function Provider({ orgs, datasetID }: ProviderProps) {
       {orgs.map((org: any, ind: number) => (
         <ProviderItem
           key={`${datasetID}-org-${ind}`}
+          datasetID={datasetID}
           organization={org}
           SetHidden={SetHidden}
         />
