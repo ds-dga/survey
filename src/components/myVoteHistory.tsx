@@ -10,7 +10,7 @@ import { displayDatetime } from '@/libs/day';
 
 import Loading from './loading';
 
-export default function myVoteHistory() {
+export default function MyVoteHistory() {
   const { data: session } = useSession();
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const { data, loading, fetchMore } = useQuery(MY_VOTE_QUERY, {

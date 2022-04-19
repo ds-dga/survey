@@ -120,6 +120,7 @@ export default function InteractiveStatusBar({
           parentType={parentType}
           parentID={parentID}
           hidden={!showComment}
+          {...getCommentFormText(parentType)}
         />
         <CommentList
           parentType={parentType}
@@ -130,6 +131,23 @@ export default function InteractiveStatusBar({
       </div>
     </>
   );
+}
+
+function getCommentFormText(parentType) {
+  if (parentType === 'related') {
+    return {
+      title: 'ความคิดเห็นของคุณต่อข้อมูลนี้',
+      placeHolder: 'ข้อคิดเห็น/เสนอแนะสำหรับข้อมูลนี้',
+    };
+  }
+  if (parentType === 'provider') {
+    return {
+      title: 'ความคิดเห็นของคุณต่อหน่วยงานนี้',
+      placeHolder:
+        'ข้อคิดเห็น/เสนอแนะสำหรับหน่วยงานนี้ต่อการเปิดเผยข้อมูลชุดนี้',
+    };
+  }
+  return {};
 }
 
 function shouldShowCommment(

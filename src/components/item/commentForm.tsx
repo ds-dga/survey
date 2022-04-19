@@ -7,12 +7,16 @@ type CommentFormProps = {
   parentType: string;
   parentID: string;
   hidden: boolean;
+  title?: string;
+  placeHolder?: string;
 };
 
 export default function CommentForm({
   parentType,
   parentID,
   hidden,
+  title,
+  placeHolder,
 }: CommentFormProps) {
   const [createComment] = useMutation(CREATE_COMMENT_FORM);
   const {
@@ -60,7 +64,7 @@ export default function CommentForm({
           htmlFor="commentForm"
           className="block text-sm font-medium text-gray-700"
         >
-          ความคิดเห็นของคุณต่อชุดข้อมูลนี้
+          {title || 'ความคิดเห็นของคุณต่อชุดข้อมูลนี้'}
           {errors && errors.note && (
             <span className="px-3 italic text-rose-500">จำเป็น</span>
           )}
@@ -71,7 +75,7 @@ export default function CommentForm({
             id="commentForm"
             rows={3}
             className="shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
-            placeholder="ข้อคิดเห็น/เสนอแนะสำหรับชุดข้อมูลนี้"
+            placeholder={placeHolder || 'ข้อคิดเห็น/เสนอแนะสำหรับชุดข้อมูลนี้'}
             defaultValue={''}
           />
         </div>
