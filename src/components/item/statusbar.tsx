@@ -90,7 +90,7 @@ export default function InteractiveStatusBar({
     updateMutationQ !== undefined &&
     deleteMutationQ !== undefined;
 
-  console.log('[statusbar] ', commentHidden, commentLabel);
+  // console.log('[statusbar] ', commentHidden, commentLabel);
   return (
     <>
       <div className="px-3 flex ">
