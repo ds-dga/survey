@@ -27,7 +27,7 @@ export default NextAuth({
     DigitalProvider({
       clientId: process.env.DIGITALID_ID!,
       clientSecret: process.env.DIGITALID_SECRET!,
-      issuer: 'https://connect.dga.or.th',
+      issuer: process.env.DIGITALID_ISSUER || 'https://connect.dga.or.th',
       // @ts-ignore
     }),
     GoogleProvider({
