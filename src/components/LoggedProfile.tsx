@@ -1,6 +1,5 @@
 import { signOut } from 'next-auth/react';
 
-import { isGovOfficer } from '../libs/govAccount';
 import MyContribution from './myContribution';
 import MyVoteHistory from './myVoteHistory';
 
@@ -52,7 +51,7 @@ export default function LoggedProfile({ user }) {
             <h3 className="text-gray-600 font-sm leading-6 overflow-auto">
               {user.email}
             </h3>
-            <ul className="bg-gray-100 text-gray-600 px-3 mt-3 divide-y rounded shadow-sm">
+            {/* <ul className="bg-gray-100 text-gray-600 px-3 mt-3 divide-y rounded shadow-sm">
               {isGovOfficer(user) ? (
                 <li className="flex gap-1 items-center py-3">
                   <span>ผู้ใช้</span>
@@ -68,7 +67,7 @@ export default function LoggedProfile({ user }) {
                   ผู้ใช้ของภาครัฐ?
                 </button>
               )}
-            </ul>
+            </ul> */}
 
             <button
               className="block w-full text-blue-800 text-sm font-semibold rounded-lg hover:bg-gray-100 focus:outline-none focus:shadow-outline focus:bg-gray-100 hover:shadow-xs p-3 my-4"

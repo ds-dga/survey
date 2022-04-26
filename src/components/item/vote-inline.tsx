@@ -3,12 +3,10 @@ import { useEffect, useRef, useState } from 'react';
 import { gql, useMutation } from '@apollo/client';
 import dayjs from 'dayjs';
 import { useSession } from 'next-auth/react';
-import Link from 'next/link';
 
 import ThumbDown from '@/icons/ThumbDown';
 import ThumbUp from '@/icons/ThumbUp';
 
-import Modal from '../modal';
 import { wording } from './wording';
 
 type InitProps = {
@@ -20,18 +18,21 @@ type InitProps = {
 type VoteProps = {
   initialValue: InitProps;
   datasetID: string;
+  noAuthHidden: boolean;
+  SetHideNoAuth: Function;
 };
 
-export default function VoteInline({ initialValue, datasetID }: VoteProps) {
+export default function VoteInline({
+  initialValue,
+  datasetID,
+  SetHideNoAuth,
+}: VoteProps) {
   const timer = useRef(0);
   const { status: sessStatus } = useSession();
-  const [upsertVote, { loading }] = useMutation(MUTATE_DATASET_POINTS);
-  const [noActionAllowed, SetNoActionAllowed] = useState(true);
-  const [noActMsg, SetNoActMessage] = useState('');
+  const [upsertVote] = useMutation(MUTATE_DATASET_POINTS);
   const [Action, SetAction] = useState('-'); // 3 states: up, down, -
   const [Point, SetPoint] = useState(+initialValue.up + +initialValue.down);
   const [MyVote, SetMyVote] = useState(initialValue.mine);
-  const [Hidden, SetHidden] = useState(true);
 
   useEffect(() => {
     if (initialValue.mine < 0) {
@@ -42,21 +43,6 @@ export default function VoteInline({ initialValue, datasetID }: VoteProps) {
       SetAction('up');
     }
   }, [initialValue]);
-
-  useEffect(() => {
-    if (sessStatus !== 'authenticated') {
-      SetNoActMessage('โปรดเข้าสู่ระบบก่อน');
-      SetNoActionAllowed(true);
-      return;
-    }
-    if (loading) {
-      SetNoActMessage('Processing');
-      SetNoActionAllowed(true);
-      return;
-    }
-    SetNoActionAllowed(false);
-    SetNoActMessage('');
-  }, [loading, sessStatus]);
 
   function verifyIfrecorded(currScore, votingPoint, mutationResult) {
     let latestPoint = currScore;
@@ -75,9 +61,7 @@ export default function VoteInline({ initialValue, datasetID }: VoteProps) {
       // console.log("verify[err] ", e)
     } finally {
       SetPoint(latestPoint);
-      // console.log("verify[finally] ")
-      SetNoActionAllowed(false);
-      SetNoActMessage('');
+      SetHideNoAuth(true);
     }
   }
 
@@ -140,72 +124,14 @@ export default function VoteInline({ initialValue, datasetID }: VoteProps) {
   /* Provider vote only applied to govOfficer #### >>> */
   return (
     <span className="inline">
-      {!Hidden && (
-        <Modal
-          hidden={false}
-          handleHidden={SetHidden}
-          footer={
-            <button
-              type="button"
-              className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-              onClick={() => {
-                SetHidden(true);
-              }}
-            >
-              Close
-            </button>
-          }
-          content={
-            <div className="sm:flex sm:items-start">
-              <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                {/* <!-- Heroicon name: outline/exclamation --> */}
-                <svg
-                  className="h-6 w-6 text-red-600"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                  />
-                </svg>
-              </div>
-              <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                <h3
-                  className="text-lg leading-6 font-medium text-gray-900"
-                  id="modal-title"
-                >
-                  {noActMsg}
-                </h3>
-                <div className="mt-2">
-                  <div className="text-sm text-gray-500">
-                    คุณจำเป็นจะต้องเข้าสู่ระบบก่อนจึงจะสามารถโหวต
-                    หรือเพิ่มเติมข้อมูลได้
-                  </div>
-                  <Link href="/profile" passHref>
-                    <div className="mt-3 w-full inline-flex justify-center rounded-md shadow-sm px-4 py-2 cursor-pointer text-base text-white font-medium bg-emerald-500  focus:ring-emerald-500 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm hover:bg-emerald-400 ">
-                      เข้าสู่ระบบ
-                    </div>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          }
-        />
-      )}
       <div className={`text-md text-gray-600 flex items-center`}>
         <span className={`font-mono text-xs ${noColor} pr-1`}>{Point}</span>
         <span
           className="px-1 pb-1 hover:bg-slate-200"
           title={wording.like}
           onClick={() => {
-            if (noActionAllowed) {
-              SetHidden(false);
+            if (sessStatus !== 'authenticated') {
+              SetHideNoAuth(false);
               // alert(noActMsg);
               return;
             }
@@ -221,8 +147,8 @@ export default function VoteInline({ initialValue, datasetID }: VoteProps) {
           className="px-1 pb-1 hover:bg-slate-200"
           title={wording.unlike}
           onClick={async () => {
-            if (noActionAllowed) {
-              SetHidden(false);
+            if (sessStatus !== 'authenticated') {
+              SetHideNoAuth(false);
               return;
             }
             calcVote(Action === 'down' ? '-' : 'down');
