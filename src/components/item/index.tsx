@@ -66,7 +66,7 @@ export default function Item({ item, commentTotal }: any) {
           }}
         >
           {commentTotal && `${commentTotal.aggregate.count} `}
-          ความเห็น <ChatBubble className="inline text-xl" />
+          ความเห็นต่อชุดข้อมูล <ChatBubble className="inline text-xl" />
         </button>
       </div>
 

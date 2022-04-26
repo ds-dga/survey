@@ -71,6 +71,7 @@ function RelatedItem({ item, datasetID }: ItemProps) {
           SetPendingDeletion={SetPendingDeletion}
           updateMutationQ={MUTATE_RELATED_POINTS}
           deleteMutationQ={MUTATE_RELATED_DELETION}
+          commentLabel={'ความเห็นต่อไฟล์หรือต่อหน่วยงานที่รับผิดชอบข้อมูล'}
         />
       </div>
     </div>

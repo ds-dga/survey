@@ -21,6 +21,8 @@ type StatusBarProps = {
   SetPendingDeletion?: Function;
   updateMutationQ?: DocumentNode;
   deleteMutationQ?: DocumentNode;
+  commentHidden?: boolean;
+  commentLabel?: string;
 };
 
 export default function InteractiveStatusBar({
@@ -32,6 +34,8 @@ export default function InteractiveStatusBar({
   SetPendingDeletion,
   updateMutationQ,
   deleteMutationQ,
+  commentLabel,
+  commentHidden,
 }: StatusBarProps) {
   const timer = useRef(0);
   const commentRef = useRef(null);
@@ -54,7 +58,7 @@ export default function InteractiveStatusBar({
         });
       }, 500);
     }
-  }, []);
+  }, [parentID, parentType, router]);
 
   useEffect(() => {
     if (sessStatus !== 'loading' && parentType && parentID) {
@@ -86,6 +90,7 @@ export default function InteractiveStatusBar({
     updateMutationQ !== undefined &&
     deleteMutationQ !== undefined;
 
+  console.log('[statusbar] ', commentHidden, commentLabel);
   return (
     <>
       <div className="px-3 flex ">
@@ -100,35 +105,43 @@ export default function InteractiveStatusBar({
             deleteMutationQ={deleteMutationQ}
           />
         )}
-        <button
-          className={`text-sm font-medium text-sky-500 ${
-            hasInlineVote && 'ml-1'
-          }`}
-          onClick={() => {
-            if (isDetailPage) {
-              SetShowComment(!showComment);
-            } else {
-              router.push(`/n/${datasetID}/#${parentType}-comment/${parentID}`);
-            }
-          }}
-        >
-          {talkTotal} ความเห็น <ChatBubble className="inline text-xl" />
-        </button>
+        {!commentHidden && (
+          <button
+            className={`text-sm font-medium text-sky-500 ${
+              hasInlineVote && 'ml-1'
+            }`}
+            onClick={() => {
+              if (isDetailPage) {
+                SetShowComment(!showComment);
+              } else {
+                router.push(
+                  `/n/${datasetID}/#${parentType}-comment/${parentID}`
+                );
+              }
+            }}
+          >
+            {talkTotal} {commentLabel || 'ความเห็น'}{' '}
+            <ChatBubble className="inline text-xl" />
+          </button>
+        )}
       </div>
-      <div ref={commentRef}>
-        <CommentForm
-          parentType={parentType}
-          parentID={parentID}
-          hidden={!showComment}
-          {...getCommentFormText(parentType)}
-        />
-        <CommentList
-          parentType={parentType}
-          parentID={parentID}
-          hidden={!showComment}
-          toggleVisibility={SetShowComment}
-        />
-      </div>
+      {!commentHidden && (
+        <div ref={commentRef}>
+          <CommentForm
+            parentType={parentType}
+            parentID={parentID}
+            hidden={!showComment}
+            {...getCommentFormText(parentType)}
+            title={commentLabel}
+          />
+          <CommentList
+            parentType={parentType}
+            parentID={parentID}
+            hidden={!showComment}
+            toggleVisibility={SetShowComment}
+          />
+        </div>
+      )}
     </>
   );
 }

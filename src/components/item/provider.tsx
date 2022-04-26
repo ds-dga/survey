@@ -60,6 +60,7 @@ function ProviderItem({ organization, datasetID }: ItemProps) {
           SetPendingDeletion={SetPendingDeletion}
           updateMutationQ={MUTATE_PROVIDER_POINTS}
           deleteMutationQ={MUTATE_PROVIDER_DELETION}
+          commentHidden={true}
         />
       </div>
     </div>
