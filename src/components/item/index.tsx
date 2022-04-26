@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { NextRouter, useRouter } from 'next/router';
 
@@ -8,6 +9,7 @@ import LinkIcon from '@/icons/LinkIcon';
 import { displayDatetime } from '@/libs/day';
 import { extractHashRoute } from '@/libs/route';
 
+import Modal from '../modal';
 import CommentList from './comment';
 import CommentForm from './commentForm';
 import Provider from './provider';
@@ -19,6 +21,8 @@ any extra data related. That's why something like # of comments will be
 missing due to the limitation of query and how we store comments.
 */
 export default function Item({ item, commentTotal }: any) {
+  const [NoAuthHidden, SetHideNoAuth] = useState(true);
+  const { status: sessStatus } = useSession();
   const router = useRouter();
   const isDetailPage = router.route === '/n/[ID]';
   const [showComment, SetShowComment] = useState(shouldShowCommment(router));
@@ -27,6 +31,7 @@ export default function Item({ item, commentTotal }: any) {
 
   return (
     <div className="group relative rounded-md shadow-md border-2 border-slate-50 bg-slate-50 pb-3 px-5">
+      {!NoAuthHidden && <Modal hidden={false} handleHidden={SetHideNoAuth} />}
       {!detailView && (
         <span className="float-right">
           <Link passHref href={`/n/${moded.id}`}>
@@ -50,7 +55,12 @@ export default function Item({ item, commentTotal }: any) {
         </div>
       </div>
       <div className="text-sm text-gray-500 flex">
-        <VoteInline datasetID={moded.id} initialValue={moded.vote} />
+        <VoteInline
+          datasetID={moded.id}
+          initialValue={moded.vote}
+          noAuthHidden={NoAuthHidden}
+          SetHideNoAuth={SetHideNoAuth}
+        />
         &nbsp;|&nbsp;
         <span className="px-1">
           {moded.vote.latest ? `${displayDatetime(moded.vote.latest)} | ` : ''}
@@ -58,7 +68,9 @@ export default function Item({ item, commentTotal }: any) {
         <button
           className="text-sm font-medium text-sky-500"
           onClick={() => {
-            if (isDetailPage) {
+            if (sessStatus !== 'authenticated') {
+              SetHideNoAuth(false);
+            } else if (isDetailPage) {
               SetShowComment(!showComment);
             } else {
               router.push(`/n/${moded.id}/#comment`);

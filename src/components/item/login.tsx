@@ -47,8 +47,6 @@ export default function Login({ providers }: LoginProps) {
       <div className="text-xl m-5 text-slate-500">เข้าสู่ระบบ</div>
       <div className="flex gap-5">
         {Object.values(providers).map((provider) => {
-          const pID = getClassByProvider(provider.id);
-          console.log('provider', provider, pID);
           return (
             <div key={provider.name}>
               <button

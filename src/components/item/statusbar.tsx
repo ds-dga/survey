@@ -8,6 +8,7 @@ import ChatBubble from '@/icons/ChatBubble';
 import { extractHashRoute } from '@/libs/route';
 
 import { isGovOfficer } from '../../libs/govAccount';
+import Modal from '../modal';
 import ChildrenVoteInline from './children-vote-inline';
 import CommentList from './comment';
 import CommentForm from './commentForm';
@@ -39,6 +40,7 @@ export default function InteractiveStatusBar({
 }: StatusBarProps) {
   const timer = useRef(0);
   const commentRef = useRef(null);
+  const [NoAuthHidden, SetHideNoAuth] = useState(true);
   const router = useRouter();
   const isDetailPage = router.route === '/n/[ID]';
   const [showComment, SetShowComment] = useState(
@@ -93,6 +95,7 @@ export default function InteractiveStatusBar({
   // console.log('[statusbar] ', commentHidden, commentLabel);
   return (
     <>
+      {!NoAuthHidden && <Modal hidden={false} handleHidden={SetHideNoAuth} />}
       <div className="px-3 flex ">
         {hasInlineVote && (
           <ChildrenVoteInline
@@ -111,6 +114,10 @@ export default function InteractiveStatusBar({
               hasInlineVote && 'ml-1'
             }`}
             onClick={() => {
+              if (sessStatus !== 'authenticated') {
+                SetHideNoAuth(false);
+                return;
+              }
               if (isDetailPage) {
                 SetShowComment(!showComment);
               } else {
