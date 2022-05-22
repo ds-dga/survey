@@ -12,6 +12,7 @@ import { extractHashRoute } from '@/libs/route';
 import Modal from '../modal';
 import CommentList from './comment';
 import CommentForm from './commentForm';
+import StatusDot from './dot';
 import Provider from './provider';
 import Related from './related';
 import VoteInline from './vote-inline';
@@ -32,21 +33,17 @@ export default function Item({ item, commentTotal }: any) {
   return (
     <div className="group relative rounded-md shadow-md border-2 border-slate-50 bg-slate-50 pb-3 px-5">
       {!NoAuthHidden && <Modal hidden={false} handleHidden={SetHideNoAuth} />}
-      {!detailView && (
-        <span className="float-right">
-          <div className="flex items-baseline gap-2">
-            <div className="flex relative h-3 w-3" title="สถานะ">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-5  "></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
-            </div>
+      <span className="float-right">
+        <div className="flex items-baseline gap-2">
+          {!detailView && (
             <Link passHref href={`/n/${moded.id}`}>
               <div className="text text-gray-500 mt-1 zmax-w-2xl text-xl cursor-pointer">
                 <LinkIcon className="inline" fill={'#10b981'} />
               </div>
             </Link>
-          </div>
-        </span>
-      )}
+          )}
+        </div>
+      </span>
       <div className="pt-3 flex gap-3">
         {/* <Vote datasetID={moded.id} initialValue={moded.vote} /> */}
         <div>
@@ -55,8 +52,8 @@ export default function Item({ item, commentTotal }: any) {
               {moded.category.name}
             </span>
           </Link>
-          <h3 className="text-xl leading-6 font-medium text-gray-900">
-            {moded.name}
+          <h3 className="text-xl leading-6 font-medium text-gray-900 flex items-center gap-1">
+            <StatusDot state={moded.status} /> {moded.name}
           </h3>
         </div>
       </div>
@@ -86,10 +83,6 @@ export default function Item({ item, commentTotal }: any) {
           {commentTotal && `${commentTotal.aggregate.count} `}
           ความเห็นต่อชุดข้อมูล <ChatBubble className="inline text-xl" />
         </button>
-      </div>
-
-      <div className="relative rounded transition delay-150 origin-bottom -rotate-12 scale-150 text-xl opacity-80 border-4 py-1 px-4 w-fit -translate-x-8 -translate-y-8 float-right cursor-pointer bg-green-100 text-green-700 border-green-700 hover:bg-teal-100 hover:text-teal-800 hover:border-teal-800">
-        เรียบร้อย ⬇️
       </div>
 
       <CommentForm

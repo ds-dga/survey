@@ -84,6 +84,7 @@ const CATEGORY_ITEMS_QUERY = gql`
     ) {
       id
       name
+      status
       category {
         id
         name

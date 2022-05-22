@@ -55,6 +55,7 @@ const POPULAR_QUERY = gql`
     ) {
       id
       name
+      status
       category {
         id
         name
