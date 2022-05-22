@@ -53,7 +53,7 @@ export default function CategoryOne() {
                 alt={cat.name}
               />
             )}
-            {cat?.name || 'Category'}
+            {cat?.name || 'กลุ่มชุดข้อมูล'}
           </div>
           <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-6 mb-20">
             {data &&

@@ -97,7 +97,7 @@ export default function Related({ items, datasetID }: RelatedProps) {
           }
         }}
       >
-        ชุดข้อมูลภายใต้ชุดนี้ข้อมูลนี้
+        แนะนำชุดข้อมูลที่ใกล้เคียง
         <svg
           viewBox="0 0 32 32"
           className="inline mx-1 h-4 w-4 fill-slate-600 hover:fill-emerald-600"

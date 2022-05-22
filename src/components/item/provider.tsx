@@ -84,7 +84,7 @@ export default function Provider({ orgs, datasetID }: ProviderProps) {
           }
         }}
       >
-        อยากได้ข้อมูลจากหน่วยงาน...
+        หน่วยงาน
         <svg
           viewBox="0 0 32 32"
           className="inline mx-1 h-4 w-4 fill-slate-600 hover:fill-emerald-600"

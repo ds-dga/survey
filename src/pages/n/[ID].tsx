@@ -36,10 +36,15 @@ export default function DatasetOne() {
       }
     >
       <div className="container mx-auto">
-        <Loading hidden={!loading} />
-        <div className="m-5">
+        <div className="m-3">
+          <div className="flex flex-row items-center">
+            <img className={`h-10`} src={`/assets/logo/digi.png`} alt="DIGI" />
+            <div className="text-slate-600 text-2xl font-normal flex-1 text-center">
+              ชุดข้อมูล
+            </div>
+          </div>
+          <Loading hidden={!loading} />
           {error && <p>{error.message} ... </p>}
-          <div className="text-slate-600 text-2xl font-normal">ชุดข้อมูล</div>
           <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-6 mb-20">
             {data && (
               <Item
