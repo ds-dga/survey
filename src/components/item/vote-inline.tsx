@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { MutableRefObject, useRef, useState } from 'react';
 
 import { gql, useMutation } from '@apollo/client';
 import dayjs from 'dayjs';
@@ -33,43 +33,19 @@ export default function VoteInline({
   const [MyPoint, SetMyPoint] = useState(+initialValue.mine);
   const init = initialValue;
 
-  function verifyMutation(mutationResult) {
-    try {
-      const {
-        insert_dataset_points: { returning },
-      } = mutationResult.data;
-      const confirmObj = returning[0];
-      SetMyPoint(confirmObj.point);
-    } catch (e) {
-      // console.log("verify[err] ", e)
+  let currUp = +init.up || 0;
+  let currDown = +init.down || 0;
+  if (MyPoint !== +init.mine) {
+    if (+init.mine > 0) {
+      currUp -= 1;
+    } else if (+init.mine < 0) {
+      currDown += 1;
     }
-  }
-
-  function saveVote(action: string) {
-    clearTimeout(timer.current);
-    timer.current = window.setTimeout(async () => {
-      // update vote to timer
-      const today = dayjs().format('YYYY-MM-DD');
-      let ownVal = 0;
-      switch (action) {
-        case 'up':
-          ownVal = 1;
-          break;
-        case 'down':
-          ownVal = -1;
-          break;
-        default:
-          break;
-      }
-      const result = await upsertVote({
-        variables: {
-          point: ownVal,
-          day: today,
-          datasetID,
-        },
-      });
-      verifyMutation(result);
-    }, 2000);
+    if (MyPoint > 0) {
+      currUp += 1;
+    } else if (MyPoint < 0) {
+      currDown -= 1;
+    }
   }
 
   /* Provider vote only applied to govOfficer #### >>> */
@@ -81,9 +57,9 @@ export default function VoteInline({
             MyPoint > 0 ? 'text-green-500' : 'text-gray-500'
           }`}
         >
-          {+init.up !== 0 && init.up}
+          {+currUp !== 0 && currUp}
           <span
-            className="px-1 pb-1 hover:bg-slate-200"
+            className="cursor-pointer px-1 pb-1 hover:bg-slate-200"
             title={wording.like}
             onClick={() => {
               if (sessStatus !== 'authenticated') {
@@ -91,8 +67,9 @@ export default function VoteInline({
                 // alert(noActMsg);
                 return;
               }
-              saveVote(MyPoint > 0 ? '-' : 'up');
-              // calcVote(Action === 'up' ? '-' : 'up');
+              const act = MyPoint > 0 ? '-' : 'up';
+              const idObj = { datasetID };
+              handleVoteChange(act, upsertVote, SetMyPoint, idObj, timer);
             }}
           >
             <ThumbUp
@@ -106,17 +83,20 @@ export default function VoteInline({
             MyPoint < 0 ? 'text-rose-500' : 'text-gray-500'
           }`}
         >
-          {+init.down !== 0 && Math.abs(+init.down)}
+          {+currDown !== 0 && Math.abs(+currDown)}
           <span
-            className="px-1 pb-1 hover:bg-slate-200"
+            className="cursor-pointer px-1 pb-1 hover:bg-slate-200"
             title={wording.unlike}
             onClick={async () => {
               if (sessStatus !== 'authenticated') {
                 SetHideNoAuth(false);
                 return;
               }
-              saveVote(MyPoint < 0 ? '-' : 'down');
-              // calcVote(Action === 'down' ? '-' : 'down');
+              clearTimeout(timer.current);
+
+              const act = MyPoint < 0 ? '-' : 'down';
+              const idObj = { datasetID };
+              handleVoteChange(act, upsertVote, SetMyPoint, idObj, timer);
             }}
           >
             <ThumbDown
@@ -155,3 +135,45 @@ const MUTATE_DATASET_POINTS = gql`
     }
   }
 `;
+
+export function handleVoteChange(
+  action: string,
+  mutate: Function,
+  setOwnPoint: Function,
+  idObj: object,
+  timer: MutableRefObject<number>
+) {
+  clearTimeout(timer.current);
+  // eslint-disable-next-line no-param-reassign
+  timer.current = window.setTimeout(async () => {
+    // update vote to timer
+    const today = dayjs().format('YYYY-MM-DD');
+    let ownVal = 0;
+    switch (action) {
+      case 'up':
+        ownVal = 1;
+        break;
+      case 'down':
+        ownVal = -1;
+        break;
+      default:
+        break;
+    }
+    const result = await mutate({
+      variables: {
+        point: ownVal,
+        day: today,
+        ...idObj,
+      },
+    });
+    try {
+      const {
+        insert_dataset_points: { returning },
+      } = result.data;
+      const confirmObj = returning[0];
+      setOwnPoint(confirmObj.point);
+    } catch (e) {
+      // console.log("verify[err] ", e)
+    }
+  }, 2000);
+}
