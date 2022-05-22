@@ -10,9 +10,9 @@ import { Meta } from '@/layout/Meta';
 import { Main } from '@/templates/Main';
 
 export default function Search() {
-  const [Q, SetQ] = useState('');
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const { data: session } = useSession();
+  const [Q, SetQ] = useState('');
   const [GQLVars, SetGQLVars] = useState({
     votedByWhere: {},
     relatedVotedWhere: {},

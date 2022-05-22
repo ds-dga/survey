@@ -34,11 +34,17 @@ export default function Item({ item, commentTotal }: any) {
       {!NoAuthHidden && <Modal hidden={false} handleHidden={SetHideNoAuth} />}
       {!detailView && (
         <span className="float-right">
-          <Link passHref href={`/n/${moded.id}`}>
-            <div className="text text-gray-500 mt-1 zmax-w-2xl text-xl cursor-pointer">
-              <LinkIcon className="inline" fill={'#10b981'} />
+          <div className="flex items-baseline gap-2">
+            <div className="flex relative h-3 w-3" title="สถานะ">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-5  "></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
             </div>
-          </Link>
+            <Link passHref href={`/n/${moded.id}`}>
+              <div className="text text-gray-500 mt-1 zmax-w-2xl text-xl cursor-pointer">
+                <LinkIcon className="inline" fill={'#10b981'} />
+              </div>
+            </Link>
+          </div>
         </span>
       )}
       <div className="pt-3 flex gap-3">
@@ -80,6 +86,10 @@ export default function Item({ item, commentTotal }: any) {
           {commentTotal && `${commentTotal.aggregate.count} `}
           ความเห็นต่อชุดข้อมูล <ChatBubble className="inline text-xl" />
         </button>
+      </div>
+
+      <div className="relative rounded transition delay-150 origin-bottom -rotate-12 scale-150 text-xl opacity-80 border-4 py-1 px-4 w-fit -translate-x-8 -translate-y-8 float-right cursor-pointer bg-green-100 text-green-700 border-green-700 hover:bg-teal-100 hover:text-teal-800 hover:border-teal-800">
+        เรียบร้อย ⬇️
       </div>
 
       <CommentForm
