@@ -184,6 +184,7 @@ const DATASET_SEARCH_QUERY = gql`
     ) {
       id
       name
+      status
       category {
         id
         name

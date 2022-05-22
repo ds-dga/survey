@@ -9,6 +9,7 @@ import LinkIcon from '@/icons/LinkIcon';
 import { displayDate } from '@/libs/day';
 
 import Modal from '../modal';
+import StatusDot from './dot';
 import VoteInline from './vote-inline';
 
 export default function MinimalItem({ item, commentTotal }: any) {
@@ -19,23 +20,16 @@ export default function MinimalItem({ item, commentTotal }: any) {
   const [showComment, SetShowComment] = useState(false);
   const moded = itemProcessor(item);
   const detailView = router.pathname === '/n/[ID]';
-
   return (
-    <div className="group relative rounded-md shadow-md border-2 border-slate-50 bg-slate-50 py-2 px-3">
+    <div className="group relative rounded-md shadow-md border-2 border-slate-50 bg-slate-50 py-0 pb-2 px-3">
       {!NoAuthHidden && <Modal hidden={false} handleHidden={SetHideNoAuth} />}
       {!detailView && (
         <span className="float-right">
-          <div className="flex items-baseline gap-2">
-            <div className="flex relative h-3 w-3" title="สถานะ">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-5  "></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
+          <Link passHref href={`/n/${moded.id}`}>
+            <div className="text text-gray-500 mt-1 zmax-w-2xl text-xl cursor-pointer">
+              <LinkIcon className="inline" fill={'#10b981'} />
             </div>
-            <Link passHref href={`/n/${moded.id}`}>
-              <div className="text text-gray-500 mt-1 zmax-w-2xl text-xl cursor-pointer">
-                <LinkIcon className="inline" fill={'#10b981'} />
-              </div>
-            </Link>
-          </div>
+          </Link>
         </span>
       )}
       <div className="flex gap-3">
@@ -46,7 +40,8 @@ export default function MinimalItem({ item, commentTotal }: any) {
               {moded.category.name}
             </span>
           </Link>
-          <h3 className="text-lg leading-6 font-medium text-gray-900">
+          <h3 className="text-lg leading-6 font-medium text-gray-900 flex items-center gap-1">
+            <StatusDot state={moded.status} />
             {moded.name}
           </h3>
         </div>

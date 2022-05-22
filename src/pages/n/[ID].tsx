@@ -70,6 +70,7 @@ const DATASET_ONE_QUERY = gql`
     item: dataset_by_pk(id: $ID) {
       id
       name
+      status
       category {
         id
         name
