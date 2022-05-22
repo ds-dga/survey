@@ -12,7 +12,10 @@ export default function Privacy() {
       }
     >
       <div className="container mx-auto prose bg-slate-50 p-5">
-        <h1 className="">นโยบายความเป็นส่วนตัว</h1>
+        <div className="flex flex-row items-center">
+          <img className={`h-10`} src={`/assets/logo/digi.png`} alt="DIGI" />
+          <h1 className="flex-1 text-center">นโยบายความเป็นส่วนตัว</h1>
+        </div>
 
         <p>
           แอปพลิเคชันนี้เป็นการให้บริการทางดิจิทัลที่พัฒนาและดูแลโดย สพร. ซึ่ง

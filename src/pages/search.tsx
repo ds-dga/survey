@@ -94,9 +94,12 @@ export default function Search() {
       }
     >
       <div className="container mx-auto">
-        <h1 className="font-semibold text-2xl text-gray-700 text-center my-5">
-          รายการข้อมูลเปิดที่ประชาชนต้องการจากภาครัฐ
-        </h1>
+        <div className="flex flex-row items-center">
+          <img className={`h-10`} src={`/assets/logo/digi.png`} alt="DIGI" />
+          <h1 className="font-semibold text-lg text-gray-700 text-center flex-1 my-5">
+            ค้นหารายการข้อมูลเปิดที่ประชาชนต้องการจากภาครัฐ
+          </h1>
+        </div>
         <Loading hidden={!loading} />
         {/* {session && <LoggedProfile user={session.user} />}
         {!session && (
@@ -117,7 +120,7 @@ export default function Search() {
             autoComplete="off"
           />
         </div>
-        <div className="mt-6 grid grid-cols-1 gap-y-2 gap-x-6">
+        <div className="mt-6 grid grid-cols-1 gap-y-2 gap-x-6 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
           {data &&
             data.items.map((item) => (
               <MinimalItem key={`s-${item.id}`} item={item} />

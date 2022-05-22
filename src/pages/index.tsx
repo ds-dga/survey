@@ -15,9 +15,12 @@ const Index = () => {
       }
     >
       <div className="m-3">
-        <h1 className="font-semibold text-2xl text-gray-700 text-center">
-          ชุดข้อมูลที่ได้รับความสนใจมากที่สุด
-        </h1>
+        <div className="flex flex-row items-center">
+          <img className={`h-10`} src={`/assets/logo/digi.png`} alt="DIGI" />
+          <h1 className="flex-1 font-semibold text-2xl text-gray-700 text-center">
+            ชุดข้อมูลที่ได้รับความสนใจมากที่สุด
+          </h1>
+        </div>
         <PopularGroup limit={4} />
 
         <h1 className="font-semibold text-2xl text-gray-700 text-center">

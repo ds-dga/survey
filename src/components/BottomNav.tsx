@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 
 export default function BottomNav() {
   const { status } = useSession();
-  const { basePath, route } = useRouter();
+  const { route } = useRouter();
   const signedIn = status === 'authenticated';
 
   return (
@@ -52,13 +52,13 @@ export default function BottomNav() {
         </a>
       </Link>
 
-      <div className={`inline-flex flex-col items-center justify-center`}>
+      {/* <div className={`inline-flex flex-col items-center justify-center`}>
         <img
           className={`h-10`}
           src={`${basePath}/assets/logo/digi.png`}
           alt="DIGI"
         />
-      </div>
+      </div> */}
 
       <Link href={'/search'}>
         <a

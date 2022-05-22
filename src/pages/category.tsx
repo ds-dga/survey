@@ -8,16 +8,12 @@ import { Main } from '@/templates/Main';
 function CategoryItem({ item }: any) {
   return (
     <Link href={`/category/${item.id}`} passHref>
-      <div className="group relative rounded-md shadow-md border-2 border-slate-50 bg-slate-50 py-5 px-5 flex justify-center items-center hover:bg-emerald-100 hover:border-emerald-100 hover:font-medium transition cursor-pointer">
+      <div className="group relative rounded-md shadow-md border-2 border-slate-50 bg-slate-50 p-2 flex flex-col justify-center items-center hover:bg-emerald-100 hover:border-emerald-100 hover:font-medium transition cursor-pointer overflow-hidden">
         <span className="absolute top-0 right-0 pr-1 text-stone-300 font-semibold text-lg z-0">
           {item.total.aggregate.count}
         </span>
-        <img
-          className="w-12 h-12 mx-0 mr-1 md:mx-2 md:mr-2"
-          src={item.image}
-          alt={item.name}
-        />
-        <span className="text-center">{item.name}</span>
+        <img className="w-14 h-14" src={item.image} alt={item.name} />
+        <div className="text-center overflow-clip">{item.name}</div>
       </div>
     </Link>
   );
@@ -45,9 +41,12 @@ export default function Category() {
       meta={<Meta title="Dataset: Category" description="Open data category" />}
     >
       <div className="m-3 h-5/6">
-        <h1 className="font-semibold text-2xl text-gray-700 text-center mb-5">
-          กลุ่มชุดข้อมูล
-        </h1>
+        <div className="flex flex-row items-center">
+          <img className={`h-10`} src={`/assets/logo/digi.png`} alt="DIGI" />
+          <h1 className="font-semibold text-2xl text-gray-700 text-center mb-5 flex-1">
+            กลุ่มชุดข้อมูล
+          </h1>
+        </div>
         <CategoryGroup />
         <div className="my-6"></div>
       </div>
