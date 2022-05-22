@@ -4,7 +4,7 @@ import { gql, useQuery } from '@apollo/client';
 import { throttle } from 'lodash';
 import { useSession } from 'next-auth/react';
 
-import Item from '@/components/item';
+import MinimalItem from '@/components/item/minimal';
 import Loading from '@/components/loading';
 import { Meta } from '@/layout/Meta';
 import { Main } from '@/templates/Main';
@@ -48,8 +48,6 @@ export default function Search() {
       SetGQLVars((prev) => ({
         ...prev,
         votedByWhere: uw,
-        relatedVotedWhere: uw,
-        providerVotedWhere: uw,
       }));
     }
   }, [session]);
@@ -96,7 +94,7 @@ export default function Search() {
       }
     >
       <div className="container mx-auto">
-        <h1 className="font-semibold text-2xl text-gray-700 text-center mb-5">
+        <h1 className="font-semibold text-2xl text-gray-700 text-center my-5">
           รายการข้อมูลเปิดที่ประชาชนต้องการจากภาครัฐ
         </h1>
         <Loading hidden={!loading} />
@@ -106,9 +104,9 @@ export default function Search() {
             <Link href={`/api/auth/signin`}>Login</Link>
           </div> */}
         {/* )} */}
-        <div className="">
+        <div className="px-1">
           <input
-            className="form-input text-xl px-4 py-3 rounded-md w-full border-0 hover:shadow-md active:border-0"
+            className="form-input text-xl px-4 py-3 rounded-md w-full border-0 border-1 border-slate-300 hover:shadow-md active:border-1"
             type="text"
             defaultValue={Q}
             placeholder="ค้นหา..."
@@ -119,9 +117,11 @@ export default function Search() {
             autoComplete="off"
           />
         </div>
-        <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-6">
+        <div className="mt-6 grid grid-cols-1 gap-y-2 gap-x-6">
           {data &&
-            data.items.map((item) => <Item key={`s-${item.id}`} item={item} />)}
+            data.items.map((item) => (
+              <MinimalItem key={`s-${item.id}`} item={item} />
+            ))}
         </div>
 
         {data &&
@@ -162,8 +162,6 @@ const DATASET_SEARCH_QUERY = gql`
   query DATASET_SEARCH_QUERY(
     $where: dataset_bool_exp!
     $votedByWhere: dataset_points_bool_exp!
-    $relatedVotedWhere: related_points_bool_exp!
-    $providerVotedWhere: provider_points_bool_exp!
     $limit: Int!
     $offset: Int!
   ) {
@@ -190,56 +188,14 @@ const DATASET_SEARCH_QUERY = gql`
       my_vote: points(where: $votedByWhere) {
         point
       }
-      related {
-        id
-        maintainer
-        title
-        url
-        created_by
-        my_vote: points(where: $relatedVotedWhere) {
-          point
-        }
-        points(order_by: [{ created_at: desc }], limit: 1) {
-          created_at
-        }
-        vote_up: points_aggregate(where: { point: { _gte: 0 } }) {
-          aggregate {
-            sum {
-              point
-            }
-          }
-        }
-        vote_down: points_aggregate(where: { point: { _lt: 0 } }) {
-          aggregate {
-            sum {
-              point
-            }
-          }
+      related_aggregate {
+        aggregate {
+          count
         }
       }
-      providers {
-        id
-        name
-        created_by
-        points(order_by: [{ created_at: desc }], limit: 1) {
-          created_at
-        }
-        my_vote: points(where: $providerVotedWhere) {
-          point
-        }
-        vote_up: points_aggregate(where: { point: { _gte: 0 } }) {
-          aggregate {
-            sum {
-              point
-            }
-          }
-        }
-        vote_down: points_aggregate(where: { point: { _lt: 0 } }) {
-          aggregate {
-            sum {
-              point
-            }
-          }
+      providers_aggregate {
+        aggregate {
+          count
         }
       }
       points(order_by: [{ updated_at: desc }], limit: 1) {
