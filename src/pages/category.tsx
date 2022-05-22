@@ -12,7 +12,12 @@ function CategoryItem({ item }: any) {
         <span className="absolute top-0 right-0 pr-1 text-stone-300 font-semibold text-lg z-0">
           {item.total.aggregate.count}
         </span>
-        <span className="text-center z-10">{item.name}</span>
+        <img
+          className="w-12 h-12 mx-0 mr-1 md:mx-2 md:mr-2"
+          src={item.image}
+          alt={item.name}
+        />
+        <span className="text-center">{item.name}</span>
       </div>
     </Link>
   );
@@ -55,6 +60,7 @@ const CATEGORY_QUERY = gql`
     items: dataset_category {
       id
       name
+      image
       total: datasets_aggregate {
         aggregate {
           count

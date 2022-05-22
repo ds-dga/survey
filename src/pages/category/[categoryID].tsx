@@ -33,7 +33,8 @@ export default function CategoryOne() {
     pollInterval: 1000 * 20, // 7s
   });
 
-  const title = data ? data.category[0].name : 'Category';
+  const cat = data ? data.category[0] : null;
+  const title = cat?.name || 'Category';
   return (
     <Main
       meta={
@@ -44,8 +45,15 @@ export default function CategoryOne() {
         <Loading hidden={!loading} />
         <div className="m-5">
           {error && <p>{error.message} ... </p>}
-          <div className="text-slate-600 text-2xl font-normal">
-            {data ? data.category[0].name : 'Category'}
+          <div className="text-slate-600 text-2xl font-normal flex gap-2 align-baseline">
+            {cat && (
+              <img
+                className="w-12 h-12 mx-0 mr-1 md:mx-2 md:mr-2"
+                src={cat.image}
+                alt={cat.name}
+              />
+            )}
+            {cat?.name || 'Category'}
           </div>
           <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-6 mb-20">
             {data &&
@@ -155,6 +163,7 @@ const CATEGORY_ITEMS_QUERY = gql`
     }
     category: dataset_category(where: { id: { _eq: $categoryID } }) {
       name
+      image
     }
   }
 `;
