@@ -17,6 +17,7 @@ import StatusDot from './dot';
 import ModControlInline from './mod-control-inline';
 import Provider from './provider';
 import Related from './related';
+import ShareButton from './share-button';
 import VoteInline from './vote-inline';
 
 /*  Item only handles the rendering part and won't deal with fetching
@@ -32,12 +33,13 @@ export default function Item({ item, commentTotal }: any) {
   const [showComment, SetShowComment] = useState(shouldShowCommment(router));
   const moded = itemProcessor(item);
   const detailView = router.pathname === '/n/[ID]';
+  const basePath = router.basePath || 'https://survey.data.go.th';
 
   return (
     <div className="group relative rounded-md shadow-md border-2 border-slate-50 bg-slate-50 pb-3 px-5">
       {!NoAuthHidden && <Modal hidden={false} handleHidden={SetHideNoAuth} />}
       <span className="float-right">
-        <div className="flex items-baseline gap-2">
+        <div className="flex items-baseline gap-2 mt-1">
           {!detailView && (
             <Link passHref href={`/n/${moded.id}`}>
               <div className="text text-gray-500 mt-1 zmax-w-2xl text-xl cursor-pointer">
@@ -45,6 +47,7 @@ export default function Item({ item, commentTotal }: any) {
               </div>
             </Link>
           )}
+          {detailView && <ShareButton link={`${basePath}${router.asPath}`} />}
         </div>
       </span>
       <div className="pt-3 flex gap-3">
