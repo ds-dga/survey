@@ -120,7 +120,7 @@ export default function Search() {
             autoComplete="off"
           />
         </div>
-        <div className="mt-6 grid grid-cols-1 gap-y-2 gap-x-6 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+        <div className="mt-6 grid grid-cols-1 gap-y-2 gap-x-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {data &&
             data.items.map((item) => (
               <MinimalItem key={`s-${item.id}`} item={item} />

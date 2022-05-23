@@ -10,9 +10,11 @@ import { displayDatetime } from '@/libs/day';
 import { extractHashRoute } from '@/libs/route';
 
 import Modal from '../modal';
+import UserProvider from '../UserProvider';
 import CommentList from './comment';
 import CommentForm from './commentForm';
 import StatusDot from './dot';
+import ModControlInline from './mod-control-inline';
 import Provider from './provider';
 import Related from './related';
 import VoteInline from './vote-inline';
@@ -22,6 +24,7 @@ any extra data related. That's why something like # of comments will be
 missing due to the limitation of query and how we store comments.
 */
 export default function Item({ item, commentTotal }: any) {
+  const user = UserProvider();
   const [NoAuthHidden, SetHideNoAuth] = useState(true);
   const { status: sessStatus } = useSession();
   const router = useRouter();
@@ -84,6 +87,14 @@ export default function Item({ item, commentTotal }: any) {
           ความเห็นต่อชุดข้อมูล <ChatBubble className="inline text-xl" />
         </button>
       </div>
+
+      {detailView && user.role === 'mod' && (
+        <ModControlInline
+          datasetID={moded.id}
+          state={moded.status}
+          user={user}
+        />
+      )}
 
       <CommentForm
         parentType={'dataset'}
