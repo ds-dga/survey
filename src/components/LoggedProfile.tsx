@@ -1,9 +1,14 @@
-import { signOut } from 'next-auth/react';
+import { signOut } from "next-auth/react"
+import Link from "next/link"
 
-import MyContribution from './myContribution';
-import MyVoteHistory from './myVoteHistory';
+import MyContribution from "./myContribution"
+import MyVoteHistory from "./myVoteHistory"
+import UserProvider from "./UserProvider"
 
 export default function LoggedProfile({ user }) {
+  const account = UserProvider()
+  const isMod = account.role === "mod"
+
   return (
     <div className="container mx-auto">
       <div className="md:flex no-wrap md:-mx-2 ">
@@ -51,6 +56,21 @@ export default function LoggedProfile({ user }) {
             <h3 className="text-gray-600 font-sm leading-6 overflow-auto">
               {user.email}
             </h3>
+            <ul className="bg-gray-100 text-gray-600 px-3 mt-3 divide-y rounded shadow-sm">
+              {isMod && (
+                <li className="flex gap-1 items-center py-3">
+                  <span className="text-sm bold">Role</span>
+                  <span className="ml-auto">Moderator</span>
+                </li>
+              )}
+              {isMod && (
+                <Link href={"/mod"}>
+                  <button className="block w-full bg-purple-100 text-sm rounded-lg hover:bg-purple-600 hover:text-white focus:bg-purple-200 hover:shadow-xs p-3 my-4">
+                    Mod page
+                  </button>
+                </Link>
+              )}
+            </ul>
             {/* <ul className="bg-gray-100 text-gray-600 px-3 mt-3 divide-y rounded shadow-sm">
               {isGovOfficer(user) ? (
                 <li className="flex gap-1 items-center py-3">
@@ -72,7 +92,7 @@ export default function LoggedProfile({ user }) {
             <button
               className="block w-full text-blue-800 text-sm font-semibold rounded-lg hover:bg-gray-100 focus:outline-none focus:shadow-outline focus:bg-gray-100 hover:shadow-xs p-3 my-4"
               onClick={() => {
-                signOut();
+                signOut()
               }}
             >
               Log out
@@ -225,5 +245,5 @@ export default function LoggedProfile({ user }) {
       </div>
       <div className="m-20"></div>
     </div>
-  );
+  )
 }

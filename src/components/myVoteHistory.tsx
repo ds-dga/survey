@@ -4,11 +4,10 @@ import { useQuery, gql } from '@apollo/client';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 
-import ThumbDown from '@/icons/ThumbDown';
-import ThumbUp from '@/icons/ThumbUp';
 import { displayDatetime } from '@/libs/day';
 
 import Loading from './loading';
+import { getColor, getArrow } from './common';
 
 export default function MyVoteHistory() {
   const { data: session } = useSession();
@@ -139,25 +138,3 @@ const MY_VOTE_QUERY = gql`
     }
   }
 `;
-
-function getColor(point: Number): string {
-  if (point > 0) {
-    return 'text-green-500';
-  }
-  if (point < 0) {
-    return 'text-rose-500';
-  }
-  return '';
-}
-
-function getArrow(point: Number) {
-  if (point > 0) {
-    return <ThumbUp />;
-    // return <ArrowUp />;
-  }
-  if (point < 0) {
-    return <ThumbDown />;
-    // return <ArrowDown />;
-  }
-  return <p>-</p>;
-}

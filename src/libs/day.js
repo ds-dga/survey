@@ -26,7 +26,7 @@ export const relativeTime = (dayStr) => {
   return `${hr.toFixed(0)}:${minText} hr`
 }
 export const displayDatetime = (dayStr) =>
-  dayjs(dayStr).format("D MMM BBBB HH:mm")
+  dayjs(dayStr).format("D MMM BBBB H:mm")
 export const displayDate = (dayStr) => dayjs(dayStr).format("D MMM BBBB")
 
 export const minDuration = (d1, d2) => {
