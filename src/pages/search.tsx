@@ -6,11 +6,16 @@ import { useSession } from 'next-auth/react';
 
 import MinimalItem from '@/components/item/minimal';
 import Loading from '@/components/loading';
+import Paginator, { PaginatorOffset } from '@/components/Paginator';
 import { Meta } from '@/layout/Meta';
 import { Main } from '@/templates/Main';
 
 export default function Search() {
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [PaginatorVars, SetPaginatorVars] = useState({
+    currPageIndex: 1,
+    itemPerPage: 10,
+    itemTotal: 0,
+  });
   const { data: session } = useSession();
   const [Q, SetQ] = useState('');
   const [GQLVars, SetGQLVars] = useState({
@@ -18,20 +23,22 @@ export default function Search() {
     relatedVotedWhere: {},
     providerVotedWhere: {},
     where: {},
-    limit: 10,
-    offset: 0,
+    limit: PaginatorVars.itemPerPage,
+    offset: PaginatorOffset(PaginatorVars),
   });
 
   const throttled = useRef(
     throttle(
       (newValue) => {
+        let where = {};
         if (newValue.length > 0)
-          SetGQLVars((prev) => ({
-            ...prev,
-            where: {
-              name: { _ilike: `%${newValue}%` },
-            },
-          }));
+          where = {
+            name: { _ilike: `%${newValue}%` },
+          };
+        SetGQLVars((prev) => ({
+          ...prev,
+          where,
+        }));
       },
       1000,
       { trailing: true }
@@ -52,41 +59,30 @@ export default function Search() {
     }
   }, [session]);
 
-  const { data, loading, fetchMore } = useQuery(DATASET_SEARCH_QUERY, {
+  const { data, loading } = useQuery(DATASET_SEARCH_QUERY, {
     variables: GQLVars,
     pollInterval: 1000 * 10, // 7s
     fetchPolicy: 'network-only',
   });
 
-  const currTotal = (data && data.items.length) || 0;
-  const total = (data && data.total.aggregate.count) || 0;
-  const hasMore = total > currTotal;
-
-  interface Item {
-    id: string;
-    name: string;
-  }
-
-  interface Results {
-    items: Item[];
-  }
-  async function loadMore(numTotal) {
-    // I really have no idea why we still use 'updateQuery' while I thought it is deprecated..??
-    fetchMore({
-      variables: {
-        offset: numTotal,
-      },
-      updateQuery: (previousResult: Results, { fetchMoreResult }: any) => {
-        if (!fetchMoreResult) {
-          return previousResult;
-        }
-        return {
-          ...previousResult, // Append the new crop results to the old one
-          items: [...previousResult.items, ...fetchMoreResult.items],
-        };
-      },
+  useEffect(() => {
+    SetPaginatorVars((prev) => {
+      return {
+        ...prev,
+        itemTotal: (data && data.total.aggregate.count) || 0,
+      };
     });
-  }
+  }, [data]);
+
+  useEffect(() => {
+    if (loading) return;
+    SetGQLVars((prevState) => {
+      // Object.assign would also work
+      const offset = PaginatorOffset(PaginatorVars);
+      return { ...prevState, offset, limit: PaginatorVars.itemPerPage };
+    });
+  }, [PaginatorVars, loading]);
+
   return (
     <Main
       meta={
@@ -120,6 +116,9 @@ export default function Search() {
             autoComplete="off"
           />
         </div>
+
+        <Paginator vars={PaginatorVars} handleVarsChanged={SetPaginatorVars} />
+
         <div className="mt-6 grid grid-cols-1 gap-y-2 gap-x-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {data &&
             data.items.map((item) => (
@@ -127,33 +126,14 @@ export default function Search() {
             ))}
         </div>
 
-        {data &&
-          data.items &&
-          hasMore &&
-          (isLoadingMore ? (
-            <Loading hidden={false} />
-          ) : (
-            <button
-              className="w-full rounded-md shadow-md bg-slate-50 py-2 my-5 text-center transition-all duration-150 ease-in hover:bg-lime-100"
-              onClick={async () => {
-                setIsLoadingMore(true);
-                loadMore(currTotal);
-                setIsLoadingMore(false);
-              }}
-            >
-              ดูเพิ่มเติม{' '}
-              <span className="text-sm text-gray-600">
-                ({currTotal} จากทั้งหมด {total} รายการ)
-              </span>
-            </button>
-          ))}
-
-        {data && data.items && data.items.length === 0 && (
+        {data?.items && data.items.length === 0 && (
           <div className="text-center text-slate-500">
             ไม่พบข้อมูลตามคำค้นหา{' '}
             <span className="italic">&quot;{Q}&quot;</span>
           </div>
         )}
+
+        <Paginator vars={PaginatorVars} handleVarsChanged={SetPaginatorVars} />
 
         <div className="mb-20"></div>
       </div>
