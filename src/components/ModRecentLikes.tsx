@@ -1,7 +1,8 @@
-import { gql, useQuery } from "@apollo/client"
-import Link from "next/link"
-import { getColor, getArrow } from "@/components/common"
-import { displayDatetime } from "@/libs/day"
+import { gql, useQuery } from '@apollo/client';
+import Link from 'next/link';
+
+import { getColor, getArrow } from '@/components/common';
+import { displayDatetime } from '@/libs/day';
 
 export default function ModRecentLikes() {
   const { data } = useQuery(RECENT_LIKES, {
@@ -13,7 +14,7 @@ export default function ModRecentLikes() {
       },
       orderBy: [{ updated_at: 'desc' }],
     },
-  })
+  });
 
   return (
     <div className="flex flex-col gap-2">
@@ -22,11 +23,11 @@ export default function ModRecentLikes() {
         <LikeItem key={`like-${item.id}`} item={item} />
       ))}
     </div>
-  )
+  );
 }
 
 function LikeItem({ item }) {
-  console.log(item)
+  console.log(item);
   return (
     <div className="rounded-md shadow-md border-2 border-slate-50 bg-slate-50 py-3 px-5">
       <Link href={`/n/${item.dataset.id}`} passHref>
@@ -47,11 +48,11 @@ function LikeItem({ item }) {
         <br />
         โดย <span className="text-sm text-slate-600">
           {item.user.name}
-        </span>{" "}
+        </span>{' '}
         เมื่อวันที่ {displayDatetime(item.updated_at)}
       </div>
     </div>
-  )
+  );
 }
 
 const RECENT_LIKES = gql`
@@ -84,4 +85,4 @@ const RECENT_LIKES = gql`
       }
     }
   }
-`
+`;

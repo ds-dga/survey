@@ -1,9 +1,7 @@
-import ThumbDown from "@/icons/ThumbDown";
-import ThumbUp from "@/icons/ThumbUp";
+import ThumbDown from '@/icons/ThumbDown';
+import ThumbUp from '@/icons/ThumbUp';
 
-
-
- function getColor(point: Number): string {
+function getColor(point: Number): string {
   if (point > 0) {
     return 'text-green-500';
   }
@@ -13,7 +11,7 @@ import ThumbUp from "@/icons/ThumbUp";
   return '';
 }
 
- function getArrow(point: Number) {
+function getArrow(point: Number) {
   if (point > 0) {
     return <ThumbUp />;
     // return <ArrowUp />;
@@ -25,5 +23,4 @@ import ThumbUp from "@/icons/ThumbUp";
   return <p>-</p>;
 }
 
-
-export { getColor, getArrow}
+export { getColor, getArrow };

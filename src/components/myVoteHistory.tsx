@@ -6,8 +6,8 @@ import Link from 'next/link';
 
 import { displayDatetime } from '@/libs/day';
 
-import Loading from './loading';
 import { getColor, getArrow } from './common';
+import Loading from './loading';
 
 export default function MyVoteHistory() {
   const { data: session } = useSession();

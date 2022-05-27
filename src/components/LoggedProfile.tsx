@@ -1,13 +1,13 @@
-import { signOut } from "next-auth/react"
-import Link from "next/link"
+import { signOut } from 'next-auth/react';
+import Link from 'next/link';
 
-import MyContribution from "./myContribution"
-import MyVoteHistory from "./myVoteHistory"
-import UserProvider from "./UserProvider"
+import MyContribution from './myContribution';
+import MyVoteHistory from './myVoteHistory';
+import UserProvider from './UserProvider';
 
 export default function LoggedProfile({ user }) {
-  const account = UserProvider()
-  const isMod = account.role === "mod"
+  const account = UserProvider();
+  const isMod = account.role === 'mod';
 
   return (
     <div className="container mx-auto">
@@ -64,7 +64,7 @@ export default function LoggedProfile({ user }) {
                 </li>
               )}
               {isMod && (
-                <Link href={"/mod"}>
+                <Link href={'/mod'}>
                   <button className="block w-full bg-purple-100 text-sm rounded-lg hover:bg-purple-600 hover:text-white focus:bg-purple-200 hover:shadow-xs p-3 my-4">
                     Mod page
                   </button>
@@ -92,7 +92,7 @@ export default function LoggedProfile({ user }) {
             <button
               className="block w-full text-blue-800 text-sm font-semibold rounded-lg hover:bg-gray-100 focus:outline-none focus:shadow-outline focus:bg-gray-100 hover:shadow-xs p-3 my-4"
               onClick={() => {
-                signOut()
+                signOut();
               }}
             >
               Log out
@@ -245,5 +245,5 @@ export default function LoggedProfile({ user }) {
       </div>
       <div className="m-20"></div>
     </div>
-  )
+  );
 }

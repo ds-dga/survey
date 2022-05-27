@@ -1,6 +1,5 @@
-import ModRecentComments from "./ModRecentComments";
-import ModRecentLikes from "./ModRecentLikes";
-
+import ModRecentComments from './ModRecentComments';
+import ModRecentLikes from './ModRecentLikes';
 
 export default function ModeratorTask() {
   return (
@@ -14,5 +13,5 @@ export default function ModeratorTask() {
         <ModRecentComments />
       </div>
     </div>
-  )
+  );
 }

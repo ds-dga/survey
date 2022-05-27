@@ -1,28 +1,36 @@
 import { gql, useQuery } from '@apollo/client';
-import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 
 import Item from '.';
 import Loading from '../loading';
+import UserProvider from '../UserProvider';
 
 export default function PopularGroup({ limit }: any) {
-  const { data: session } = useSession();
+  const user = UserProvider();
   let userWhere = {};
-  if (session) {
+  let wh: any = {
+    _or: [{ status: { _neq: 'hidden' } }, { status: { _is_null: true } }],
+  };
+  if (user.role === 'mod') {
+    wh = {};
+  }
+  if (user.id) {
     userWhere = {
       voted_by: {
-        _eq: session.user.uid,
+        _eq: user.id,
       },
     };
   }
   const { data, loading } = useQuery(POPULAR_QUERY, {
     variables: {
+      where: wh,
       votedByWhere: userWhere,
       relatedVotedWhere: userWhere,
       providerVotedWhere: userWhere,
       limit,
     },
     pollInterval: 1000 * 7, // 7s
+    skip: user.loading,
   });
 
   return (
@@ -42,11 +50,13 @@ export default function PopularGroup({ limit }: any) {
 const POPULAR_QUERY = gql`
   query POPULAR_QUERY(
     $limit: Int!
+    $where: dataset_bool_exp!
     $votedByWhere: dataset_points_bool_exp!
     $relatedVotedWhere: related_points_bool_exp!
     $providerVotedWhere: provider_points_bool_exp!
   ) {
     items: dataset(
+      where: $where
       order_by: [
         { points_aggregate: { sum: { point: desc_nulls_last } } }
         { id: asc }

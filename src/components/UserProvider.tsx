@@ -7,6 +7,7 @@ export type UserProviderType = {
   id: string | null;
   name: string | null;
   role: string | null;
+  loading: boolean;
 };
 
 export default function UserProvider(): UserProviderType {
@@ -15,18 +16,29 @@ export default function UserProvider(): UserProviderType {
     id: null,
     name: null,
     role: null,
+    loading: true,
   });
   const { data } = useQuery(USER_QUERY, {
     variables: { ID: session?.user.uid },
     skip: status !== 'authenticated',
   });
   useEffect(() => {
+    if (status === 'unauthenticated') {
+      SetState({
+        id: null,
+        name: null,
+        role: null,
+        loading: false,
+      });
+      return;
+    }
     if (data) {
       const u = data.item;
       SetState({
         id: u.id,
         name: u.name,
         role: u.roles.length > 0 ? u.roles[0].role : '',
+        loading: false,
       });
     }
   }, [data]);

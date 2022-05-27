@@ -2,22 +2,23 @@ import { useEffect, useRef, useState } from 'react';
 
 import { gql, useQuery } from '@apollo/client';
 import { throttle } from 'lodash';
-import { useSession } from 'next-auth/react';
 
 import MinimalItem from '@/components/item/minimal';
 import Loading from '@/components/loading';
 import Paginator, { PaginatorOffset } from '@/components/Paginator';
+import UserProvider from '@/components/UserProvider';
 import { Meta } from '@/layout/Meta';
 import { Main } from '@/templates/Main';
 
 export default function Search() {
+  const user = UserProvider();
   const [PaginatorVars, SetPaginatorVars] = useState({
     currPageIndex: 1,
     itemPerPage: 10,
     itemTotal: 0,
   });
-  const { data: session } = useSession();
   const [Q, SetQ] = useState('');
+  const [RoleWhere, SetRoleWhere] = useState<any[]>([]);
   const [GQLVars, SetGQLVars] = useState({
     votedByWhere: {},
     relatedVotedWhere: {},
@@ -29,40 +30,54 @@ export default function Search() {
 
   const throttled = useRef(
     throttle(
-      (newValue) => {
-        let where = {};
+      (rw, newValue) => {
+        const cond = [...rw];
         if (newValue.length > 0)
-          where = {
+          cond.push({
             name: { _ilike: `%${newValue}%` },
-          };
+          });
         SetGQLVars((prev) => ({
           ...prev,
-          where,
+          where: { _and: cond },
         }));
       },
       1000,
       { trailing: true }
     )
   );
-  useEffect(() => throttled.current(Q), [Q]);
+  useEffect(() => throttled.current(RoleWhere, Q), [Q, RoleWhere]);
   useEffect(() => {
-    if (session) {
+    if (user.loading) return;
+    if (user.id) {
       const uw = {
         voted_by: {
-          _eq: session.user.uid,
+          _eq: user.id,
         },
       };
+      let rW = [
+        {
+          _or: [{ status: { _neq: 'hidden' } }, { status: { _is_null: true } }],
+        },
+      ];
+      if (user.role === 'mod') {
+        rW = [];
+      }
+      SetRoleWhere(rW);
       SetGQLVars((prev) => ({
         ...prev,
         votedByWhere: uw,
+        where: {
+          _and: [...rW],
+        },
       }));
     }
-  }, [session]);
+  }, [user]);
 
   const { data, loading } = useQuery(DATASET_SEARCH_QUERY, {
     variables: GQLVars,
     pollInterval: 1000 * 10, // 7s
     fetchPolicy: 'network-only',
+    skip: user.loading,
   });
 
   useEffect(() => {
