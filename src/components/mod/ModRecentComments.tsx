@@ -12,7 +12,6 @@ export default function ModRecentComments() {
     },
   });
 
-  console.log(data);
   return (
     <>
       {/* <Paginator /> */}
@@ -32,7 +31,6 @@ const PARENT_TYPE_CONV = {
 };
 
 function CommentItem({ comment }) {
-  console.log(comment);
   return (
     <div className="rounded-md shadow-md border-2 border-slate-50 bg-slate-50 py-3 px-5 text-slate-600">
       <div className="float-right bg-pink-800 text-white px-2 text-xs rounded hover:bg-pink-500">

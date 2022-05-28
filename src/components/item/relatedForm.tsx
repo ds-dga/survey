@@ -135,7 +135,7 @@ const RELATED_ADD_MUTATAION = gql`
     $url: String!
     $maintainer: String!
   ) {
-    insert_dateset_related_one(
+    insert_dataset_related_one(
       object: {
         dataset_id: $datasetID
         title: $title

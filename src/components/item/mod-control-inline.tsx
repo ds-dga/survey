@@ -67,6 +67,7 @@ export default function ModControlInline({
           <option value="inactive">ยังไม่มีความคืบหน้า</option>
           <option value="negotiate">อยู่ในขั้นตอนการเจรจา</option>
           <option value="done">เปิดชุดข้อมูลแล้ว</option>
+          <option value="hidden">ซ่อน</option>
         </select>
       </form>
     </div>

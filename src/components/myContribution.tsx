@@ -119,14 +119,14 @@ const MY_CONTRIBUTION_QUERY = gql`
         count
       }
     }
-    related_total: dateset_related_aggregate(
+    related_total: dataset_related_aggregate(
       where: { created_by: { _eq: $userID } }
     ) {
       aggregate {
         count
       }
     }
-    related: dateset_related(
+    related: dataset_related(
       where: { created_by: { _eq: $userID } }
       order_by: { created_at: desc }
       offset: $offset

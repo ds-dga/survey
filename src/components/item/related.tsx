@@ -131,7 +131,7 @@ export default function Related({ items, datasetID }: RelatedProps) {
 
 const MUTATE_RELATED_DELETION = gql`
   mutation MUTATE_RELATED_DELETION($id: uuid!) {
-    delete_dateset_related_by_pk(id: $id) {
+    delete_dataset_related_by_pk(id: $id) {
       id
     }
   }
