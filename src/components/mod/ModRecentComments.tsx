@@ -1,16 +1,41 @@
+import { useEffect } from 'react';
+
 import { gql, useQuery } from '@apollo/client';
 
 import { displayDatetime } from '@/libs/day';
 
-export default function ModRecentComments() {
+import { PaginatorOffset } from '../Paginator';
+import { ModRecentCommentsProps } from './mod-common';
+
+function parentTypeConv(t: string) {
+  if (t === 'ชุดข้อมูลใกล้เคียง') return 'related';
+
+  return 'dataset';
+}
+
+export default function ModRecentComments({
+  paginatorVars,
+  handleItemTotalChanged,
+  parentType,
+}: ModRecentCommentsProps) {
+  const where =
+    parentType && parentType.length > 0
+      ? { parent_type: { _eq: parentTypeConv(parentType) } }
+      : {};
+
   const { data } = useQuery(RECENT_COMMENTS, {
     variables: {
-      limit: 10,
-      offset: 0,
-      where: {},
+      limit: paginatorVars.itemPerPage,
+      offset: PaginatorOffset(paginatorVars),
+      where,
       orderBy: [{ created_at: 'desc' }],
     },
   });
+
+  useEffect(() => {
+    if (!data) return;
+    handleItemTotalChanged(data.items_total.aggregate.count);
+  }, [data, handleItemTotalChanged]);
 
   return (
     <>
@@ -66,6 +91,11 @@ const RECENT_COMMENTS = gql`
       parent_id
       user {
         name
+      }
+    }
+    items_total: comments_aggregate(where: $where) {
+      aggregate {
+        count
       }
     }
   }

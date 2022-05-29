@@ -1,20 +1,33 @@
+import { useEffect } from 'react';
+
 import { gql, useQuery } from '@apollo/client';
 import Link from 'next/link';
 
 import { getColor, getArrow } from '@/components/common';
 import { displayDatetime } from '@/libs/day';
 
-export default function ModRecentDatasetLikes() {
+import { PaginatorOffset } from '../Paginator';
+import { ModRecentLikesProps } from './mod-common';
+
+export default function ModRecentDatasetLikes({
+  paginatorVars,
+  handleItemTotalChanged,
+}: ModRecentLikesProps) {
   const { data } = useQuery(RECENT_LIKES, {
     variables: {
-      limit: 10,
-      offset: 0,
+      limit: paginatorVars.itemPerPage,
+      offset: PaginatorOffset(paginatorVars),
       where: {
         voted_by: { _is_null: false },
       },
       orderBy: [{ updated_at: 'desc' }],
     },
   });
+
+  useEffect(() => {
+    if (!data) return;
+    handleItemTotalChanged(data.items_total.aggregate.count);
+  }, [data, handleItemTotalChanged]);
 
   return (
     <div className="flex flex-col gap-2">
@@ -81,6 +94,11 @@ const RECENT_LIKES = gql`
           name
           id
         }
+      }
+    }
+    items_total: dataset_points_aggregate(where: $where) {
+      aggregate {
+        count
       }
     }
   }

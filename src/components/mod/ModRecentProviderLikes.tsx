@@ -1,20 +1,33 @@
+import { useEffect } from 'react';
+
 import { gql, useQuery } from '@apollo/client';
 import Link from 'next/link';
 
 import { getColor, getArrow } from '@/components/common';
 import { displayDate } from '@/libs/day';
 
-export default function ModRecentProviderLikes() {
+import { PaginatorOffset } from '../Paginator';
+import { ModRecentLikesProps } from './mod-common';
+
+export default function ModRecentProviderLikes({
+  handleItemTotalChanged,
+  paginatorVars,
+}: ModRecentLikesProps) {
   const { data } = useQuery(RECENT_PROVIDER_LIKES, {
     variables: {
-      limit: 10,
-      offset: 0,
+      limit: paginatorVars.itemPerPage,
+      offset: PaginatorOffset(paginatorVars),
       where: {
         voted_by: { _is_null: false },
       },
       orderBy: [{ day: 'desc' }],
     },
   });
+
+  useEffect(() => {
+    if (!data) return;
+    handleItemTotalChanged(data.items_total.aggregate.count);
+  }, [data, handleItemTotalChanged]);
 
   return (
     <div className="flex flex-col gap-2">
@@ -39,7 +52,7 @@ function ProviderItem({ item }) {
           <span className={`text-2xl ${getColor(item.point)}`}>
             {getArrow(item.point)}
           </span>
-          <span className="hover:bg-green-100">{parent.name}</span>
+          <span className="flex-1 hover:bg-green-100">{parent.name}</span>
         </div>
       </Link>
       <Link href={`/n/${parent.dataset.id}`} passHref>
@@ -82,6 +95,11 @@ const RECENT_PROVIDER_LIKES = gql`
           id
           name
         }
+      }
+    }
+    items_total: provider_points_aggregate(where: $where) {
+      aggregate {
+        count
       }
     }
   }

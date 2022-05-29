@@ -15,6 +15,7 @@ export function PaginatorOffset(v: PaginatorVarsType) {
 type PaginatorProps = {
   vars: PaginatorVarsType;
   handleVarsChanged: Function;
+  direction?: string;
 };
 
 function* range(start, end) {
@@ -23,7 +24,11 @@ function* range(start, end) {
   yield* range(start + 1, end);
 }
 
-export default function Paginator({ vars, handleVarsChanged }: PaginatorProps) {
+export default function Paginator({
+  vars,
+  handleVarsChanged,
+  direction,
+}: PaginatorProps) {
   const { register, setValue, getValues } = useForm({
     defaultValues: { count: vars.itemPerPage },
   });
@@ -90,7 +95,11 @@ export default function Paginator({ vars, handleVarsChanged }: PaginatorProps) {
 
   return (
     <>
-      <div className="sm:my-2 bg-slate-200 px-2 sm:py-3 flex items-center justify-between border-0 hover:bg-slate-100 transition py-1 my-1">
+      <div
+        className={`sm:my-2 bg-slate-200 px-2 sm:py-3 flex items-center justify-between border-0 hover:bg-slate-100 transition py-1 my-1 ${
+          direction === 'col' ? 'flex-col' : ''
+        }`}
+      >
         <div className="">
           <select
             className="form-select rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
@@ -128,7 +137,11 @@ export default function Paginator({ vars, handleVarsChanged }: PaginatorProps) {
             Next
           </a>
         </div>
-        <div className="hidden sm:flex-1 sm:flex sm:flex-row-reverse sm:items-center">
+        <div
+          className={`hidden sm:flex-1 sm:flex sm:flex-row-reverse sm:items-center ${
+            direction === 'col' ? 'flex-col sm:flex-col' : ''
+          }`}
+        >
           <div>
             <nav
               className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
