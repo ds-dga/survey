@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 
 import { gql, useQuery } from '@apollo/client';
-import { useSession } from 'next-auth/react';
 import styled from 'styled-components';
 
 import { displayDatetime } from '../../libs/day';
+import UserProvider, { UserProviderType } from '../UserProvider';
 
 type CommentProps = {
   parentType: string;
@@ -13,11 +13,20 @@ type CommentProps = {
   hidden: boolean;
 };
 
-function CommentItem({ userID, item }: any) {
+type CommentItemProps = {
+  user: UserProviderType;
+  item: any;
+};
+
+function CommentItem({ user, item }: CommentItemProps) {
   const color =
-    userID === item.user.id
+    user.id === item.user.id
       ? '#FDA4AF' // sky-500
       : '#7DD3FC'; // bg-sky-300
+  // NEVER show item if it's hidden, but its own user and user is mod
+  if (item.hidden && user.id !== item.user.id && user.role !== 'mod') {
+    return <></>;
+  }
   return (
     <div className="flex flex-col sm:flex-row">
       <div className="pt-4 mr-4 text-sm min-w-fit">
@@ -44,9 +53,8 @@ export default function CommentList({
   parentID,
   parentType,
   hidden,
-  toggleVisibility,
 }: CommentProps) {
-  const { data: session } = useSession();
+  const user = UserProvider();
   const [Items, SetItems] = useState([]);
   const { data } = useQuery(COMMENT_QUERY, {
     variables: {
@@ -54,9 +62,8 @@ export default function CommentList({
       parentID,
     },
     pollInterval: 1000 * 20, // 15-sec
-    skip: hidden,
+    skip: hidden || user.loading,
   });
-  const user = session ? session.user : null;
 
   useEffect(() => {
     if (!data) {
@@ -76,12 +83,7 @@ export default function CommentList({
         <p className="text-sm text-gray-500 italic">~ ยังไม่มีความคิดเห็น ~</p>
       )}
       {Items.map((cm: any, ind: number) => (
-        <CommentItem
-          userID={user ? user.uid : null}
-          key={`cm-${ind}`}
-          item={cm}
-          toggleVisibility={toggleVisibility}
-        />
+        <CommentItem user={user} key={`cm-${ind}`} item={cm} />
       ))}
     </>
   );
@@ -127,6 +129,7 @@ export const COMMENT_QUERY = gql`
     ) {
       note
       created_at
+
       user {
         id
         name

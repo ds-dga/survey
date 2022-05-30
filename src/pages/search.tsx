@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { gql, useQuery } from '@apollo/client';
 import { throttle } from 'lodash';
+import Link from 'next/link';
 
 import MinimalItem from '@/components/item/minimal';
 import Loading from '@/components/loading';
@@ -106,7 +107,9 @@ export default function Search() {
     >
       <div className="container mx-auto">
         <div className="flex flex-row items-center">
-          <img className={`h-10`} src={`/assets/logo/digi.png`} alt="DIGI" />
+          <Link href={'/'} passHref>
+            <img className={`h-10`} src={`/assets/logo/digi.png`} alt="DIGI" />
+          </Link>
           <h1 className="font-semibold text-lg text-gray-700 text-center flex-1 my-5">
             ค้นหารายการข้อมูลเปิดที่ประชาชนต้องการจากภาครัฐ
           </h1>

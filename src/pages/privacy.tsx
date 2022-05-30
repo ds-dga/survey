@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import { Meta } from '@/layout/Meta';
 import { Main } from '@/templates/Main';
 
@@ -13,7 +15,9 @@ export default function Privacy() {
     >
       <div className="container mx-auto prose bg-slate-50 p-5">
         <div className="flex flex-row items-center">
-          <img className={`h-10`} src={`/assets/logo/digi.png`} alt="DIGI" />
+          <Link href={'/'} passHref>
+            <img className={`h-10`} src={`/assets/logo/digi.png`} alt="DIGI" />
+          </Link>
           <h1 className="flex-1 text-center">นโยบายความเป็นส่วนตัว</h1>
         </div>
 

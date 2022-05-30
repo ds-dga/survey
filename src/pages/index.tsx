@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import PopularGroup from '@/components/item/popularGroup';
 import { Meta } from '@/layout/Meta';
 import { Main } from '@/templates/Main';
@@ -16,7 +18,9 @@ const Index = () => {
     >
       <div className="m-3">
         <div className="flex flex-row items-center">
-          <img className={`h-10`} src={`/assets/logo/digi.png`} alt="DIGI" />
+          <Link href={'/'} passHref>
+            <img className={`h-10`} src={`/assets/logo/digi.png`} alt="DIGI" />
+          </Link>
           <h1 className="flex-1 font-semibold text-2xl text-gray-700 text-center">
             ชุดข้อมูลที่ได้รับความสนใจมากที่สุด
           </h1>

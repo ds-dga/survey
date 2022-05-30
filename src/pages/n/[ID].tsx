@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import Item from '@/components/item';
@@ -39,7 +40,13 @@ export default function DatasetOne() {
       <div className="container mx-auto">
         <div className="m-3">
           <div className="flex flex-row items-center">
-            <img className={`h-10`} src={`/assets/logo/digi.png`} alt="DIGI" />
+            <Link href={'/'} passHref>
+              <img
+                className={`h-10`}
+                src={`/assets/logo/digi.png`}
+                alt="DIGI"
+              />
+            </Link>
             <div className="text-slate-600 text-2xl font-normal flex-1 text-center">
               ชุดข้อมูล
             </div>

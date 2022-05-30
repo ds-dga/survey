@@ -8,11 +8,7 @@ import Paginator from './Paginator';
 import Tab from './Tab';
 
 const LikeTabs = ['ชุดข้อมูล', 'ชุดข้อมูลใกล้เคียง', 'หน่วยงาน'];
-const CommentTabs = [
-  // 'ทั้งหมด',
-  'ชุดข้อมูล',
-  'ชุดข้อมูลใกล้เคียง',
-];
+const CommentTabs = ['ทั้งหมด', 'ชุดข้อมูล', 'ชุดข้อมูลใกล้เคียง'];
 
 export default function ModeratorTask() {
   const [PaginatorVars, SetPaginatorVars] = useState({

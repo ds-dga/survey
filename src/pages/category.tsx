@@ -42,7 +42,9 @@ export default function Category() {
     >
       <div className="m-3 h-5/6">
         <div className="flex flex-row items-center">
-          <img className={`h-10`} src={`/assets/logo/digi.png`} alt="DIGI" />
+          <Link href={'/'} passHref>
+            <img className={`h-10`} src={`/assets/logo/digi.png`} alt="DIGI" />
+          </Link>
           <h1 className="font-semibold text-2xl text-gray-700 text-center mb-5 flex-1">
             กลุ่มชุดข้อมูล
           </h1>
