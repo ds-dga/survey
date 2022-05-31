@@ -19,7 +19,11 @@ export default function Search() {
     itemTotal: 0,
   });
   const [Q, SetQ] = useState('');
-  const [RoleWhere, SetRoleWhere] = useState<any[]>([]);
+  const [RoleWhere, SetRoleWhere] = useState<any[]>([
+    {
+      _or: [{ status: { _neq: 'hidden' } }, { status: { _is_null: true } }],
+    },
+  ]); // anonymous -- hide all hidden items
   const [GQLVars, SetGQLVars] = useState({
     votedByWhere: {},
     relatedVotedWhere: {},
@@ -78,7 +82,7 @@ export default function Search() {
     variables: GQLVars,
     pollInterval: 1000 * 10, // 7s
     fetchPolicy: 'network-only',
-    skip: user.loading,
+    skip: user.loading && (RoleWhere.length > 0 || user.role === 'mod'),
   });
 
   useEffect(() => {

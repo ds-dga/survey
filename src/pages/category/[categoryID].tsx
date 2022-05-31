@@ -1,34 +1,47 @@
 import { gql, useQuery } from '@apollo/client';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
 import Item from '@/components/item';
 import Loading from '@/components/loading';
+import UserProvider from '@/components/UserProvider';
 import { Meta } from '@/layout/Meta';
 import { Main } from '@/templates/Main';
 
 export default function CategoryOne() {
-  const { data: session } = useSession();
+  const router = useRouter();
+  const user = UserProvider();
   let userWhere = {};
-  if (session) {
-    userWhere = {
-      voted_by: {
-        _eq: session.user.uid,
+  let wh: any = {
+    _and: [
+      {
+        category: {
+          id: { _eq: router.query.categoryID },
+        },
+      },
+      { _or: [{ status: { _neq: 'hidden' } }, { status: { _is_null: true } }] },
+    ],
+  };
+  if (user.role === 'mod') {
+    wh = {
+      category: {
+        id: { _eq: router.query.categoryID },
       },
     };
   }
-  const router = useRouter();
+  if (user.id) {
+    userWhere = {
+      voted_by: {
+        _eq: user.id,
+      },
+    };
+  }
   const { data, loading, error } = useQuery(CATEGORY_ITEMS_QUERY, {
     variables: {
       votedByWhere: userWhere,
       relatedVotedWhere: userWhere,
       providerVotedWhere: userWhere,
       categoryID: router.query.categoryID,
-      where: {
-        category: {
-          id: { _eq: router.query.categoryID },
-        },
-      },
+      where: wh,
     },
     pollInterval: 1000 * 20, // 7s
   });

@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import styled from 'styled-components';
 
+import EyeSlash from '@/icons/EyeSlash';
+
 import { displayDatetime } from '../../libs/day';
 import UserProvider, { UserProviderType } from '../UserProvider';
 
@@ -19,22 +21,32 @@ type CommentItemProps = {
 };
 
 function CommentItem({ user, item }: CommentItemProps) {
-  const color =
-    user.id === item.user.id
-      ? '#FDA4AF' // sky-500
-      : '#7DD3FC'; // bg-sky-300
   // NEVER show item if it's hidden, but its own user and user is mod
   if (item.hidden && user.id !== item.user.id && user.role !== 'mod') {
     return <></>;
   }
+  let color =
+    user.id === item.user.id
+      ? '#FDA4AF' // sky-500
+      : '#7DD3FC'; // bg-sky-300
+  if (item.hidden) {
+    color = '#E2E8F0'; // slate-300
+  }
   return (
     <div className="flex flex-col sm:flex-row">
       <div className="pt-4 mr-4 text-sm min-w-fit">
-        👤 {item.user.name}
-        <br />⏰{' '}
-        <span className="italic text-xs">
-          {displayDatetime(item.created_at)}
-        </span>
+        <div>👤 {item.user.name}</div>
+        <div className="flex items-center gap-1">
+          {item.hidden && (
+            <span className="text-2xl text-slate-400">
+              <EyeSlash />
+            </span>
+          )}
+          ⏰
+          <span className="italic text-xs">
+            {displayDatetime(item.created_at)}
+          </span>
+        </div>
       </div>
       <TalkBubble
         className={`my-2 px-5 py-3 border-0 rounded-lg`}
@@ -129,7 +141,7 @@ export const COMMENT_QUERY = gql`
     ) {
       note
       created_at
-
+      hidden
       user {
         id
         name

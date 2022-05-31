@@ -62,7 +62,11 @@ const CATEGORY_QUERY = gql`
       id
       name
       image
-      total: datasets_aggregate {
+      total: datasets_aggregate(
+        where: {
+          _or: [{ status: { _neq: "hidden" } }, { status: { _is_null: true } }]
+        }
+      ) {
         aggregate {
           count
         }

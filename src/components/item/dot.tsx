@@ -7,11 +7,13 @@ export default function StatusDot({ state }: StatusDotProps) {
     inactive: 'bg-red-400',
     negotiate: 'bg-amber-400',
     done: 'bg-green-400',
+    hidden: 'bg-zinc-500',
   };
   const STATUS_TEXT = {
     inactive: 'ไม่มีความเคลื่อนไหว',
     negotiate: 'กำลังประสานงานเปิดเผยข้อมูล',
     done: 'เปิดเผยข้อมูลเรียบร้อยแล้ว',
+    hidden: 'ซ่อน',
   };
   const color = STATUS_COLOR[state] || STATUS_COLOR.inactive;
   const txt = STATUS_TEXT[state] || STATUS_TEXT.inactive;

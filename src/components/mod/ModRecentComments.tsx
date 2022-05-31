@@ -5,6 +5,7 @@ import { gql, useQuery } from '@apollo/client';
 import { displayDatetime } from '@/libs/day';
 
 import { PaginatorOffset } from '../Paginator';
+import CommentHiddenToggle from './item-hidden';
 import { ModRecentCommentsProps } from './mod-common';
 
 function parentTypeConv(t: string) {
@@ -69,8 +70,11 @@ function CommentItem({ comment }) {
         target="_blank"
         rel="noreferrer"
       >
-        <div className="float-right bg-pink-800 text-white px-2 text-xs rounded hover:bg-pink-500">
-          {PARENT_TYPE_CONV[comment.parent_type]}
+        <div className="float-right text-right">
+          <div className="bg-pink-800 text-white px-2 text-xs rounded hover:bg-pink-500">
+            {PARENT_TYPE_CONV[comment.parent_type]}
+          </div>
+          <CommentHiddenToggle item={comment} />
         </div>
       </a>
       {comment.note}
@@ -97,7 +101,7 @@ const RECENT_COMMENTS = gql`
     ) {
       id
       note
-      created_by
+      hidden
       created_at
       parent_type
       parent_id
